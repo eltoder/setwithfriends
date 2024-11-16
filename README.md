@@ -37,8 +37,9 @@ chat!
 
 To build the site for development:
 
-- Install Node.js 16 and npm 8.
-- Run `npm install -g firebase-tools` to globally install the Firebase CLI.
+- Install Node.js 20 and npm 10.
+- Run `npm install -g firebase-tools` to globally install the Firebase CLI. This
+  requires Java version 11 or higher.
 - Run `npm install` in the root folder to get dependencies.
 - Run `npm install` in the `functions` folder.
 - To start the project, run `npm run dev`. This runs a script, which is
