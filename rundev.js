@@ -41,7 +41,7 @@ emulators = spawn(
   [
     "emulators:start",
     "--project",
-    "staging",
+    "preview",
     "--import=./data",
     "--export-on-exit",
   ],
