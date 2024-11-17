@@ -41,7 +41,7 @@ emulators = spawn(
   [
     "emulators:start",
     "--project",
-    "preview",
+    "staging",
     "--import=./data",
     "--export-on-exit",
   ],
@@ -61,7 +61,7 @@ app.stdout.pipe(process.stdout);
 
 const pubsub = new PubSub({
   apiEndpoint: "localhost:8085",
-  projectId: "setwithfriends-dev",
+  projectId: "setwithforks-dev",
 });
 
 setInterval(async () => {
