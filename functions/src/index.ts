@@ -3,8 +3,8 @@ import * as admin from "firebase-admin";
 admin.initializeApp();
 
 import Stripe from "stripe";
-const stripe = process.env.FUNCTIONS_EMULATOR
-  ? (null as any)
+const stripe = !functions.config().stripe
+  ? null
   : new Stripe(functions.config().stripe.secret, {
       apiVersion: "2020-08-27",
     });
@@ -320,6 +320,13 @@ export const createGame = functions.https.onCall(async (data, context) => {
 
 /** Generate a link to the customer portal. */
 export const customerPortal = functions.https.onCall(async (data, context) => {
+  if (!stripe) {
+    throw new functions.https.HttpsError(
+      "failed-precondition",
+      "Stripe is not supported."
+    );
+  }
+
   if (!context.auth) {
     throw new functions.https.HttpsError(
       "failed-precondition",
@@ -375,6 +382,11 @@ export const clearConnections = functions.pubsub
 
 /** Webhook that handles Stripe customer events. */
 export const handleStripe = functions.https.onRequest(async (req, res) => {
+  if (!stripe) {
+    res.status(400).send("Stripe is not supported");
+    return;
+  }
+
   const payload = req.rawBody;
   const sig = req.get("stripe-signature");
 

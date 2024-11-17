@@ -21,7 +21,6 @@ import NotFoundPage from "./NotFoundPage";
 import LoadingPage from "./LoadingPage";
 import GameSidebar from "../components/GameSidebar";
 import Chat from "../components/Chat";
-import DonateDialog from "../components/DonateDialog";
 import { SettingsContext, UserContext } from "../context";
 import {
   removeCard,
@@ -355,9 +354,6 @@ function GamePage({ match }) {
 
   return (
     <Container>
-      <DonateDialog
-        active={game.status === "done" && !spectating && !user.patron}
-      />
       <Snackbar
         anchorOrigin={{
           vertical: "bottom",

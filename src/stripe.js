@@ -1,14 +1,14 @@
 import { loadStripe } from "@stripe/stripe-js";
 
-import config, { isDev } from "./config";
+import config from "./config";
 
-const stripe = isDev ? null : loadStripe(config.stripe.publishableKey);
+const stripe = !config.stripe ? null : loadStripe(config.stripe.publishableKey);
 
 export async function patronCheckout(email) {
-  if (isDev) {
+  if (!stripe) {
     return {
       error: {
-        message: "Stripe not supported in development mode. Sorry!",
+        message: "Stripe is not currently supported. Sorry!",
       },
     };
   }
