@@ -1,6 +1,6 @@
 {
   "projects": {
-    "default": "setwithfriends",
-    "staging": "setwithfriends-dev"
+    "prod": "setwithforks",
+    "preview": "setwithforks-dev"
   }
 }

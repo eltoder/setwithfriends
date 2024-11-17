@@ -1,7 +1,7 @@
 {
   "name": "setwithfriends",
   "version": "1.0.0",
-  "repository": "https://github.com/ekzhang/setwithfriends",
+  "repository": "https://github.com/eltoder/setwithfriends",
   "license": "MIT",
   "description": "Online, real-time set application hosted on Firebase.",
   "keywords": [],
@@ -39,7 +39,7 @@
     "dev": "node rundev.js",
     "build:dev": "react-scripts build",
     "build:preview": "cross-env REACT_APP_ENV=preview react-scripts build",
-    "build": "cross-env REACT_APP_ENV=production react-scripts build",
+    "build:prod": "cross-env REACT_APP_ENV=production react-scripts build",
     "test": "react-scripts test --env=jsdom",
     "eject": "react-scripts eject",
     "format": "prettier --write ."

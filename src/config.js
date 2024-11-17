@@ -3,30 +3,26 @@
 const config = {
   development: {
     firebase: {
-      apiKey: "AIzaSyB6jICg__HEdtZRcSoIoeUMau41jvKNwvU",
-      authDomain: "setwithfriends-dev.web.app",
-      databaseURL: "https://setwithfriends-dev.firebaseio.com",
-      projectId: "setwithfriends-dev",
-      appId: "1:369319422608:web:b9038b38a1bd598048c615",
+      apiKey: "AIzaSyDJbrpSFlmr2D9r9HS0UiFkw_Qk7wlY0lA",
+      authDomain: "setwithforks-dev.firebaseapp.com",
+      databaseURL: "https://setwithforks-dev-default-rtdb.firebaseio.com",
+      projectId: "setwithforks-dev",
+      appId: "1:488130851214:web:e656dc30f31e99e160b4df",
     },
     stripe: null, // Stripe not supported in development
   },
   preview: {
     firebase: {
-      apiKey: "AIzaSyB6jICg__HEdtZRcSoIoeUMau41jvKNwvU",
-      authDomain: "setwithfriends-dev.web.app",
-      databaseURL: "https://setwithfriends-dev.firebaseio.com",
-      projectId: "setwithfriends-dev",
-      storageBucket: "setwithfriends-dev.appspot.com",
-      messagingSenderId: "369319422608",
-      appId: "1:369319422608:web:b9038b38a1bd598048c615",
-      measurementId: "G-GN0204W8F7",
+      apiKey: "AIzaSyDJbrpSFlmr2D9r9HS0UiFkw_Qk7wlY0lA",
+      authDomain: "setwithforks-dev.firebaseapp.com",
+      databaseURL: "https://setwithforks-dev-default-rtdb.firebaseio.com",
+      projectId: "setwithforks-dev",
+      storageBucket: "setwithforks-dev.firebasestorage.app",
+      messagingSenderId: "488130851214",
+      appId: "1:488130851214:web:e656dc30f31e99e160b4df",
+      measurementId: "G-LQR3228JDG",
     },
-    stripe: {
-      publishableKey:
-        "pk_test_51I0VxyCWK9K42cLJfn9bVu57liV6yS9BP1iS6hKCMvtZ3ObTGcYDxz544z2P9CPkN1a0T3VTYbpUcBO1AUDLwTGz00KDNytNhW",
-      priceId: "price_1I2Wi2CWK9K42cLJMyY0yzKT",
-    },
+    stripe: null, // No Stripe yet
   },
   production: {
     firebase: {
