@@ -1,6 +1,6 @@
 {
   "projects": {
     "prod": "setwithforks",
-    "preview": "setwithforks-dev"
+    "staging": "setwithforks-dev"
   }
 }

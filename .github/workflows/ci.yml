@@ -58,12 +58,12 @@ jobs:
       - run: npm run build
         working-directory: functions
 
-  preview:
-    name: Deploy Preview
+  deploy:
+    name: Deploy Staging
     needs: [format, lint_test, functions]
     if: github.event_name == 'push' && github.repository_owner == 'eltoder'
     uses: ./.github/workflows/deploy.yml
     with:
-      env: preview
+      env: staging
     secrets:
       firebase-token: ${{ secrets.FIREBASE_DEV_TOKEN }}

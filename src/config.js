@@ -11,7 +11,7 @@ const config = {
     },
     stripe: null, // Stripe not supported in development
   },
-  preview: {
+  staging: {
     firebase: {
       apiKey: "AIzaSyDJbrpSFlmr2D9r9HS0UiFkw_Qk7wlY0lA",
       authDomain: "setwithforks-dev.firebaseapp.com",
