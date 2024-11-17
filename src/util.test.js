@@ -3,7 +3,7 @@ import {
   checkSet,
   checkSetUltra,
   findSet,
-  filter,
+  badWords,
 } from "./util";
 
 it("computes conjugate cards", () => {
@@ -74,9 +74,14 @@ describe("findSet()", () => {
   });
 });
 
-describe("bad-words filter", () => {
-  it("does not trigger on 'wang'", () => {
-    expect(filter.isProfane("Rona Wang")).toBe(false);
-    expect(filter.isProfane("wang")).toBe(false);
+describe("bad words filter", () => {
+  it("sort of works", () => {
+    expect(badWords.hasMatch("Rona Wang")).toBe(false);
+    expect(badWords.hasMatch("queer")).toBe(false);
+    expect(badWords.hasMatch("lesbian")).toBe(false);
+    expect(badWords.hasMatch("gay")).toBe(false);
+    expect(badWords.hasMatch("fuck")).toBe(true);
+    expect(badWords.hasMatch("cunting")).toBe(true);
+    expect(badWords.hasMatch("retard")).toBe(true);
   });
 });
