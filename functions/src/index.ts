@@ -49,6 +49,13 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     .ref(`gameData/${gameId}`)
     .once("value");
   const gameSnap = await admin.database().ref(`games/${gameId}`).once("value");
+  if (!gameData.exists() || !gameSnap.exists()) {
+    throw new functions.https.HttpsError(
+      "not-found",
+      `The game with gameId ${gameId} was not found in the database.`
+    );
+  }
+
   const gameMode = (gameSnap.child("mode").val() as GameMode) || "normal";
 
   const { lastSet, deck, finalTime, scores } = replayEvents(gameData, gameMode);
@@ -66,13 +73,10 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     .database()
     .ref(`games/${gameId}`)
     .transaction((game) => {
-      // Transaction handler should always handle null, because firebase often
-      // calls it like that: https://stackoverflow.com/a/65415636/5190601
       if (game === null) {
-        throw new functions.https.HttpsError(
-          "not-found",
-          `The game with gameId ${gameId} was not found in the database.`
-        );
+        // Transaction handler should always handle null, because firebase often
+        // calls it like that: https://stackoverflow.com/a/65415636/5190601
+        return null;
       }
       if (game.status !== "ingame") {
         // Someone beat us to the atomic update, so we cancel the transaction.
@@ -83,7 +87,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
       return game;
     });
 
-  if (!committed) {
+  if (!committed || !snapshot.exists()) {
     return;
   }
 
