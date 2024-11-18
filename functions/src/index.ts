@@ -49,13 +49,6 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     .ref(`gameData/${gameId}`)
     .once("value");
   const gameSnap = await admin.database().ref(`games/${gameId}`).once("value");
-  if (!gameSnap.exists()) {
-    throw new functions.https.HttpsError(
-      "not-found",
-      `The game with gameId ${gameId} was not found in the database.`
-    );
-  }
-
   const gameMode = (gameSnap.child("mode").val() as GameMode) || "normal";
 
   const { lastSet, deck, finalTime, scores } = replayEvents(gameData, gameMode);
@@ -73,6 +66,14 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     .database()
     .ref(`games/${gameId}`)
     .transaction((game) => {
+      // Transaction handler should always handle null, because firebase often
+      // calls it like that: https://stackoverflow.com/a/65415636/5190601
+      if (game === null) {
+        throw new functions.https.HttpsError(
+          "not-found",
+          `The game with gameId ${gameId} was not found in the database.`
+        );
+      }
       if (game.status !== "ingame") {
         // Someone beat us to the atomic update, so we cancel the transaction.
         return;
@@ -290,30 +291,14 @@ export const createGame = functions.https.onCall(async (data, context) => {
   // We update the database asynchronously in three different places:
   //   1. /gameData/:gameId
   //   2. /stats/gameCount
-  //   3. /publicGames (if access is public)
-  const updates: Array<Promise<any>> = [];
-  updates.push(
-    admin.database().ref(`gameData/${gameId}`).set({
-      deck: generateDeck(),
-    })
-  );
-  updates.push(
-    admin
-      .database()
-      .ref("stats/gameCount")
-      .transaction((count) => (count || 0) + 1)
-  );
+  //   3. /publicGames/:gameId (if access is public)
+  const updates: { [key: string]: any } = {};
+  updates[`gameData/${gameId}`] = { deck: generateDeck() };
+  updates["stats/gameCount"] = admin.database.ServerValue.increment(1);
   if (access === "public") {
-    updates.push(
-      admin
-        .database()
-        .ref("publicGames")
-        .child(gameId)
-        .set(snapshot?.child("createdAt").val())
-    );
+    updates[`publicGames/${gameId}`] = snapshot.child("createdAt").val();
   }
-
-  await Promise.all(updates);
+  await admin.database().ref().update(updates);
   return snapshot.val();
 });
 
