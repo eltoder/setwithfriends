@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
@@ -6,7 +6,6 @@ import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
 import { makeStyles } from "@material-ui/core/styles";
-import { useHistory } from "react-router-dom";
 import clsx from "clsx";
 
 import { UserContext } from "../context";
@@ -33,16 +32,7 @@ const useStyles = makeStyles({
 
 function UserColorDialog({ open, onClose, title }) {
   const user = useContext(UserContext);
-  const history = useHistory();
   const classes = useStyles();
-
-  // Only allow access to patrons
-  useEffect(() => {
-    if (open && !user.patron) {
-      onClose();
-      history.push("/donate");
-    }
-  });
 
   function handleChange(color) {
     firebase.database().ref(`users/${user.id}/color`).set(color);
