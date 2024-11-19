@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext, useRef } from "react";
+import { useState, useEffect, useContext } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -94,44 +94,28 @@ function GamePage({ match }) {
   }, [gameData]);
 
   // Terminate the game if no sets are remaining
-  const finishing = useRef(false);
+  const [finished, setFinished] = useState({ gameId: "", error: "" });
   useEffect(() => {
-    if (!loadingGame && !loadingGameData && game && gameData) {
-      const gameMode = game.mode || "normal";
-      const { current, history } = computeState(gameData, gameMode);
-      if (
-        game.users &&
-        user.id in game.users &&
-        game.status === "ingame" &&
-        !finishing.current
-      ) {
-        let hasSet = false;
-        if (gameMode === "setchain" && history.length > 0) {
-          const { c1, c2, c3 } = history[history.length - 1];
-          hasSet = findSet(current, gameMode, [c1, c2, c3]);
-        } else {
-          hasSet = findSet(current, gameMode, []);
-        }
-
-        if (!hasSet) {
-          finishing.current = true;
-          // Attempt to finish the game up to 5 times, before giving up
-          (async () => {
-            for (let i = 0; i < 5; i++) {
-              try {
-                await finishGame({ gameId });
-                break;
-              } catch (error) {
-                const delay = 200 * (i + 1);
-                await new Promise((resolve) => setTimeout(resolve, delay));
-              }
+    if (finished.gameId === gameId) {
+      // Attempt to finish the game a few times before giving up
+      (async () => {
+        const numRetries = 8;
+        for (let i = 0; i < numRetries; i++) {
+          try {
+            await finishGame({ gameId });
+            break;
+          } catch (error) {
+            if (i === numRetries - 1) {
+              setFinished({ gameId, error: error + "" });
+            } else {
+              const delay = 100 * Math.pow(2, i);
+              await new Promise((resolve) => setTimeout(resolve, delay));
             }
-            finishing.current = false;
-          })();
+          }
         }
-      }
+      })();
     }
-  });
+  }, [finished.gameId, gameId]);
 
   if (redirect) return <Redirect push to={redirect} />;
 
@@ -192,11 +176,17 @@ function GamePage({ match }) {
     const { c1, c2, c3 } = history[history.length - 1];
     lastSet = [c1, c2, c3];
   }
-  let answer = findSet(current.slice(0, boardSize), gameMode, lastSet);
-  if (hasHint(game) && answer) {
-    answer = answer.slice(0, numHints);
-  } else {
-    answer = null;
+  const answer = findSet(current.slice(0, boardSize), gameMode, lastSet);
+  const hint = hasHint(game) && answer ? answer.slice(0, numHints) : null;
+  const gameEnded = !answer || game.status === "done";
+  if (
+    !answer &&
+    game.users &&
+    user.id in game.users &&
+    game.status === "ingame" &&
+    finished.gameId !== gameId
+  ) {
+    setFinished({ gameId, error: "" });
   }
 
   function handleClick(card) {
@@ -391,32 +381,38 @@ function GamePage({ match }) {
             <div
               className={classes.doneOverlay}
               style={{
-                opacity: game.status === "done" ? 1 : 0,
-                visibility: game.status === "done" ? "visible" : "hidden",
+                opacity: gameEnded ? 1 : 0,
+                visibility: gameEnded ? "visible" : "hidden",
               }}
             >
               <Paper elevation={3} className={classes.doneModal}>
                 <Typography variant="h5" gutterBottom>
                   The game has ended.
                 </Typography>
-                <Typography variant="body1">
-                  Winner: <User id={leaderboard[0]} />
-                </Typography>
-                {leaderboard.length >= 2 && (
-                  <Typography variant="body2">
-                    Runner-up: <User id={leaderboard[1]} />
-                  </Typography>
-                )}
-                {!spectating && (
-                  <Button
-                    variant="contained"
-                    color="primary"
-                    onClick={handlePlayAgain}
-                    style={{ marginTop: 12 }}
-                    disabled={waiting}
-                  >
-                    {waiting ? <Loading /> : "Play Again"}
-                  </Button>
+                {game.status !== "done" ? (
+                  finished.error || <Loading />
+                ) : (
+                  <div>
+                    <Typography variant="body1">
+                      Winner: <User id={leaderboard[0]} />
+                    </Typography>
+                    {leaderboard.length >= 2 && (
+                      <Typography variant="body2">
+                        Runner-up: <User id={leaderboard[1]} />
+                      </Typography>
+                    )}
+                    {!spectating && (
+                      <Button
+                        variant="contained"
+                        color="primary"
+                        onClick={handlePlayAgain}
+                        style={{ marginTop: 12 }}
+                        disabled={waiting}
+                      >
+                        {waiting ? <Loading /> : "Play Again"}
+                      </Button>
+                    )}
+                  </div>
                 )}
               </Paper>
             </div>
@@ -430,7 +426,7 @@ function GamePage({ match }) {
               onClear={handleClear}
               gameMode={gameMode}
               lastSet={lastSet}
-              answer={answer}
+              answer={hint}
             />
           </Grid>
         </Box>
@@ -440,6 +436,13 @@ function GamePage({ match }) {
               game={game}
               scores={scores}
               leaderboard={leaderboard}
+              endedAt={
+                game.status === "done"
+                  ? game.endedAt
+                  : !answer && history.length > 0
+                  ? history[history.length - 1].time
+                  : 0
+              }
             />
             <Box mt={1}>
               {hasHint(game) && (
@@ -448,11 +451,7 @@ function GamePage({ match }) {
                   variant="outlined"
                   color="primary"
                   fullWidth
-                  disabled={
-                    numHints === maxNumHints ||
-                    !answer ||
-                    game.status === "done"
-                  }
+                  disabled={numHints === maxNumHints || !hint || gameEnded}
                   onClick={handleAddHint}
                 >
                   Add hint: {numHints}

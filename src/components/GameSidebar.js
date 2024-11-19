@@ -41,12 +41,12 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function GameSidebar({ game, scores, leaderboard }) {
+function GameSidebar({ game, scores, leaderboard, endedAt }) {
   const classes = useStyles();
   const { pathname } = useLocation();
   const time = useMoment(500);
 
-  const gameTime = game.status === "done" ? game.endedAt : time;
+  const gameTime = endedAt || time;
 
   return (
     <Paper className={classes.sidebar}>
@@ -56,7 +56,7 @@ function GameSidebar({ game, scores, leaderboard }) {
         <Typography variant="h4" align="center">
           {/* Hide the sub-second time resolution while game is active to
           avoid stressing beginners. */}
-          {formatTime(gameTime - game.startedAt, game.status !== "done")}
+          {formatTime(gameTime - game.startedAt, !endedAt)}
         </Typography>
       </div>
       <Divider style={{ margin: "8px 0" }} />
@@ -74,7 +74,7 @@ function GameSidebar({ game, scores, leaderboard }) {
               noWrap
               render={(user, userEl) => (
                 <ListItem button component={RouterLink} to={`/profile/${uid}`}>
-                  {game.status === "ingame" && (
+                  {!endedAt && (
                     <ListItemIcon>
                       {user.connections &&
                       Object.values(user.connections).includes(pathname) ? (
