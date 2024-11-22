@@ -13,13 +13,13 @@
         },
         "users": {
           "$userId": {
-            ".write": "auth != null && auth.uid == $userId && data.parent().parent().child('status').val() == 'waiting'",
+            ".write": "auth != null && auth.uid == $userId && data.parent().parent().child('status').val() == 'waiting' && !(root.child('users/' + auth.uid + '/banned').exists() && now < root.child('users/' + auth.uid + '/banned').val())",
             ".validate": "!newData.exists() || (newData.isNumber() && newData.val() == now)"
           }
         },
         "mode": {
           ".write": "auth != null && auth.uid == data.parent().child('host').val() && newData.exists()",
-          ".validate": "newData.isString()&& (newData.val() == 'normal' || newData.val() == 'ultraset' || newData.val() == 'setchain')"
+          ".validate": "newData.isString() && newData.val().matches(/^normal|ultraset|setchain$/)"
         },
         "enableHint": {
           ".write": "auth != null && auth.uid == data.parent().child('host').val() && newData.exists()",
@@ -57,7 +57,7 @@
       ".indexOn": "connections",
       "$userId": {
         ".read": "auth != null",
-        ".write": "auth != null && (auth.uid == $userId || root.child('users').child(auth.uid).child('admin').val() == true)",
+        ".write": "auth != null && (auth.uid == $userId || root.child('users/' + auth.uid + '/admin').val() == true)",
         ".validate": "newData.hasChildren(['color', 'name'])",
         "color": {
           ".validate": "newData.isString()"
@@ -74,7 +74,7 @@
           }
         },
         "banned": {
-          ".validate": "newData.isNumber()"
+          ".validate": "newData.isNumber() && root.child('users/' + auth.uid + '/admin').val() == true"
         },
         "$other": {
           ".validate": false
@@ -105,7 +105,7 @@
         ".read": "auth != null",
         ".indexOn": ["time", "user"],
         "$messageId": {
-          ".write": "auth != null && ((!data.exists() && newData.exists()) || (data.exists() && root.child('users').child(auth.uid).child('admin').val() == true))",
+          ".write": "auth != null && (!data.exists() || root.child('users/' + auth.uid + '/admin').val() == true) && !(root.child('users/' + auth.uid + '/banned').exists() && now < root.child('users/' + auth.uid + '/banned').val())",
           ".validate": "newData.hasChildren(['user', 'message', 'time'])",
           "user": {
             ".validate": "newData.isString() && newData.val() == auth.uid"
@@ -126,7 +126,7 @@
       ".read": "auth != null",
       ".indexOn": ["time", "user"],
       "$messageId": {
-        ".write": "auth != null && ((!data.exists() && newData.exists()) || (data.exists() && root.child('users').child(auth.uid).child('admin').val() == true))",
+        ".write": "auth != null && (!data.exists() || root.child('users/' + auth.uid + '/admin').val() == true) && !(root.child('users/' + auth.uid + '/banned').exists() && now < root.child('users/' + auth.uid + '/banned').val())",
         ".validate": "newData.hasChildren(['user', 'message', 'time'])",
         "user": {
           ".validate": "newData.isString() && newData.val() == auth.uid"
