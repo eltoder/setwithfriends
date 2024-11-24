@@ -309,10 +309,16 @@ export function computeState(gameData, gameMode = "normal") {
         return e1.time !== e2.time ? e1.time - e2.time : k1 < k2;
       })
       .map(([_k, e]) => e);
+    const processFn =
+      gameMode === "normal"
+        ? processEventNormal
+        : gameMode === "setchain"
+        ? processEventChain
+        : gameMode === "ultraset"
+        ? processEventUltra
+        : null;
     for (const event of events) {
-      if (gameMode === "normal") processEventNormal(internalGameState, event);
-      if (gameMode === "setchain") processEventChain(internalGameState, event);
-      if (gameMode === "ultraset") processEventUltra(internalGameState, event);
+      processFn(internalGameState, event);
     }
   }
 
