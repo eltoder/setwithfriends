@@ -109,7 +109,7 @@ function ProfilePage({ match }) {
   if (redirect) {
     return <Redirect push to={redirect} />;
   }
-  if (!games) {
+  if (!gameIds) {
     return <LoadingPage />;
   }
 
@@ -117,6 +117,9 @@ function ProfilePage({ match }) {
   if (!loadingGameVals && !loadingGameDataVals) {
     gamesData = {};
     for (let i = 0; i < gameIds.length; i++) {
+      if (!gameVals[i] || !gameDataVals[i]) {
+        continue;
+      }
       if (gameVals[i].status === "done") {
         const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
         if (

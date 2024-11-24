@@ -26,7 +26,7 @@ function GameInfoRow({ gameId, onClick }) {
   const theme = useTheme();
 
   const [game, loading] = useFirebaseRef(`/games/${gameId}`);
-  if (loading) {
+  if (loading || !game) {
     return null;
   }
   const gameMode = game.mode || "normal";
