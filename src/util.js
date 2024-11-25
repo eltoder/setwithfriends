@@ -2,6 +2,7 @@ import animals from "./utils/animals.json";
 import moment from "moment";
 import {
   RegExpMatcher,
+  TextCensor,
   englishDataset,
   englishRecommendedTransformers,
 } from "obscenity";
@@ -341,4 +342,8 @@ export function hasHint(game) {
     Object.keys(game.users).length === 1 &&
     game.access === "private"
   );
+}
+
+export function censorText(text) {
+  return new TextCensor().applyTo(text, badWords.getAllMatches(text));
 }

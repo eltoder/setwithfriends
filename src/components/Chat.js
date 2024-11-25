@@ -15,7 +15,7 @@ import Scrollbox from "./Scrollbox";
 import ChatCards from "./ChatCards";
 import ElapsedTime from "./ElapsedTime";
 import firebase from "../firebase";
-import { badWords } from "../util";
+import { censorText } from "../util";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useMoment from "../hooks/useMoment";
@@ -97,18 +97,15 @@ function Chat({
   function handleSubmit(event) {
     event.preventDefault();
     if (input) {
-      if (badWords.hasMatch(input)) {
-        alert(
-          "We detected that your message contains profane language. If you think this was a mistake, please let us know!"
-        );
-      } else {
-        firebase.database().ref(databasePath).push({
+      firebase
+        .database()
+        .ref(databasePath)
+        .push({
           user: user.id,
-          message: input,
+          message: censorText(input),
           time: firebase.database.ServerValue.TIMESTAMP,
         });
-        setInput("");
-      }
+      setInput("");
     }
   }
 
