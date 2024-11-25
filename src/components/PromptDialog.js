@@ -8,7 +8,7 @@ import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
 
-import { badWords } from "../util";
+import { censorText } from "../util";
 import { UserContext } from "../context";
 
 function PromptDialog(props) {
@@ -22,17 +22,10 @@ function PromptDialog(props) {
   }
 
   function handleSubmit() {
-    if (badWords.hasMatch(value)) {
-      alert(
-        "We detected that your input contains profane language. If you think this was a mistake, please let us know!"
-      );
-    } else if (
-      !user.patron &&
-      !value.match(/^[\p{L}\p{M}\p{N}\p{P}\p{Zs}]*$/u)
-    ) {
+    if (!user.patron && !value.match(/^[\p{L}\p{M}\p{N}\p{P}\p{Zs}]*$/u)) {
       alert("Please use only letters, numbers, and punctuation.");
     } else {
-      onClose(value);
+      onClose(censorText(value));
       setValue("");
     }
   }
