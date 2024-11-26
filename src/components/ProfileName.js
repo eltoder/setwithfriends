@@ -11,7 +11,7 @@ import firebase from "../firebase";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 import { UserContext } from "../context";
-import { generateName } from "../util";
+import { generateColor, generateName } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   vertIcon: {
@@ -42,6 +42,11 @@ function ProfileName({ userId }) {
 
   const handleResetName = () => {
     firebase.database().ref(`users/${userId}/name`).set(generateName());
+    handleClose();
+  };
+
+  const handleColor = () => {
+    firebase.database().ref(`users/${userId}/color`).set(generateColor());
     handleClose();
   };
 
@@ -88,6 +93,7 @@ function ProfileName({ userId }) {
                 onClose={handleClose}
               >
                 <MenuItem onClick={handleResetName}>Reset username</MenuItem>
+                <MenuItem onClick={handleColor}>Reset color</MenuItem>
                 {player.banned && Date.now() < player.banned ? (
                   <MenuItem onClick={() => handleUnban()}>Unban</MenuItem>
                 ) : (
