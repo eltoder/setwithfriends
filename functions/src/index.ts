@@ -1,15 +1,18 @@
 import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
-admin.initializeApp(
+
+if (process.env.FUNCTIONS_EMULATOR) {
   // We don't pass any configs, so admin SDK queries firebase API to get them.
   // This works if the user is logged in and has access, but we don't want to
   // require this for local development. Passing just the databaseURL seems to
   // be enough. The default db name is just "setwithforks-dev". Once we have
   // prod set up, we can rename the dev db and remove this code.
-  process.env.FUNCTIONS_EMULATOR
-    ? { databaseURL: "https://setwithforks-dev-default-rtdb.firebaseio.com" }
-    : {}
-);
+  admin.initializeApp({
+    databaseURL: "https://setwithforks-dev-default-rtdb.firebaseio.com",
+  });
+} else {
+  admin.initializeApp();
+}
 
 import Stripe from "stripe";
 const stripe = !functions.config().stripe
