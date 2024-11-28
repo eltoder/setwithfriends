@@ -3,8 +3,10 @@ import moment from "moment";
 import {
   RegExpMatcher,
   TextCensor,
+  asteriskCensorStrategy,
   englishDataset,
   englishRecommendedTransformers,
+  keepStartCensorStrategy,
 } from "obscenity";
 import red from "@material-ui/core/colors/red";
 import pink from "@material-ui/core/colors/pink";
@@ -26,6 +28,9 @@ export const badWords = new RegExpMatcher({
   ...englishDataset.build(),
   ...englishRecommendedTransformers,
 });
+const censor = new TextCensor().setStrategy(
+  keepStartCensorStrategy(asteriskCensorStrategy())
+);
 
 export const colors = {
   red,
@@ -345,5 +350,5 @@ export function hasHint(game) {
 }
 
 export function censorText(text) {
-  return new TextCensor().applyTo(text, badWords.getAllMatches(text));
+  return censor.applyTo(text, badWords.getAllMatches(text));
 }
