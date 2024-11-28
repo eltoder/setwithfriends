@@ -1,5 +1,5 @@
-import { useHistory } from "react-router-dom";
 import { useTheme, makeStyles } from "@material-ui/core/styles";
+import Security from "@material-ui/icons/Security";
 import WhatshotIcon from "@material-ui/icons/Whatshot";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
@@ -7,12 +7,6 @@ import useStats from "../hooks/useStats";
 import { colors } from "../util";
 
 const useStyles = makeStyles((theme) => ({
-  patronIcon: {
-    cursor: "pointer",
-    "&:hover": {
-      filter: `drop-shadow(0.1rem 0rem 0.2rem)`,
-    },
-  },
   rating: {
     display: "inline-block",
     width: "3em",
@@ -35,7 +29,6 @@ function User({
   ...other
 }) {
   const theme = useTheme();
-  const history = useHistory();
   const classes = useStyles();
 
   const [user, loading] = useFirebaseRef(`users/${id}`);
@@ -44,11 +37,6 @@ function User({
   if (loading) {
     return null;
   }
-
-  const handleClick = (e) => {
-    e.preventDefault();
-    history.push("/donate");
-  };
 
   const Component = component || "span";
   const userEl = (
@@ -67,10 +55,8 @@ function User({
           {loadingStats ? "⋯" : Math.round(stats[showRating].rating)}
         </span>
       )}
-      {(user.patron || forcePatron) && (
-        <WhatshotIcon
-          className={classes.patronIcon}
-          onClick={handleClick}
+      {user.admin ? (
+        <Security
           fontSize="inherit"
           style={{
             display: "inline",
@@ -80,6 +66,19 @@ function User({
             color: "inherit",
           }}
         />
+      ) : (
+        (user.patron || forcePatron) && (
+          <WhatshotIcon
+            fontSize="inherit"
+            style={{
+              display: "inline",
+              position: "relative",
+              left: "-0.1em",
+              top: "0.15em",
+              color: "inherit",
+            }}
+          />
+        )
       )}
       <span>{user.name}</span>
     </Component>
