@@ -18,7 +18,7 @@ import firebase from "../firebase";
 import { censorText } from "../util";
 import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
-import useMoment from "../hooks/useMoment";
+import useStats from "../hooks/useStats";
 import useStorage from "../hooks/useStorage";
 import { UserContext } from "../context";
 
@@ -67,11 +67,8 @@ function Chat({
 }) {
   const user = useContext(UserContext);
   const classes = useStyles();
-  const isNewUser = useMoment(30000)
-    .clone()
-    .subtract(5, "minutes")
-    .isBefore(user.authUser.metadata.creationTime);
-  const chatDisabled = !gameId && isNewUser;
+  const [stats, loadingStats] = useStats(gameId ? null : user.id);
+  const chatDisabled = !gameId && (loadingStats || stats.all.finishedGames < 3);
 
   const chatEl = useRef();
   useEffect(() => {
