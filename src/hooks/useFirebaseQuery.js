@@ -8,6 +8,8 @@ function useFirebaseQuery(query) {
   const state = useRef({});
 
   useEffect(() => {
+    if (!query) return;
+
     function update() {
       clearInterval(timer.current);
       timer.current = setTimeout(() => {
