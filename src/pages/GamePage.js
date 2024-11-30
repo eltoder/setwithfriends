@@ -143,17 +143,16 @@ function GamePage({ match }) {
   const spectating = !game.users || !(user.id in game.users);
   const maxNumHints = gameMode === "ultraset" ? 4 : 3;
 
-  const { current, scores, history, boardSize } = computeState(
+  const { current, scores, lastEvents, history, boardSize } = computeState(
     gameData,
     gameMode
   );
 
-  const leaderboard = Object.keys(game.users).sort((u1, u2) => {
-    const s1 = scores[u1] || 0;
-    const s2 = scores[u2] || 0;
-    if (s1 !== s2) return s2 - s1;
-    return u1 < u2 ? -1 : 1;
-  });
+  const leaderboard = Object.keys(game.users).sort(
+    (u1, u2) =>
+      (scores[u2] || 0) - (scores[u1] || 0) ||
+      (lastEvents[u1] || 0) - (lastEvents[u2] || 0)
+  );
 
   function handleSet(cards) {
     const event =

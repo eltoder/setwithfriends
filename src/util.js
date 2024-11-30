@@ -244,8 +244,9 @@ function removeCards(internalGameState, cards) {
 }
 
 function processValidEvent(internalGameState, event, cards) {
-  const { scores, history } = internalGameState;
+  const { scores, lastEvents, history } = internalGameState;
   scores[event.user] = (scores[event.user] || 0) + 1;
+  lastEvents[event.user] = event.time;
   history.push(event);
   removeCards(internalGameState, cards);
 }
@@ -300,21 +301,22 @@ export function computeState(gameData, gameMode = "normal") {
   const used = {}; // set of cards that have been taken
   const history = []; // list of valid events in time order
   const current = gameData.deck.slice(); // remaining cards in the game
+  const lastEvents = {}; // time of the last event for each user
   const internalGameState = {
     used,
     current,
     scores,
     history,
+    lastEvents,
     // Initial deck split
     boardSize: splitDeck(current, gameMode, 12, [])[0].length,
   };
 
   if (gameData.events) {
-    const events = Object.entries(gameData.events)
-      .sort(([k1, e1], [k2, e2]) => {
-        return e1.time !== e2.time ? e1.time - e2.time : k1 < k2;
-      })
-      .map(([_k, e]) => e);
+    // Array.sort() is guaranteed to be stable in since around 2018
+    const events = Object.values(gameData.events).sort(
+      (e1, e2) => e1.time - e2.time
+    );
     const processFn =
       gameMode === "normal"
         ? processEventNormal
@@ -328,7 +330,13 @@ export function computeState(gameData, gameMode = "normal") {
     }
   }
 
-  return { current, scores, history, boardSize: internalGameState.boardSize };
+  return {
+    current,
+    scores,
+    history,
+    lastEvents,
+    boardSize: internalGameState.boardSize,
+  };
 }
 
 export function formatTime(t, hideSubsecond) {
