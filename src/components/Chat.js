@@ -65,10 +65,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const makeUserRE = (username) => {
+const makeMentionRE = (username) => {
   username = username.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
   username = username.replace(/^anonymous /i, "($&)?");
-  return new RegExp(`@(all|${username})\\b`, "i");
+  return new RegExp(`@(all|${username})(\\W|$)`, "iu");
 };
 
 /** A chat sidebar element, opens lobby chat when the `gameId` prop is not set. */
@@ -106,10 +106,10 @@ function Chat({
     [databasePath, messageLimit]
   );
   const messages = useFirebaseQuery(messagesQuery);
-  const userRE = useMemo(() => makeUserRE(user.name), [user.name]);
+  const mentionRE = useMemo(() => makeMentionRE(user.name), [user.name]);
 
   const addMentioned = (cls, message) => {
-    return userRE.test(message) ? `${cls} ${classes.mentioned}` : cls;
+    return mentionRE.test(message) ? `${cls} ${classes.mentioned}` : cls;
   };
 
   function handleSubmit(event) {
