@@ -14,7 +14,6 @@ export const darkTheme = createTheme({
       main: "#ff4284",
       dark: "#c51162",
     },
-
     action: {
       hover: "#363636",
     },
@@ -33,6 +32,10 @@ export const darkTheme = createTheme({
     textColor: "#fff",
     caretColor: "#fff",
     background: "#262626",
+  },
+  mentioned: {
+    background: "#383838",
+    border: "#ffd700",
   },
   pie: {
     noGames: "#rgba(0, 0, 0, 0.12)",
@@ -68,6 +71,10 @@ export const lightTheme = createTheme({
     textColor: "black",
     caretColor: "black",
     background: "#fff",
+  },
+  mentioned: {
+    background: "#fffedc",
+    border: "#ffd700",
   },
   pie: {
     noGames: "rgba(0, 0, 0, 0.12)",

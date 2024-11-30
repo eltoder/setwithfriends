@@ -22,7 +22,7 @@ import useStats from "../hooks/useStats";
 import useStorage from "../hooks/useStorage";
 import { UserContext } from "../context";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   chatPanel: {
     display: "flex",
     flexDirection: "column",
@@ -53,7 +53,23 @@ const useStyles = makeStyles({
       visibility: "visible",
     },
   },
-});
+  messageTime: {
+    color: "gray",
+    fontSize: "xx-small",
+    marginRight: "0.4em",
+    verticalAlign: "middle",
+  },
+  mentioned: {
+    backgroundColor: theme.mentioned.background,
+    borderRight: `solid ${theme.mentioned.border}`,
+  },
+}));
+
+const makeUserRE = (username) => {
+  username = username.replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
+  username = username.replace(/^anonymous /i, "($&)?");
+  return new RegExp(`@(all|${username})\\b`, "i");
+};
 
 /** A chat sidebar element, opens lobby chat when the `gameId` prop is not set. */
 function Chat({
@@ -90,6 +106,11 @@ function Chat({
     [databasePath, messageLimit]
   );
   const messages = useFirebaseQuery(messagesQuery);
+  const userRE = useMemo(() => makeUserRE(user.name), [user.name]);
+
+  const addMentioned = (cls, message) => {
+    return userRE.test(message) ? `${cls} ${classes.mentioned}` : cls;
+  };
 
   function handleSubmit(event) {
     event.preventDefault();
@@ -160,6 +181,17 @@ function Chat({
     );
   };
 
+  const formatTime = (time) => {
+    const opts = { timeStyle: "short", hour12: false };
+    return (
+      showMessageTimes && (
+        <span className={classes.messageTime}>
+          {new Date(time).toLocaleTimeString(undefined, opts)}
+        </span>
+      )
+    );
+  };
+
   return (
     <section
       className={classes.chatPanel}
@@ -184,11 +216,12 @@ function Chat({
                 <div
                   key={key}
                   style={{ display: "flex", flexDirection: "row" }}
-                  className={classes.message}
+                  className={addMentioned(classes.message, item.message)}
                 >
                   {timeTooltip(
                     item.time,
                     <Typography variant="body2" gutterBottom>
+                      {formatTime(item.time)}
                       <User
                         id={item.user}
                         component={InternalLink}
