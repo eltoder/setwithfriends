@@ -32,8 +32,8 @@
         ".read": "auth != null",
         "events": {
           "$eventId": {
-            ".write": "!data.exists() && newData.exists() && auth != null && root.child('games/' + $gameId + '/users/' + auth.uid).exists()",
-            ".validate": "newData.hasChildren(['user', 'time', 'c1', 'c2', 'c3'])",
+            ".write": "!data.exists() && newData.exists() && auth != null && root.child('games/' + $gameId + '/users/' + auth.uid).exists() && root.child('games/' + $gameId + '/status').val() == 'ingame'",
+            ".validate": "newData.hasChildren(['user', 'time', 'c1', 'c2', 'c3']) && (newData.child('c4').exists() == (root.child('games/' + $gameId + '/mode').val() == 'ultraset'))",
             "user": {
               ".validate": "newData.isString() && newData.val() == auth.uid"
             },
@@ -47,6 +47,9 @@
               ".validate": "newData.isString() && newData.val().matches(/^[0-2]{4}$/)"
             },
             "c3": {
+              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{4}$/)"
+            },
+            "c4": {
               ".validate": "newData.isString() && newData.val().matches(/^[0-2]{4}$/)"
             }
           }
