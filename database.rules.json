@@ -58,7 +58,7 @@
       "$userId": {
         ".read": "auth != null",
         ".write": "auth != null && (auth.uid == $userId || root.child('users/' + auth.uid + '/admin').val() == true)",
-        ".validate": "newData.hasChildren(['color', 'name'])",
+        ".validate": "newData.hasChildren(['color', 'name']) && (newData.child('banned').exists() || !data.child('banned').exists() || root.child('users/' + auth.uid + '/admin').val() == true)",
         "color": {
           ".validate": "newData.isString()"
         },
