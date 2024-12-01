@@ -63,12 +63,7 @@ export async function calcStats() {
             const { finalTime, scores } = replayEvents(gameData, gameMode);
 
             // Check if hints are enabled; and if so, ignore the game in statistics
-            if (
-              game.child("enableHint").val() &&
-              game.child("users").numChildren() === 1 &&
-              game.child("access").val() === "private" &&
-              gameMode === "normal"
-            ) {
+            if (game.child("enableHint").val()) {
               return;
             }
 

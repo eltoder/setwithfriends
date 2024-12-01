@@ -351,9 +351,8 @@ export function formatTime(t, hideSubsecond) {
 export function hasHint(game) {
   return (
     game.enableHint &&
-    game.users &&
-    Object.keys(game.users).length === 1 &&
-    game.access === "private"
+    game.access === "private" &&
+    Object.keys(game.users || {}).length === 1
   );
 }
 
