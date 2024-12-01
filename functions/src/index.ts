@@ -104,11 +104,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   }
 
   // Check if hints are enabled; and if so, ignore the game in statistics
-  if (
-    snapshot.child("enableHint").val() &&
-    snapshot.child("users").numChildren() === 1 &&
-    snapshot.child("access").val() === "private"
-  ) {
+  if (snapshot.child("enableHint").val()) {
     return;
   }
 

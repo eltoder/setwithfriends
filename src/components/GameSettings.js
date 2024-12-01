@@ -54,8 +54,8 @@ function GameSettings({ game, gameId, userId }) {
             control={<Switch checked={hasHint(game)} onChange={toggleHint} />}
             label="Enable Hints"
             disabled={
-              Object.keys(game.users || {}).length > 1 ||
-              game.access !== "private"
+              game.access !== "private" ||
+              Object.keys(game.users || {}).length !== 1
             }
           />
         </Tooltip>
