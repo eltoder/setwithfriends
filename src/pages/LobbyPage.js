@@ -35,7 +35,7 @@ const useStyles = makeStyles((theme) => ({
       "--table-height": "480px",
     },
     [theme.breakpoints.up("md")]: {
-      "--table-height": "calc(min(100vh - 140px, 720px))",
+      "--table-height": "calc(min(100vh - 200px, 720px))",
     },
   },
   gamesTable: {
@@ -64,37 +64,30 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   gameCounters: {
-    "& > p": {
-      marginBottom: "0.2em",
-    },
-    [theme.breakpoints.up("sm")]: {
-      position: "absolute",
-      bottom: 4,
-    },
-    [theme.breakpoints.down("xs")]: {
-      marginTop: 4,
-      display: "flex",
-      justifyContent: "space-between",
+    margin: "1.2em 0.2em 0.2em 0.2em",
+    display: "flex",
+    justifyContent: "space-between",
+    [theme.breakpoints.down("sm")]: {
+      order: -1,
+      margin: "0 0.2em 1em 0.2em",
     },
   },
   actionButtons: {
-    [theme.breakpoints.up("sm")]: {
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "center",
-      "& button": {
-        margin: "12px 0",
-      },
+    display: "flex",
+    margin: "1em 0 1em 0",
+    "& button:first-of-type": {
+      marginRight: "0.5em",
     },
-    [theme.breakpoints.down("xs")]: {
-      "& button": {
-        marginBottom: theme.spacing(1),
-      },
+    "& button:last-of-type": {
+      marginLeft: "0.5em",
+    },
+    [theme.breakpoints.down("sm")]: {
+      marginBottom: "0.2em",
     },
   },
   chatColumn: {
-    maxHeight: "calc(var(--table-height) + 16px)",
+    display: "flex",
+    flexDirection: "column",
     [theme.breakpoints.up("md")]: {
       marginTop: 36,
     },
@@ -103,18 +96,10 @@ const useStyles = makeStyles((theme) => ({
     padding: 8,
     display: "flex",
     flexDirection: "column",
-    height: "100%",
+    "--chat-height": "calc(var(--table-height) - 16px)",
   },
-  chatPanel: {
-    display: "flex",
-    flexDirection: "column",
-  },
-  buttonColumn: {
-    position: "relative",
-    maxHeight: "calc(var(--table-height) + 16px)",
-    [theme.breakpoints.up("sm")]: {
-      marginTop: 36,
-    },
+  gamesColumn: {
+    paddingBottom: "0 !important",
   },
 }));
 
@@ -195,15 +180,33 @@ function LobbyPage() {
   return (
     <Container>
       <Grid container spacing={2} className={classes.mainGrid}>
-        <Box clone order={{ xs: 3, md: 1 }} className={classes.chatColumn}>
-          <Grid item xs={12} sm={12} md={3}>
+        <Box clone order={{ xs: 2, md: 1 }} className={classes.chatColumn}>
+          <Grid item xs={12} sm={12} md={6}>
             <Paper className={classes.chatColumnPaper}>
               <Chat title="Lobby Chat" messageLimit={50} showMessageTimes />
             </Paper>
+            <div className={classes.gameCounters}>
+              <Typography variant="body2">
+                <strong>
+                  {loadingStats
+                    ? "---"
+                    : humanize((stats && stats.onlineUsers) || 0)}
+                </strong>{" "}
+                users online
+              </Typography>
+              <Typography variant="body2">
+                <strong>
+                  {loadingStats
+                    ? "---,---"
+                    : humanize((stats && stats.gameCount) || 0)}
+                </strong>{" "}
+                games played
+              </Typography>
+            </div>
           </Grid>
         </Box>
-        <Box clone order={{ xs: 1, md: 2 }}>
-          <Grid item xs={12} sm={8} md={6}>
+        <Box clone order={{ xs: 1, md: 2 }} className={classes.gamesColumn}>
+          <Grid item xs={12} sm={12} md={6}>
             <Tabs
               className={classes.lobbyTabs}
               indicatorColor="secondary"
@@ -241,10 +244,6 @@ function LobbyPage() {
                 </TableBody>
               </Table>
             </TableContainer>
-          </Grid>
-        </Box>
-        <Box clone order={{ xs: 2, md: 3 }} className={classes.buttonColumn}>
-          <Grid item xs={12} sm={4} md={3}>
             <div className={classes.actionButtons}>
               <Tooltip
                 arrow
@@ -275,24 +274,6 @@ function LobbyPage() {
                   New Private Game
                 </Button>
               </Tooltip>
-            </div>
-            <div className={classes.gameCounters}>
-              <Typography variant="body2">
-                <strong>
-                  {loadingStats
-                    ? "---"
-                    : humanize((stats && stats.onlineUsers) || 0)}
-                </strong>{" "}
-                users online
-              </Typography>
-              <Typography variant="body2">
-                <strong>
-                  {loadingStats
-                    ? "---,---"
-                    : humanize((stats && stats.gameCount) || 0)}
-                </strong>{" "}
-                games played
-              </Typography>
             </div>
           </Grid>
         </Box>

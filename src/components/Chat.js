@@ -24,8 +24,14 @@ import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
+    height: "var(--chat-height, auto)",
     display: "flex",
     flexDirection: "column",
+  },
+  chatHidden: {
+    [theme.breakpoints.down("sm")]: {
+      height: "auto !important",
+    },
   },
   chatHeader: {
     transition: "text-shadow 0.5s",
@@ -94,6 +100,7 @@ function Chat({
   const [input, setInput] = useState("");
   const [menuOpenIdx, setMenuOpenIdx] = useState(null);
   const [chatHidden, setChatHidden] = useStorage("chat-hidden", "no");
+  const isHidden = chatHidden === "yes";
 
   const databasePath = gameId ? `chats/${gameId}` : "lobbyChat";
   const messagesQuery = useMemo(
@@ -105,7 +112,7 @@ function Chat({
         .limitToLast(messageLimit),
     [databasePath, messageLimit]
   );
-  const messages = useFirebaseQuery(messagesQuery);
+  const messages = useFirebaseQuery(isHidden ? null : messagesQuery);
   const mentionRE = useMemo(() => makeMentionRE(user.name), [user.name]);
 
   const addMentioned = (cls, message) => {
@@ -128,7 +135,7 @@ function Chat({
   }
 
   function toggleChat() {
-    setChatHidden(chatHidden === "yes" ? "no" : "yes");
+    setChatHidden(isHidden ? "no" : "yes");
   }
 
   const [anchorEl, setAnchorEl] = useState(null);
@@ -194,11 +201,11 @@ function Chat({
 
   return (
     <section
-      className={classes.chatPanel}
+      className={`${classes.chatPanel} ${isHidden ? classes.chatHidden : ""}`}
       style={{ flexGrow: 1, overflowY: "hidden" }}
     >
       <Subheading className={classes.chatHeader} onClick={toggleChat}>
-        {title} {chatHidden === "yes" && "(Hidden)"}
+        {title} {isHidden && "(Hidden)"}
       </Subheading>
       <Scrollbox className={classes.chat} ref={chatEl}>
         {Object.entries(items)
@@ -212,70 +219,70 @@ function Chat({
                 startedAt={startedAt}
               />
             ) : (
-              chatHidden !== "yes" && (
-                <div
-                  key={key}
-                  style={{ display: "flex", flexDirection: "row" }}
-                  className={addMentioned(classes.message, item.message)}
-                >
-                  {timeTooltip(
-                    item.time,
-                    <Typography variant="body2" gutterBottom>
-                      {formatTime(item.time)}
-                      <User
-                        id={item.user}
-                        component={InternalLink}
-                        to={`/profile/${item.user}`}
-                        underline="none"
-                      />
-                      : {item.message}
-                    </Typography>
-                  )}
-                  {user.admin && (
-                    <MoreVertIcon
-                      aria-controls="admin-menu"
-                      color="inherit"
-                      className={classes.vertIcon}
-                      onClick={(e) => handleClickVertIcon(e, key)}
+              <div
+                key={key}
+                style={{ display: "flex", flexDirection: "row" }}
+                className={addMentioned(classes.message, item.message)}
+              >
+                {timeTooltip(
+                  item.time,
+                  <Typography variant="body2" gutterBottom>
+                    {formatTime(item.time)}
+                    <User
+                      id={item.user}
+                      component={InternalLink}
+                      to={`/profile/${item.user}`}
+                      underline="none"
                     />
-                  )}
+                    : {item.message}
+                  </Typography>
+                )}
+                {user.admin && (
+                  <MoreVertIcon
+                    aria-controls="admin-menu"
+                    color="inherit"
+                    className={classes.vertIcon}
+                    onClick={(e) => handleClickVertIcon(e, key)}
+                  />
+                )}
 
-                  <Menu
-                    id="admin-menu"
-                    anchorEl={anchorEl}
-                    open={Boolean(anchorEl) && key === menuOpenIdx}
-                    onClose={handleClose}
-                  >
-                    <MenuItem onClick={() => handleDelete(key)}>
-                      Delete message
-                    </MenuItem>
-                    <MenuItem onClick={() => handleDeleteAll(item.user)}>
-                      Delete all from user
-                    </MenuItem>
-                  </Menu>
-                </div>
-              )
+                <Menu
+                  id="admin-menu"
+                  anchorEl={anchorEl}
+                  open={Boolean(anchorEl) && key === menuOpenIdx}
+                  onClose={handleClose}
+                >
+                  <MenuItem onClick={() => handleDelete(key)}>
+                    Delete message
+                  </MenuItem>
+                  <MenuItem onClick={() => handleDeleteAll(item.user)}>
+                    Delete all from user
+                  </MenuItem>
+                </Menu>
+              </div>
             )
           )}
       </Scrollbox>
-      <form onSubmit={handleSubmit}>
-        <Tooltip
-          arrow
-          title={
-            chatDisabled
-              ? "New users cannot chat. Play a couple games first!"
-              : ""
-          }
-        >
-          <SimpleInput
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder="Type a message..."
-            maxLength={250}
-            disabled={chatDisabled}
-          />
-        </Tooltip>
-      </form>
+      {!isHidden && (
+        <form onSubmit={handleSubmit}>
+          <Tooltip
+            arrow
+            title={
+              chatDisabled
+                ? "New users cannot chat. Play a couple games first!"
+                : ""
+            }
+          >
+            <SimpleInput
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder="Type a message..."
+              maxLength={250}
+              disabled={chatDisabled}
+            />
+          </Tooltip>
+        </form>
+      )}
     </section>
   );
 }
