@@ -35,7 +35,7 @@ const fixedDataset = englishDataset
       .addWhitelistedTerm("dickens")
   )
   .addPhrase((phrase) =>
-    phrase.setMetadata({ originalWord: "fuck" }).addWhitelistedTerm("fickle")
+    phrase.setMetadata({ originalWord: "fuck" }).addWhitelistedTerm("fick")
   );
 export const badWords = new RegExpMatcher({
   ...fixedDataset.build(),
