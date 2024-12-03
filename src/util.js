@@ -1,7 +1,6 @@
 import animals from "./utils/animals.json";
 import moment from "moment";
 import {
-  DataSet,
   pattern,
   RegExpMatcher,
   TextCensor,
