@@ -1,12 +1,13 @@
 import animals from "./utils/animals.json";
 import moment from "moment";
 import {
+  DataSet,
+  pattern,
   RegExpMatcher,
   TextCensor,
-  asteriskCensorStrategy,
   englishDataset,
   englishRecommendedTransformers,
-  keepStartCensorStrategy,
+  fixedPhraseCensorStrategy,
 } from "obscenity";
 import red from "@material-ui/core/colors/red";
 import pink from "@material-ui/core/colors/pink";
@@ -24,13 +25,24 @@ import amber from "@material-ui/core/colors/amber";
 import orange from "@material-ui/core/colors/orange";
 import deepOrange from "@material-ui/core/colors/deepOrange";
 
+const fixedDataset = englishDataset
+  .removePhrasesIf((phrase) => phrase.metadata.originalWord === "dick")
+  .addPhrase((phrase) =>
+    phrase
+      .setMetadata({ originalWord: "dick" })
+      .addPattern(pattern`dick`)
+      .addPattern(pattern`|dck|`)
+      .addWhitelistedTerm("benedick")
+      .addWhitelistedTerm("dickens")
+  )
+  .addPhrase((phrase) =>
+    phrase.setMetadata({ originalWord: "fuck" }).addWhitelistedTerm("fickle")
+  );
 export const badWords = new RegExpMatcher({
-  ...englishDataset.build(),
+  ...fixedDataset.build(),
   ...englishRecommendedTransformers,
 });
-const censor = new TextCensor().setStrategy(
-  keepStartCensorStrategy(asteriskCensorStrategy())
-);
+const censor = new TextCensor().setStrategy(fixedPhraseCensorStrategy("🤬"));
 
 export const colors = {
   red,
