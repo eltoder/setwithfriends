@@ -1,7 +1,7 @@
 {
   "name": "scripts",
   "version": "1.0.0",
-  "repository": "https://github.com/ekzhang/setwithfriends",
+  "repository": "https://github.com/eltoder/setwithfriends",
   "license": "MIT",
   "description": "Internal scripts for Set with Friends.",
   "main": "src/index.ts",

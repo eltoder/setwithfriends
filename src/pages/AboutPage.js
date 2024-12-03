@@ -22,33 +22,27 @@ function AboutPage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           The code powering this site is completely open source and available on{" "}
-          <Link href="https://github.com/ekzhang/setwithfriends">GitHub</Link>.
+          <Link href="https://github.com/eltoder/setwithfriends">GitHub</Link>.
           We are happy to provide mentorship for contributors from all
           backgrounds, whether you're a seasoned programmer or just want to
           learn more about web development.
         </Typography>
         <Typography variant="body1" gutterBottom>
           This site would not be possible without many people's help: the{" "}
-          <Link href="https://github.com/ekzhang/setwithfriends/graphs/contributors">
+          <Link href="https://github.com/eltoder/setwithfriends/graphs/contributors">
             volunteer developers
           </Link>{" "}
-          who contribute code to add features and fix bugs, the{" "}
-          <Link href="https://www.patreon.com/setwithfriends">patrons</Link> who
-          help keep the site running, and many others who reported bugs and
-          provided feedback.
+          who contributed code to add features and fix bugs and many others who
+          reported bugs and provided feedback.
         </Typography>
         <Typography variant="body1" gutterBottom>
           <strong>
             If you have suggestions, the best way to reach us is by{" "}
-            <Link href="https://github.com/ekzhang/setwithfriends/issues">
+            <Link href="https://github.com/eltoder/setwithfriends/issues">
               filing an issue
             </Link>
             .
-          </strong>{" "}
-          For questions about payment, please email us at{" "}
-          <Link href="mailto:ekzhang1@gmail.com">ekzhang1@gmail.com</Link> and{" "}
-          <Link href="mailto:cynthiakedu@gmail.com">cynthiakedu@gmail.com</Link>
-          .
+          </strong>
         </Typography>
       </Paper>
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
