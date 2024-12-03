@@ -83,5 +83,8 @@ describe("bad words filter", () => {
     expect(badWords.hasMatch("fuck")).toBe(true);
     expect(badWords.hasMatch("cunting")).toBe(true);
     expect(badWords.hasMatch("retard")).toBe(true);
+    expect(badWords.hasMatch("ducks")).toBe(false);
+    expect(badWords.hasMatch("deck")).toBe(false);
+    expect(badWords.hasMatch("fickle")).toBe(false);
   });
 });
