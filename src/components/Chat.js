@@ -21,6 +21,7 @@ import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useStats from "../hooks/useStats";
 import useStorage from "../hooks/useStorage";
 import { UserContext } from "../context";
+import emoji from "../utils/emoji";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {
@@ -199,6 +200,10 @@ function Chat({
     );
   };
 
+  const processText = (text) => {
+    return text.replace(/:([a-z0-9_+-]+):/g, (m, n) => emoji[n] || m);
+  };
+
   return (
     <section
       className={`${classes.chatPanel} ${isHidden ? classes.chatHidden : ""}`}
@@ -275,7 +280,7 @@ function Chat({
           >
             <SimpleInput
               value={input}
-              onChange={(e) => setInput(e.target.value)}
+              onChange={(e) => setInput(processText(e.target.value))}
               placeholder="Type a message..."
               maxLength={250}
               disabled={chatDisabled}
