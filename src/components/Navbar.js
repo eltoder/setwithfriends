@@ -25,6 +25,7 @@ import UserColorDialog from "./UserColorDialog";
 import ColorChoiceDialog from "./ColorChoiceDialog";
 import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
+import hatImage from "../assets/hat.png";
 
 function Navbar({
   themeType,
@@ -73,9 +74,29 @@ function Navbar({
     <AppBar position="relative" color="transparent" elevation={0}>
       <Toolbar variant="dense">
         <Typography variant="h6" style={{ flexGrow: 1, whiteSpace: "nowrap" }}>
+          <img
+            style={{
+              height: "0.5em",
+              verticalAlign: "text-top",
+              marginRight: "-0.5em",
+              position: "relative",
+              zIndex: 1,
+            }}
+            alt="Santa Hat"
+            src={hatImage}
+          />
           <InternalLink underline="none" color="inherit" to="/">
             Set with Friends
           </InternalLink>
+          <span
+            style={{
+              verticalAlign: "text-bottom",
+              fontSize: "smaller",
+              marginLeft: "-0.2em",
+            }}
+          >
+            🎄
+          </span>
         </Typography>
         <Typography
           variant="subtitle1"
