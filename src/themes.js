@@ -58,7 +58,6 @@ export const darkTheme = createTheme({
       "@global": {
         body: {
           backgroundImage: `url("${snowDarkImage}")`,
-          backgroundSize: "25%",
         },
       },
     },
@@ -107,7 +106,6 @@ export const lightTheme = createTheme({
       "@global": {
         body: {
           backgroundImage: `url("${snowLightImage}")`,
-          backgroundSize: "25%",
         },
       },
     },
