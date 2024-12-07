@@ -15,7 +15,7 @@ import { useLocation, Link as RouterLink } from "react-router-dom";
 import User from "./User";
 import Subheading from "./Subheading";
 import useMoment from "../hooks/useMoment";
-import { formatTime } from "../util";
+import { formatTime, modes, capitalizeFirst } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   sidebar: {
@@ -50,6 +50,11 @@ function GameSidebar({ game, scores, leaderboard, endedAt }) {
 
   return (
     <Paper className={classes.sidebar}>
+      <Subheading>
+        {modes[game.mode].name}{" "}
+        <span style={{ opacity: 0.4 }}>[{capitalizeFirst(game.access)}]</span>
+      </Subheading>
+      <Divider style={{ margin: "4px 0" }} />
       {/* Timer */}
       <div className={classes.timer} style={{ marginTop: 6 }}>
         <AlarmIcon className={classes.alarm} fontSize="large" />
