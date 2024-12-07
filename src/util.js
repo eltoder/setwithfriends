@@ -370,3 +370,7 @@ export function hasHint(game) {
 export function censorText(text) {
   return censor.applyTo(text, badWords.getAllMatches(text));
 }
+
+export function capitalizeFirst(text) {
+  return text.charAt(0).toUpperCase() + text.slice(1);
+}

@@ -23,6 +23,7 @@ import Chat from "../components/Chat";
 import firebase from "../firebase";
 import { UserContext } from "../context";
 import GameSettings from "../components/GameSettings";
+import { capitalizeFirst } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   subpanel: {
@@ -43,11 +44,6 @@ const useStyles = makeStyles((theme) => ({
     flexDirection: "column",
     height: 400,
     padding: 8,
-  },
-  modeSelection: {
-    display: "flex",
-    flexDirection: "row",
-    justifyContent: "space-around",
   },
 }));
 
@@ -151,7 +147,7 @@ function RoomPage({ match, location }) {
                   }
                 >
                   <span style={{ opacity: 0.4 }}>
-                    [{game.access === "public" ? "Public" : "Private"}]
+                    [{capitalizeFirst(game.access)}]
                   </span>
                 </Tooltip>
               </Typography>
