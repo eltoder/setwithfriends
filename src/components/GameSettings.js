@@ -1,15 +1,16 @@
 import { makeStyles } from "@material-ui/core/styles";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
-import Radio from "@material-ui/core/Radio";
-import RadioGroup from "@material-ui/core/RadioGroup";
+import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 import Switch from "@material-ui/core/Switch";
 import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
 
 import firebase from "../firebase";
 import { hasHint, modes } from "../util";
 
 const useStyles = makeStyles(() => ({
-  settings: { display: "flex", flexDirection: "column", alignItems: "center" },
+  settings: { display: "flex", justifyContent: "space-evenly" },
 }));
 
 const hintTip =
@@ -31,35 +32,28 @@ function GameSettings({ game, gameId, userId }) {
 
   return (
     <div className={classes.settings}>
-      <RadioGroup row value={gameMode} onChange={handleChangeMode}>
-        {["normal", "setchain", "ultraset"].map((mode) => (
-          <Tooltip
-            key={mode}
-            arrow
-            placement="left"
-            title={modes[mode].description}
-          >
-            <FormControlLabel
-              value={mode}
-              control={<Radio />}
-              disabled={userId !== game.host}
-              label={modes[mode].name}
-            />
-          </Tooltip>
-        ))}
-      </RadioGroup>
-      {
-        <Tooltip arrow placement="left" title={hintTip}>
-          <FormControlLabel
-            control={<Switch checked={hasHint(game)} onChange={toggleHint} />}
-            label="Enable Hints"
-            disabled={
-              game.access !== "private" ||
-              Object.keys(game.users || {}).length !== 1
-            }
-          />
-        </Tooltip>
-      }
+      <div style={{ display: "flex", alignItems: "baseline" }}>
+        <Typography style={{ marginRight: "0.6em" }}>Mode:</Typography>
+        <Select value={gameMode} onChange={handleChangeMode}>
+          {Object.entries(modes).map(([key, { name, description }]) => (
+            <MenuItem key={key} value={key}>
+              <Tooltip key={key} arrow placement="left" title={description}>
+                <Typography>{name}</Typography>
+              </Tooltip>
+            </MenuItem>
+          ))}
+        </Select>
+      </div>
+      <Tooltip arrow placement="left" title={hintTip}>
+        <FormControlLabel
+          control={<Switch checked={hasHint(game)} onChange={toggleHint} />}
+          label="Enable Hints"
+          disabled={
+            game.access !== "private" ||
+            Object.keys(game.users || {}).length !== 1
+          }
+        />
+      </Tooltip>
     </div>
   );
 }
