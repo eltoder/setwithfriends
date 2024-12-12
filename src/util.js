@@ -246,41 +246,46 @@ function hasUsedCards(used, cards) {
   return cards.some((c) => used[c]);
 }
 
-function removeCards(internalGameState, cards) {
-  const { current, used, minBoardSize } = internalGameState;
-  let canPreserve = true;
-  for (const c of cards) {
-    if (current.indexOf(c) >= minBoardSize) canPreserve = false;
-    used[c] = true;
-  }
-  if (current.length < minBoardSize + cards.length) canPreserve = false;
-
-  if (canPreserve) {
-    // Try to preserve card locations, if possible
-    const d = current.splice(minBoardSize, cards.length);
-    for (let i = 0; i < cards.length; i++) {
-      current[current.indexOf(cards[i])] = d[i];
-    }
-  } else {
-    // Otherwise, just remove the cards
-    for (const card of cards) {
-      current.splice(current.indexOf(card), 1);
+function removeCards(internalGameState, cardIndexes, newBoardSize) {
+  const { current, boardSize } = internalGameState;
+  for (const [i, ci] of cardIndexes.entries()) {
+    if (ci >= newBoardSize) {
+      current.splice(ci, 1);
+    } else {
+      const start = Math.min(boardSize, newBoardSize);
+      const len = cardIndexes.length - i;
+      for (const [j, c] of current.splice(start, len).entries()) {
+        current[cardIndexes[i + j]] = c;
+      }
+      break;
     }
   }
 }
 
 function processValidEvent(internalGameState, event, cards) {
-  const { scores, lastEvents, history } = internalGameState;
+  const { scores, lastEvents, history, used } = internalGameState;
   scores[event.user] = (scores[event.user] || 0) + 1;
   lastEvents[event.user] = event.time;
   history.push(event);
-  removeCards(internalGameState, cards);
+  for (const c of cards) {
+    used[c] = true;
+  }
 }
 
-function updateBoardSize(internalGameState, cards, old) {
+function updateBoard(internalGameState, cards, old) {
   const { current, gameMode, boardSize, minBoardSize } = internalGameState;
+  // find the new board size
+  const cardIndexes = cards
+    .map((c) => current.indexOf(c))
+    .sort((a, b) => b - a);
+  const tmpBoard = current.slice();
+  for (const ci of cardIndexes) {
+    tmpBoard.splice(ci, 1);
+  }
   const minSize = Math.max(boardSize - cards.length, minBoardSize);
-  const newBoardSize = findBoardSize(current, gameMode, minSize, old);
+  const newBoardSize = findBoardSize(tmpBoard, gameMode, minSize, old);
+  // remove cards, preserving positions when possible
+  removeCards(internalGameState, cardIndexes, newBoardSize);
   internalGameState.boardSize = newBoardSize;
 }
 
@@ -290,7 +295,7 @@ function processEventCommon(internalGameState, event) {
   if (event.c4) cards.push(event.c4);
   if (hasDuplicates(cards) || hasUsedCards(used, cards)) return;
   processValidEvent(internalGameState, event, cards);
-  updateBoardSize(internalGameState, cards);
+  updateBoard(internalGameState, cards);
 }
 
 function processEventChain(internalGameState, event) {
@@ -305,7 +310,7 @@ function processEventChain(internalGameState, event) {
     if (![prev.c1, prev.c2, prev.c3].includes(c1)) return;
   }
   processValidEvent(internalGameState, event, cards);
-  updateBoardSize(internalGameState, cards, allCards);
+  updateBoard(internalGameState, cards, allCards);
 }
 
 export function computeState(gameData, gameMode = "normal") {
