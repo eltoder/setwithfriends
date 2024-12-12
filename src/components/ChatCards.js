@@ -29,13 +29,14 @@ const useStyles = makeStyles((theme) => ({
 
 function ChatCards({ item, gameMode, startedAt }) {
   const classes = useStyles();
+  const setType = modes[gameMode].setType;
 
   return (
     <Tooltip arrow placement="left" title={formatTime(item.time - startedAt)}>
       <div className={classes.logEntry}>
         <div className={classes.logEntryText}>
           <Typography variant="subtitle2" style={{ marginRight: "0.2em" }}>
-            {modes[gameMode].setType} found by
+            {setType} found by
           </Typography>
           <User
             component={Typography}
@@ -44,14 +45,14 @@ function ChatCards({ item, gameMode, startedAt }) {
             id={item.user}
           />
         </div>
-        {(gameMode === "normal" || gameMode === "setchain") && (
+        {setType === "Set" && (
           <div>
             <SetCard size="sm" value={item.c1} />
             <SetCard size="sm" value={item.c2} />
             <SetCard size="sm" value={item.c3} />
           </div>
         )}
-        {gameMode === "ultraset" && (
+        {setType === "UltraSet" && (
           <div className={classes.ultraSetCards}>
             <div style={{ display: "flex", flexDirection: "column" }}>
               <SetCard size="sm" value={item.c1} />

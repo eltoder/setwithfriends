@@ -29,6 +29,7 @@ import {
   findSet,
   computeState,
   hasHint,
+  cardsInSet,
 } from "../util";
 import foundSfx from "../assets/successfulSetSound.mp3";
 import failSfx from "../assets/failedSetSound.mp3";
@@ -141,7 +142,7 @@ function GamePage({ match }) {
 
   const gameMode = game.mode || "normal";
   const spectating = !game.users || !(user.id in game.users);
-  const maxNumHints = gameMode === "ultraset" ? 4 : 3;
+  const maxNumHints = cardsInSet(gameMode);
 
   const { current, scores, lastEvents, history, boardSize } = computeState(
     gameData,
@@ -155,10 +156,8 @@ function GamePage({ match }) {
   );
 
   function handleSet(cards) {
-    const event =
-      gameMode === "ultraset"
-        ? { c1: cards[0], c2: cards[1], c3: cards[2], c4: cards[3] }
-        : { c1: cards[0], c2: cards[1], c3: cards[2] };
+    const event = { c1: cards[0], c2: cards[1], c3: cards[2] };
+    if (cards.length === 4) event.c4 = cards[3];
     firebase.analytics().logEvent("find_set", event);
     firebase
       .database()
@@ -227,7 +226,7 @@ function GamePage({ match }) {
           } else {
             return vals;
           }
-        } else if (gameMode === "ultraset") {
+        } else if (gameMode === "ultraset" || gameMode === "ultra9") {
           const vals = [...selected, card];
           if (vals.length === 4) {
             let res = checkSetUltra(...vals);

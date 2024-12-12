@@ -81,6 +81,13 @@ export const modes = {
       "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
     setType: "UltraSet",
   },
+  ultra9: {
+    name: "Ultra9",
+    color: "deepOrange",
+    description:
+      "Same as UltraSet, but only 9 cards are dealt at a time, unless they don't contain any sets.",
+    setType: "UltraSet",
+  },
 };
 
 export const standardLayouts = {
@@ -194,7 +201,7 @@ export function findSet(deck, gameMode = "normal", old) {
         if (old.includes(c)) {
           return [c, deck[i], deck[j]];
         }
-      } else if (gameMode === "ultraset") {
+      } else if (gameMode === "ultraset" || gameMode === "ultra9") {
         if (c in ultraConjugates) {
           return [...ultraConjugates[c], deck[i], deck[j]];
         }
@@ -205,11 +212,16 @@ export function findSet(deck, gameMode = "normal", old) {
   return null;
 }
 
-export function splitDeck(deck, gameMode = "normal", minBoardSize = 12, old) {
+export function findBoardSize(
+  deck,
+  gameMode = "normal",
+  minBoardSize = 12,
+  old
+) {
   let len = Math.min(deck.length, minBoardSize);
   while (len < deck.length && !findSet(deck.slice(0, len), gameMode, old))
     len += 3 - (len % 3);
-  return [deck.slice(0, len), deck.slice(len)];
+  return len;
 }
 
 export function removeCard(deck, c) {
@@ -221,28 +233,31 @@ export function generateName() {
   return "Anonymous " + animals[Math.floor(Math.random() * animals.length)];
 }
 
-function hasDuplicates(used, cards) {
+function hasDuplicates(cards) {
   for (let i = 0; i < cards.length; i++) {
     for (let j = i + 1; j < cards.length; j++) {
       if (cards[i] === cards[j]) return true;
     }
-    if (used[cards[i]]) return true;
   }
   return false;
 }
 
+function hasUsedCards(used, cards) {
+  return cards.some((c) => used[c]);
+}
+
 function removeCards(internalGameState, cards) {
-  const { current, used } = internalGameState;
+  const { current, used, minBoardSize } = internalGameState;
   let canPreserve = true;
   for (const c of cards) {
-    if (current.indexOf(c) >= 12) canPreserve = false;
+    if (current.indexOf(c) >= minBoardSize) canPreserve = false;
     used[c] = true;
   }
-  if (current.length < 12 + cards.length) canPreserve = false;
+  if (current.length < minBoardSize + cards.length) canPreserve = false;
 
   if (canPreserve) {
     // Try to preserve card locations, if possible
-    const d = current.splice(12, cards.length);
+    const d = current.splice(minBoardSize, cards.length);
     for (let i = 0; i < cards.length; i++) {
       current[current.indexOf(cards[i])] = d[i];
     }
@@ -262,49 +277,35 @@ function processValidEvent(internalGameState, event, cards) {
   removeCards(internalGameState, cards);
 }
 
-function processEventNormal(internalGameState, event) {
-  const { current, used } = internalGameState;
-  const cards = [event.c1, event.c2, event.c3];
-  if (hasDuplicates(used, cards)) return;
-  processValidEvent(internalGameState, event, cards);
+function updateBoardSize(internalGameState, cards, old) {
+  const { current, gameMode, boardSize, minBoardSize } = internalGameState;
+  const minSize = Math.max(boardSize - cards.length, minBoardSize);
+  const newBoardSize = findBoardSize(current, gameMode, minSize, old);
+  internalGameState.boardSize = newBoardSize;
+}
 
-  const minSize = Math.max(internalGameState.boardSize - 3, 12);
-  const boardSize = splitDeck(current, "normal", minSize)[0].length;
-  internalGameState.boardSize = boardSize;
+function processEventCommon(internalGameState, event) {
+  const { used } = internalGameState;
+  const cards = [event.c1, event.c2, event.c3];
+  if (event.c4) cards.push(event.c4);
+  if (hasDuplicates(cards) || hasUsedCards(used, cards)) return;
+  processValidEvent(internalGameState, event, cards);
+  updateBoardSize(internalGameState, cards);
 }
 
 function processEventChain(internalGameState, event) {
-  const { used, history, current } = internalGameState;
+  const { used, history } = internalGameState;
   const { c1, c2, c3 } = event;
-
-  let ok = c1 !== c2 && c2 !== c3 && c1 !== c3 && !used[c2] && !used[c3];
+  const allCards = [c1, c2, c3];
+  const cards = history.length === 0 ? allCards : allCards.slice(1);
+  if (hasDuplicates(allCards) || hasUsedCards(used, cards)) return;
   if (history.length) {
     // One card (c1) should be taken from the previous set
-    let prev = history[history.length - 1];
-    ok &&= [prev.c1, prev.c2, prev.c3].includes(c1);
-  } else {
-    ok &&= !used[c1];
+    const prev = history[history.length - 1];
+    if (![prev.c1, prev.c2, prev.c3].includes(c1)) return;
   }
-  if (!ok) return;
-
-  const cards = history.length === 0 ? [c1, c2, c3] : [c2, c3];
   processValidEvent(internalGameState, event, cards);
-
-  const minSize = Math.max(internalGameState.boardSize - cards.length, 12);
-  const old = [c1, c2, c3];
-  const boardSize = splitDeck(current, "setchain", minSize, old)[0].length;
-  internalGameState.boardSize = boardSize;
-}
-
-function processEventUltra(internalGameState, event) {
-  const { used, current } = internalGameState;
-  const cards = [event.c1, event.c2, event.c3, event.c4];
-  if (hasDuplicates(used, cards)) return;
-  processValidEvent(internalGameState, event, cards);
-
-  const minSize = Math.max(internalGameState.boardSize - 4, 12);
-  const boardSize = splitDeck(current, "ultraset", minSize)[0].length;
-  internalGameState.boardSize = boardSize;
+  updateBoardSize(internalGameState, cards, allCards);
 }
 
 export function computeState(gameData, gameMode = "normal") {
@@ -313,14 +314,17 @@ export function computeState(gameData, gameMode = "normal") {
   const history = []; // list of valid events in time order
   const current = gameData.deck.slice(); // remaining cards in the game
   const lastEvents = {}; // time of the last event for each user
+  const minBoardSize = gameMode === "ultra9" ? 9 : 12;
   const internalGameState = {
     used,
     current,
     scores,
     history,
     lastEvents,
+    gameMode,
+    minBoardSize,
     // Initial deck split
-    boardSize: splitDeck(current, gameMode, 12, [])[0].length,
+    boardSize: findBoardSize(current, gameMode, minBoardSize, []),
   };
 
   if (gameData.events) {
@@ -329,13 +333,14 @@ export function computeState(gameData, gameMode = "normal") {
       (e1, e2) => e1.time - e2.time
     );
     const processFn =
-      gameMode === "normal"
-        ? processEventNormal
+      gameMode === "normal" || gameMode === "ultraset" || gameMode === "ultra9"
+        ? processEventCommon
         : gameMode === "setchain"
         ? processEventChain
-        : gameMode === "ultraset"
-        ? processEventUltra
         : null;
+    if (!processFn) {
+      throw new Error(`invalid gameMode ${gameMode}`);
+    }
     for (const event of events) {
       processFn(internalGameState, event);
     }
@@ -365,6 +370,10 @@ export function hasHint(game) {
     game.access === "private" &&
     Object.keys(game.users || {}).length === 1
   );
+}
+
+export function cardsInSet(gameMode) {
+  return gameMode === "ultraset" || gameMode === "ultra9" ? 4 : 3;
 }
 
 export function censorText(text) {

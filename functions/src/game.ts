@@ -9,7 +9,7 @@ interface GameEvent {
   c4?: string;
 }
 
-export type GameMode = "normal" | "setchain" | "ultraset";
+export type GameMode = "normal" | "setchain" | "ultraset" | "ultra9";
 
 /** Generates a random 81-card deck using a Fisher-Yates shuffle. */
 export function generateDeck() {
@@ -80,7 +80,7 @@ export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
         if (old!.includes(c)) {
           return [c, deck[i], deck[j]];
         }
-      } else if (gameMode === "ultraset") {
+      } else if (gameMode === "ultraset" || gameMode === "ultra9") {
         if (c in ultraConjugates) {
           return [...ultraConjugates[c], deck[i], deck[j]];
         }
@@ -91,15 +91,19 @@ export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
   return null;
 }
 
-/** Check if cards are valid (all distinct and exist in deck) */
-function isValid(deck: Set<string>, cards: string[]) {
+/** Check if all cards are distinct */
+function hasDuplicates(cards: string[]) {
   for (let i = 0; i < cards.length; i++) {
     for (let j = i + 1; j < cards.length; j++) {
-      if (cards[i] === cards[j]) return false;
+      if (cards[i] === cards[j]) return true;
     }
-    if (!deck.has(cards[i])) return false;
   }
-  return true;
+  return false;
+}
+
+/** Check if all cards exist in deck */
+function validCards(deck: Set<string>, cards: string[]) {
+  return cards.every((c) => deck.has(c));
 }
 
 /** Delete cards from deck */
@@ -107,42 +111,40 @@ function deleteCards(deck: Set<string>, cards: string[]) {
   for (const c of cards) deck.delete(c);
 }
 
-/** Replay game event for normal mode */
-function replayEventNormal(deck: Set<string>, event: GameEvent) {
+type ReplayFn = (
+  deck: Set<string>,
+  event: GameEvent,
+  history: GameEvent[]
+) => boolean;
+
+/** Replay game event for normal and ultra modes */
+function replayEventCommon(
+  deck: Set<string>,
+  event: GameEvent,
+  history: GameEvent[]
+) {
   const cards = [event.c1, event.c2, event.c3];
-  if (!isValid(deck, cards)) return false;
+  if (event.c4) cards.push(event.c4);
+  if (hasDuplicates(cards) || !validCards(deck, cards)) return false;
   deleteCards(deck, cards);
   return true;
 }
 
 /** Replay game event for setchain mode */
 function replayEventChain(
-  history: GameEvent[],
   deck: Set<string>,
-  event: GameEvent
+  event: GameEvent,
+  history: GameEvent[]
 ) {
   const { c1, c2, c3 } = event;
-
-  // Check validity
-  let ok = c1 !== c2 && c2 !== c3 && c1 !== c3;
-  ok &&= deck.has(c2) && deck.has(c3);
+  const allCards = [c1, c2, c3];
+  const cards = history.length === 0 ? allCards : allCards.slice(1);
+  if (hasDuplicates(allCards) || !validCards(deck, cards)) return false;
   if (history.length) {
     // One card (c1) should be taken from the previous set
-    const prevEvent = history[history.length - 1];
-    const prev = [prevEvent.c1, prevEvent.c2, prevEvent.c3];
-    ok &&= prev.includes(c1);
+    const prev = history[history.length - 1];
+    if (![prev.c1, prev.c2, prev.c3].includes(c1)) return false;
   }
-  if (!ok) return;
-
-  const cards = history.length === 0 ? [c1, c2, c3] : [c2, c3];
-  deleteCards(deck, cards);
-  return true;
-}
-
-/** Replay game event for ultraset mode */
-function replayEventUltra(deck: Set<string>, event: GameEvent) {
-  const cards = [event.c1, event.c2, event.c3, event.c4!];
-  if (!isValid(deck, cards)) return false;
   deleteCards(deck, cards);
   return true;
 }
@@ -166,15 +168,17 @@ export function replayEvents(
   const history: GameEvent[] = [];
   const scores: Record<string, number> = {};
   let finalTime = 0;
+  const replayFn: ReplayFn | null =
+    gameMode === "normal" || gameMode === "ultraset" || gameMode === "ultra9"
+      ? replayEventCommon
+      : gameMode === "setchain"
+      ? replayEventChain
+      : null;
+  if (!replayFn) {
+    throw new Error(`invalid gameMode ${gameMode}`);
+  }
   for (const event of events) {
-    let eventValid = false;
-    if (gameMode === "normal" && replayEventNormal(deck, event))
-      eventValid = true;
-    if (gameMode === "setchain" && replayEventChain(history, deck, event))
-      eventValid = true;
-    if (gameMode === "ultraset" && replayEventUltra(deck, event))
-      eventValid = true;
-    if (eventValid) {
+    if (replayFn(deck, event, history)) {
       history.push(event);
       scores[event.user] = (scores[event.user] ?? 0) + 1;
       finalTime = event.time;
