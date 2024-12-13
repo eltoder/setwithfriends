@@ -247,12 +247,13 @@ function hasUsedCards(used, cards) {
 }
 
 function removeCards(internalGameState, cardIndexes, newBoardSize) {
-  const { current, boardSize } = internalGameState;
+  const { current, boardSize, minBoardSize } = internalGameState;
+  const cutoff = Math.min(newBoardSize, minBoardSize);
   for (const [i, ci] of cardIndexes.entries()) {
-    if (ci >= newBoardSize) {
+    if (ci >= cutoff) {
       current.splice(ci, 1);
     } else {
-      const start = Math.min(boardSize, newBoardSize);
+      const start = Math.min(boardSize, cutoff);
       const len = cardIndexes.length - i;
       for (const [j, c] of current.splice(start, len).entries()) {
         current[cardIndexes[i + j]] = c;
