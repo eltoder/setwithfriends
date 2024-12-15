@@ -34,7 +34,11 @@ function GameSettings({ game, gameId, userId }) {
     <div className={classes.settings}>
       <div style={{ display: "flex", alignItems: "baseline" }}>
         <Typography style={{ marginRight: "0.6em" }}>Mode:</Typography>
-        <Select value={gameMode} onChange={handleChangeMode}>
+        <Select
+          value={gameMode}
+          disabled={userId !== game.host}
+          onChange={handleChangeMode}
+        >
           {Object.entries(modes).map(([key, { name, description }]) => (
             <MenuItem key={key} value={key}>
               <Tooltip key={key} arrow placement="left" title={description}>
@@ -49,6 +53,7 @@ function GameSettings({ game, gameId, userId }) {
           control={<Switch checked={hasHint(game)} onChange={toggleHint} />}
           label="Enable Hints"
           disabled={
+            userId !== game.host ||
             game.access !== "private" ||
             Object.keys(game.users || {}).length !== 1
           }
