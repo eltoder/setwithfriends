@@ -25,16 +25,21 @@ import LoadingPage from "./LoadingPage";
 const datasetVariants = {
   all: {
     label: "All Games",
-    filterFn: (gameData) => true,
+    filterFn: (game) => true,
   },
   solo: {
     label: "Solo Games",
-    filterFn: (gameData) => Object.keys(gameData.users).length === 1,
+    filterFn: (game) => Object.keys(game.users).length === 1,
   },
   multiplayer: {
     label: "Multiplayer Games",
-    filterFn: (gameData) => Object.keys(gameData.users).length > 1,
+    filterFn: (game) => Object.keys(game.users).length > 1,
   },
+};
+
+const gameModes = {
+  ...modes,
+  all: { name: "All Modes" },
 };
 
 const useStyles = makeStyles((theme) => ({
@@ -117,18 +122,17 @@ function ProfilePage({ match }) {
   if (!loadingGameVals && !loadingGameDataVals) {
     gamesData = {};
     for (let i = 0; i < gameIds.length; i++) {
-      if (!gameVals[i] || !gameDataVals[i]) {
+      const game = gameVals[i];
+      if (!game || !gameDataVals[i]) {
         continue;
       }
-      if (gameVals[i].status === "done") {
-        const gameData = mergeGameData(gameVals[i], gameDataVals[i]);
-        if (
-          datasetVariants[variant].filterFn(gameData) &&
-          (gameData.mode || "normal") === modeVariant &&
-          !hasHint(gameData)
-        ) {
-          gamesData[gameIds[i]] = gameData;
-        }
+      if (
+        game.status === "done" &&
+        (modeVariant === "all" || (game.mode || "normal") === modeVariant) &&
+        datasetVariants[variant].filterFn(game) &&
+        !hasHint(game)
+      ) {
+        gamesData[gameIds[i]] = mergeGameData(game, gameDataVals[i]);
       }
     }
   }
@@ -161,7 +165,7 @@ function ProfilePage({ match }) {
                   style={{ marginRight: "1em" }}
                   color="secondary"
                 >
-                  {Object.entries(modes).map(([key, { name }]) => (
+                  {Object.entries(gameModes).map(([key, { name }]) => (
                     <MenuItem key={key} value={key}>
                       <Typography variant="body2">{name}</Typography>
                     </MenuItem>

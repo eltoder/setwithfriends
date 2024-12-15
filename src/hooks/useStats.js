@@ -17,7 +17,6 @@ function useStats(userId) {
     }
 
     const stats = cloneDeep(value) ?? {};
-    stats.all = { finishedGames: 0 };
     for (const mode of Object.keys(modes)) {
       stats[mode] ??= {};
       stats[mode].rating ??= BASE_RATING;
@@ -37,7 +36,18 @@ function useStats(userId) {
         fastestTime: Math.min(solo.fastestTime, multiplayer.fastestTime),
         totalTime: solo.totalTime + multiplayer.totalTime,
       };
-      stats.all.finishedGames += stats[mode].all.finishedGames;
+    }
+    stats.all = {};
+    for (const variant of ["solo", "multiplayer", "all"]) {
+      stats.all[variant] = Object.keys(modes)
+        .map((mode) => stats[mode][variant])
+        .reduce((a, b) => ({
+          finishedGames: a.finishedGames + b.finishedGames,
+          wonGames: a.wonGames + b.wonGames,
+          totalSets: a.totalSets + b.totalSets,
+          fastestTime: Math.min(a.fastestTime, b.fastestTime),
+          totalTime: a.totalTime + b.totalTime,
+        }));
     }
 
     return stats;
