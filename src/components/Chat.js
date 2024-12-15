@@ -91,7 +91,8 @@ function Chat({
   const user = useContext(UserContext);
   const classes = useStyles();
   const [stats, loadingStats] = useStats(gameId ? null : user.id);
-  const chatDisabled = !gameId && (loadingStats || stats.all.finishedGames < 3);
+  const chatDisabled =
+    !gameId && (loadingStats || stats.all.all.finishedGames < 3);
 
   const chatEl = useRef();
   useEffect(() => {

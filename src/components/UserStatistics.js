@@ -108,7 +108,8 @@ function UserStatistics({ stats, variant }) {
           </strong>
         </Typography>
         <Typography variant="body2" className={classes.statsItem}>
-          Rating: <strong>{Math.round(stats.rating)}</strong>
+          Rating:{" "}
+          <strong>{stats.rating ? Math.round(stats.rating) : "N/A"}</strong>
         </Typography>
       </Grid>
     </Grid>
