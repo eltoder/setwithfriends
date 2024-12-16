@@ -10,7 +10,7 @@ import { conjugateCard, formatTime, modes } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   logEntry: {
-    marginBottom: "0.35em",
+    margin: "0.2em 0",
     padding: "0 12px",
     textAlign: "center",
     background: theme.setFoundEntry,

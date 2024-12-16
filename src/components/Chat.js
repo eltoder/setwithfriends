@@ -42,6 +42,8 @@ const useStyles = makeStyles((theme) => ({
     },
   },
   chat: {
+    display: "flex",
+    flexDirection: "column",
     overflowY: "auto",
     flexGrow: 1,
     overflowWrap: "anywhere",
@@ -71,7 +73,7 @@ const useStyles = makeStyles((theme) => ({
   },
   mentioned: {
     backgroundColor: theme.mentioned.background,
-    borderLeft: `solid ${theme.mentioned.border}`,
+    borderLeft: `solid 2px ${theme.mentioned.border}`,
     margin: "0 -4px",
     padding: "0 4px 0 2px",
   },
