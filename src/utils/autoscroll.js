@@ -32,16 +32,26 @@ export default function autoscroll(element) {
     animate(0);
   }
 
+  var fullyScrolled = true;
+
+  function onScroll() {
+    // https://developer.mozilla.org/en-US/docs/Web/API/Element/scrollHeight#determine_if_an_element_has_been_totally_scrolled
+    fullyScrolled =
+      Math.abs(this.scrollHeight - this.clientHeight - this.scrollTop) <= 1;
+  }
+
   function scrollToBottom() {
     var duration = 300;
-    animateScroll(duration);
+    if (fullyScrolled) animateScroll(duration);
   }
 
   var observer = new MutationObserver(scrollToBottom);
   var config = { childList: true };
   observer.observe(element, config);
   element.scrollTop = element.scrollHeight;
+  element.addEventListener("scroll", onScroll);
   return () => {
     observer.disconnect();
+    element.removeEventListener("scroll", onScroll);
   };
 }

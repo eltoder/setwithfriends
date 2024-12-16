@@ -133,6 +133,7 @@ function Chat({
           time: firebase.database.ServerValue.TIMESTAMP,
         });
       setInput("");
+      chatEl.current.scrollTop = chatEl.current.scrollHeight;
     }
   }
 
