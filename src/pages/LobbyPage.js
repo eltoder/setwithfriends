@@ -75,10 +75,10 @@ const useStyles = makeStyles((theme) => ({
   actionButtons: {
     display: "flex",
     margin: "1em 0 1em 0",
-    "& button:first-of-type": {
+    "& > button:first-of-type": {
       marginRight: "0.5em",
     },
-    "& button:last-of-type": {
+    "& > button:last-of-type": {
       marginLeft: "0.5em",
     },
     [theme.breakpoints.down("sm")]: {
