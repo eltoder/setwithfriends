@@ -45,7 +45,7 @@ const useStyles = makeStyles((theme) => ({
     overflowY: "auto",
     flexGrow: 1,
     overflowWrap: "anywhere",
-    padding: "0 4px",
+    padding: "0 4px 4px 4px",
   },
   vertIcon: {
     marginLeft: "auto",
@@ -56,6 +56,9 @@ const useStyles = makeStyles((theme) => ({
     visibility: "hidden",
   },
   message: {
+    "& > p": {
+      margin: "0.15em 0",
+    },
     "&:hover > $vertIcon": {
       visibility: "visible",
     },
@@ -68,7 +71,9 @@ const useStyles = makeStyles((theme) => ({
   },
   mentioned: {
     backgroundColor: theme.mentioned.background,
-    borderRight: `solid ${theme.mentioned.border}`,
+    borderLeft: `solid ${theme.mentioned.border}`,
+    margin: "0 -4px",
+    padding: "0 4px 0 2px",
   },
 }));
 
@@ -123,18 +128,19 @@ function Chat({
 
   function handleSubmit(event) {
     event.preventDefault();
-    if (input) {
+    const trimmed = input.trim();
+    if (trimmed) {
       firebase
         .database()
         .ref(databasePath)
         .push({
           user: user.id,
-          message: censorText(input),
+          message: censorText(trimmed),
           time: firebase.database.ServerValue.TIMESTAMP,
         });
-      setInput("");
-      chatEl.current.scrollTop = chatEl.current.scrollHeight;
     }
+    setInput("");
+    chatEl.current.scrollTop = chatEl.current.scrollHeight;
   }
 
   function toggleChat() {
@@ -233,7 +239,7 @@ function Chat({
               >
                 {timeTooltip(
                   item.time,
-                  <Typography variant="body2" gutterBottom>
+                  <Typography variant="body2">
                     {formatTime(item.time)}
                     <User
                       id={item.user}
