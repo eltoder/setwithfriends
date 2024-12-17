@@ -7,6 +7,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 
 import firebase from "../firebase";
+import useStorage from "../hooks/useStorage";
 import { hasHint, modes } from "../util";
 
 const useStyles = makeStyles(() => ({
@@ -19,16 +20,17 @@ const hintTip =
 
 function GameSettings({ game, gameId, userId }) {
   const classes = useStyles();
+  const gameMode = game.mode || "normal";
+  const [, setGameMode] = useStorage("gameMode", "normal");
 
   function handleChangeMode(event) {
     firebase.database().ref(`games/${gameId}/mode`).set(event.target.value);
+    setGameMode(event.target.value);
   }
 
   function toggleHint() {
     firebase.database().ref(`games/${gameId}/enableHint`).set(!game.enableHint);
   }
-
-  const gameMode = game.mode || "normal";
 
   return (
     <div className={classes.settings}>

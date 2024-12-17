@@ -24,6 +24,7 @@ import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useKeydown from "../hooks/useKeydown";
+import useStorage from "../hooks/useStorage";
 import InternalLink from "../components/InternalLink";
 import GameInfoRow from "../components/GameInfoRow";
 import Chat from "../components/Chat";
@@ -121,6 +122,7 @@ function LobbyPage() {
   const [redirect, setRedirect] = useState(null);
   const [waiting, setWaiting] = useState(false);
   const [tabValue, setTabValue] = useState(0);
+  const [gameMode] = useStorage("gameMode", "normal");
 
   const gamesQuery = useMemo(() => {
     return firebase
@@ -172,7 +174,7 @@ function LobbyPage() {
     while (attempts < 5) {
       const gameId = generate({ words: 3 }).dashed;
       try {
-        await createGame({ gameId, access });
+        await createGame({ gameId, access, mode: gameMode });
       } catch (error) {
         if (error.code === "functions/already-exists") {
           // We generated an already-used game ID
