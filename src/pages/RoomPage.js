@@ -14,6 +14,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import { Redirect, useHistory } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import useKeydown from "../hooks/useKeydown";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 import SimpleInput from "../components/SimpleInput";
@@ -79,6 +80,15 @@ function RoomPage({ match, location }) {
         });
     }
   }, [user.id, game, gameId, leaving]);
+
+  useKeydown((event) => {
+    if (event.key === "Enter" && event.ctrlKey && !event.shiftKey) {
+      event.preventDefault();
+      if (user.id === game.host) {
+        startGame();
+      }
+    }
+  });
 
   if (loadingGame) {
     return <LoadingPage />;
@@ -200,7 +210,10 @@ function RoomPage({ match, location }) {
                 {user.id === game.host ? (
                   <Tooltip
                     arrow
-                    title="Make sure everyone is in the waiting room! Additional players won't be able to join after the game has started."
+                    title={
+                      "Make sure everyone is in the waiting room! Additional players " +
+                      "won't be able to join after the game has started. (Ctrl+Enter)"
+                    }
                   >
                     <Button
                       size="large"

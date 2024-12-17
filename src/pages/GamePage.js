@@ -8,12 +8,14 @@ import Paper from "@material-ui/core/Paper";
 import Button from "@material-ui/core/Button";
 import Box from "@material-ui/core/Box";
 import Snackbar from "@material-ui/core/Snackbar";
+import Tooltip from "@material-ui/core/Tooltip";
 import { Redirect } from "react-router-dom";
 import useSound from "use-sound";
 
 import SnackContent from "../components/SnackContent";
 import firebase, { createGame, finishGame } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import useKeydown from "../hooks/useKeydown";
 import Game from "../components/Game";
 import User from "../components/User";
 import Loading from "../components/Loading";
@@ -117,6 +119,15 @@ function GamePage({ match }) {
       })();
     }
   }, [finished.gameId, gameId]);
+
+  useKeydown((event) => {
+    if (event.key === "Enter" && event.ctrlKey && !event.shiftKey) {
+      event.preventDefault();
+      if (game.status === "done" && !(spectating || waiting)) {
+        handlePlayAgain();
+      }
+    }
+  });
 
   if (redirect) return <Redirect push to={redirect} />;
 
@@ -400,15 +411,20 @@ function GamePage({ match }) {
                       </Typography>
                     )}
                     {!spectating && (
-                      <Button
-                        variant="contained"
-                        color="primary"
-                        onClick={handlePlayAgain}
-                        style={{ marginTop: 12 }}
-                        disabled={waiting}
+                      <Tooltip
+                        placement="top"
+                        title="Create or join a new game with the same settings. (Ctrl+Enter)"
                       >
-                        {waiting ? <Loading /> : "Play Again"}
-                      </Button>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={handlePlayAgain}
+                          style={{ marginTop: 12 }}
+                          disabled={waiting}
+                        >
+                          {waiting ? <Loading /> : "Play Again"}
+                        </Button>
+                      </Tooltip>
                     )}
                   </div>
                 )}
