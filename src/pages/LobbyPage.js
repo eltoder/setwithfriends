@@ -23,6 +23,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
+import useKeydown from "../hooks/useKeydown";
 import InternalLink from "../components/InternalLink";
 import GameInfoRow from "../components/GameInfoRow";
 import Chat from "../components/Chat";
@@ -145,6 +146,23 @@ function LobbyPage() {
     setTabValue(newValue);
   };
 
+  useKeydown((event) => {
+    if (event.key === "Enter") {
+      if (event.ctrlKey && !event.shiftKey) {
+        event.preventDefault();
+        if (!waiting) {
+          newRoom("public");
+        }
+      }
+      if (event.shiftKey && !event.ctrlKey) {
+        event.preventDefault();
+        if (!waiting) {
+          newRoom("private");
+        }
+      }
+    }
+  });
+
   if (redirect) return <Redirect push to={redirect} />;
 
   async function newRoom(access) {
@@ -248,7 +266,10 @@ function LobbyPage() {
               <Tooltip
                 arrow
                 placement="top"
-                title="Create a new game, which will appear in the lobby. You can also invite your friends to join by link!"
+                title={
+                  "Create a new game, which will appear in the lobby. " +
+                  "You can also invite your friends to join by link! (Ctrl+Enter)"
+                }
               >
                 <Button
                   variant="contained"
@@ -257,13 +278,16 @@ function LobbyPage() {
                   onClick={() => newRoom("public")}
                   disabled={waiting}
                 >
-                  Create a Game
+                  New Game
                 </Button>
               </Tooltip>
               <Tooltip
                 arrow
-                placement="bottom"
-                title="Create a new private game. Only players you share the link with will be able to join."
+                placement="top"
+                title={
+                  "Create a new private game. Only players you share " +
+                  "the link with will be able to join. (Shift+Enter)"
+                }
               >
                 <Button
                   variant="contained"

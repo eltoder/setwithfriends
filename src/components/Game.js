@@ -163,7 +163,7 @@ function Game({
     : keyboardLayoutDesc.verticalLayout;
   useKeydown((event) => {
     const { key } = event;
-    if (key === "Escape") {
+    if (key === "Escape" || key === " ") {
       event.preventDefault();
       onClear();
     } else if (key.length === 1 && shortcuts.includes(key.toLowerCase())) {
