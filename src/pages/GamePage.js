@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect, useMemo, useContext } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -32,7 +32,7 @@ import {
   computeState,
   hasHint,
   cardsInSet,
-} from "../util";
+} from "../game";
 import foundSfx from "../assets/successfulSetSound.mp3";
 import failSfx from "../assets/failedSetSound.mp3";
 
@@ -41,10 +41,10 @@ const useStyles = makeStyles((theme) => ({
     display: "flex",
     flexDirection: "column",
     justifyContent: "center",
-    [theme.breakpoints.up("lg")]: {
+    [theme.breakpoints.up("md")]: {
       maxHeight: 543,
     },
-    [theme.breakpoints.down("md")]: {
+    [theme.breakpoints.down("sm")]: {
       maxHeight: 435,
     },
     [theme.breakpoints.down("xs")]: {
@@ -123,11 +123,16 @@ function GamePage({ match }) {
   useKeydown((event) => {
     if (event.key === "Enter" && event.ctrlKey && !event.shiftKey) {
       event.preventDefault();
-      if (game.status === "done" && !(spectating || waiting)) {
+      if (game?.status === "done" && !(spectating || waiting)) {
         handlePlayAgain();
       }
     }
   });
+
+  const gameMode = game?.mode || "normal";
+  const { current, scores, lastEvents, history, boardSize } = useMemo(() => {
+    return gameData ? computeState(gameData, gameMode) : {};
+  }, [gameData, gameMode]);
 
   if (redirect) return <Redirect push to={redirect} />;
 
@@ -151,15 +156,8 @@ function GamePage({ match }) {
     );
   }
 
-  const gameMode = game.mode || "normal";
   const spectating = !game.users || !(user.id in game.users);
   const maxNumHints = cardsInSet(gameMode);
-
-  const { current, scores, lastEvents, history, boardSize } = computeState(
-    gameData,
-    gameMode
-  );
-
   const leaderboard = Object.keys(game.users).sort(
     (u1, u2) =>
       (scores[u2] || 0) - (scores[u1] || 0) ||

@@ -99,7 +99,7 @@ function Chat({
   const classes = useStyles();
   const [stats, loadingStats] = useStats(gameId ? null : user.id);
   const chatDisabled =
-    !gameId && (loadingStats || stats.all.all.finishedGames < 3);
+    !gameId && (loadingStats || stats.all.all.totalSets < 55);
 
   const chatEl = useRef();
   useEffect(() => {

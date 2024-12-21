@@ -19,7 +19,7 @@ import Loading from "../components/Loading";
 import firebase from "../firebase";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
-import { computeState, hasHint, modes } from "../util";
+import { computeState, hasHint, modes } from "../game";
 import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {

@@ -2,7 +2,7 @@ import { useMemo } from "react";
 import cloneDeep from "clone-deep";
 
 import useFirebaseRef from "./useFirebaseRef";
-import { BASE_RATING, modes } from "../util";
+import { BASE_RATING, modes } from "../game";
 
 /** Listen to statistics for a given user, with filled in default values. */
 function useStats(userId) {

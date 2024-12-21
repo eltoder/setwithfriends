@@ -8,7 +8,7 @@ import Typography from "@material-ui/core/Typography";
 
 import firebase from "../firebase";
 import useStorage from "../hooks/useStorage";
-import { hasHint, modes } from "../util";
+import { hasHint, modes } from "../game";
 
 const useStyles = makeStyles(() => ({
   settings: { display: "flex", justifyContent: "space-evenly" },

@@ -84,7 +84,7 @@ function RoomPage({ match, location }) {
   useKeydown((event) => {
     if (event.key === "Enter" && event.ctrlKey && !event.shiftKey) {
       event.preventDefault();
-      if (user.id === game.host) {
+      if (!leaving && user.id === game?.host) {
         startGame();
       }
     }
