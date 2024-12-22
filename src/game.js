@@ -16,18 +16,18 @@ export function generateCards(gameMode) {
 }
 
 export function checkSet(a, b, c) {
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < a.length; i++) {
     if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3 !== 0)
-      return false;
+      return null;
   }
-  return true;
+  return [a, b, c];
 }
 
 /** Returns the unique card c such that {a, b, c} form a set. */
 export function conjugateCard(a, b) {
   const zeroCode = "0".charCodeAt(0);
   let c = "";
-  for (let i = 0; i < 4; i++) {
+  for (let i = 0; i < a.length; i++) {
     const an = a.charCodeAt(i) - zeroCode,
       bn = b.charCodeAt(i) - zeroCode;
     const lastNum = an === bn ? an : 3 - an - bn;
@@ -41,6 +41,26 @@ export function checkSetUltra(a, b, c, d) {
   if (conjugateCard(a, c) === conjugateCard(b, d)) return [a, c, b, d];
   if (conjugateCard(a, d) === conjugateCard(b, c)) return [a, d, b, c];
   return null;
+}
+
+export function addCard(deck, card, gameMode, lastSet) {
+  const cardsInSet = modes[gameMode].setType === "UltraSet" ? 4 : 3;
+  let res;
+  if (gameMode === "setchain" && lastSet.includes(card)) {
+    // Move the card from lastSet to the front and remove one if it was already there
+    res = [
+      card,
+      ...(deck.length > 0 && lastSet.includes(deck[0]) ? deck.slice(1) : deck),
+    ];
+  } else {
+    res = [...deck, card];
+  }
+  return [res, res.length === cardsInSet];
+}
+
+export function removeCard(deck, card) {
+  let i = deck.indexOf(card);
+  return [...deck.slice(0, i), ...deck.slice(i + 1)];
 }
 
 export function findSet(deck, gameMode = "normal", old) {
@@ -76,11 +96,6 @@ function findBoardSize(deck, gameMode = "normal", minBoardSize = 12, old) {
   while (len < deck.length && !findSet(deck.slice(0, len), gameMode, old))
     len += 3 - (len % 3);
   return len;
-}
-
-export function removeCard(deck, c) {
-  let i = deck.indexOf(c);
-  return [...deck.slice(0, i), ...deck.slice(i + 1)];
 }
 
 function hasDuplicates(cards) {
@@ -209,16 +224,13 @@ export function hasHint(game) {
   );
 }
 
-export function cardsInSet(gameMode) {
-  return modes[gameMode]?.setType === "UltraSet" ? 4 : 3;
-}
-
 export const modes = {
   normal: {
     name: "Normal",
     color: "purple",
     description: "Find 3 cards that form a Set.",
     setType: "Set",
+    checkFn: checkSet,
     processFn: processEventCommon,
   },
   setchain: {
@@ -226,6 +238,7 @@ export const modes = {
     color: "teal",
     description: "In every Set, you have to use 1 card from the previous Set.",
     setType: "Set",
+    checkFn: checkSet,
     processFn: processEventChain,
   },
   ultraset: {
@@ -234,6 +247,7 @@ export const modes = {
     description:
       "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
     setType: "UltraSet",
+    checkFn: checkSetUltra,
     processFn: processEventCommon,
   },
   ultra9: {
@@ -242,6 +256,7 @@ export const modes = {
     description:
       "Same as UltraSet, but only 9 cards are dealt at a time, unless they don't contain any sets.",
     setType: "UltraSet",
+    checkFn: checkSetUltra,
     processFn: processEventCommon,
   },
 };
