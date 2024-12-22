@@ -11,7 +11,8 @@ import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import { makeStyles } from "@material-ui/core/styles";
-import { colors, modes } from "../util";
+import { modes } from "../game";
+import { colors } from "../util";
 
 const useStyles = makeStyles({
   host: {

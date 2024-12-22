@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 
 import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
@@ -7,7 +7,8 @@ import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "@react-spring/web";
 import useSound from "use-sound";
 
-import { generateCards, standardLayouts } from "../util";
+import { generateCards } from "../game";
+import { standardLayouts } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown from "../hooks/useKeydown";
@@ -16,7 +17,6 @@ import { SettingsContext } from "../context";
 import layoutSfx from "../assets/layoutChangeSound.mp3";
 
 const gamePadding = 8;
-const cardArray = generateCards();
 
 function Game({
   deck,
@@ -28,6 +28,7 @@ function Game({
   answer,
   lastSet,
 }) {
+  const cardArray = useMemo(() => generateCards(gameMode), [gameMode]);
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
     "portrait"

@@ -8,7 +8,8 @@ import Paper from "@material-ui/core/Paper";
 import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
 import { SettingsContext } from "../context";
-import { BASE_RATING, SCALING_FACTOR, standardLayouts } from "../util";
+import { BASE_RATING, SCALING_FACTOR } from "../game";
+import { standardLayouts } from "../util";
 
 function HelpPage() {
   const { keyboardLayout } = useContext(SettingsContext);

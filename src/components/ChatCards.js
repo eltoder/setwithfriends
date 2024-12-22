@@ -6,7 +6,8 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import SetCard from "./SetCard";
 import User from "./User";
-import { conjugateCard, formatTime, modes } from "../util";
+import { conjugateCard, modes } from "../game";
+import { formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   logEntry: {
