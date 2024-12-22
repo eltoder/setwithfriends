@@ -6,13 +6,20 @@ it("computes conjugate cards", () => {
   expect(conjugateCard("0112", "0112")).toBe("0112");
 });
 
+const verifySet = (cards) => {
+  expect(cards).toBeTruthy();
+  const [a, b, c] = cards;
+  expect(conjugateCard(a, b)).toBe(c);
+};
+
 it("checks sets", () => {
-  expect(checkSet("0001", "0002", "0000")).toBe(true);
-  expect(checkSet("0001", "0002", "0020")).toBe(false);
-  expect(checkSet("1201", "1002", "1100")).toBe(true);
-  expect(checkSet("1221", "1002", "1100")).toBe(false);
-  expect(checkSet("0112", "0112", "0112")).toBe(true);
-  expect(checkSet("0112", "0122", "0112")).toBe(false);
+  verifySet(checkSet("0001", "0002", "0000"));
+  expect(checkSet("0001", "0002", "0020")).toBe(null);
+  expect(checkSet("0010", "0002", "0000")).toBe(null);
+  verifySet(checkSet("1201", "1002", "1100"));
+  expect(checkSet("1221", "1002", "1100")).toBe(null);
+  verifySet(checkSet("0112", "0112", "0112"));
+  expect(checkSet("0112", "0122", "0112")).toBe(null);
 });
 
 const verifyUltra = (cards) => {

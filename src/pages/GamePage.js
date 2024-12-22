@@ -25,13 +25,12 @@ import GameSidebar from "../components/GameSidebar";
 import Chat from "../components/Chat";
 import { SettingsContext, UserContext } from "../context";
 import {
-  removeCard,
-  checkSet,
-  checkSetUltra,
-  findSet,
+  addCard,
   computeState,
+  findSet,
   hasHint,
-  cardsInSet,
+  modes,
+  removeCard,
 } from "../game";
 import foundSfx from "../assets/successfulSetSound.mp3";
 import failSfx from "../assets/failedSetSound.mp3";
@@ -157,7 +156,6 @@ function GamePage({ match }) {
   }
 
   const spectating = !game.users || !(user.id in game.users);
-  const maxNumHints = cardsInSet(gameMode);
   const leaderboard = Object.keys(game.users).sort(
     (u1, u2) =>
       (scores[u2] || 0) - (scores[u1] || 0) ||
@@ -211,95 +209,39 @@ function GamePage({ match }) {
     setSelected((selected) => {
       if (selected.includes(card)) {
         return removeCard(selected, card);
-      } else {
-        if (gameMode === "normal") {
-          const vals = [...selected, card];
-          if (vals.length === 3) {
-            if (checkSet(...vals)) {
-              handleSet(vals);
-              if (volume === "on") playSuccess();
-              setSnack({
-                open: true,
-                variant: "success",
-                message: "Found a set!",
-              });
-            } else {
-              if (volume === "on") playFail();
-              setSnack({
-                open: true,
-                variant: "error",
-                message: "Not a set!",
-              });
-            }
-            return [];
-          } else {
-            return vals;
-          }
-        } else if (gameMode === "ultraset" || gameMode === "ultra9") {
-          const vals = [...selected, card];
-          if (vals.length === 4) {
-            let res = checkSetUltra(...vals);
-            if (res) {
-              handleSet(res);
-              if (volume === "on") playSuccess();
-              setSnack({
-                open: true,
-                variant: "success",
-                message: "Found an UltraSet!",
-              });
-            } else {
-              if (volume === "on") playFail();
-              setSnack({
-                open: true,
-                variant: "error",
-                message: "Not an UltraSet!",
-              });
-            }
-            return [];
-          } else {
-            return vals;
-          }
-        } else if (gameMode === "setchain") {
-          let vals = [];
-          if (lastSet.includes(card)) {
-            if (selected.length > 0 && lastSet.includes(selected[0])) {
-              return [card, ...selected.slice(1)];
-            } else {
-              vals = [card, ...selected];
-            }
-          } else {
-            vals = [...selected, card];
-          }
-          if (vals.length === 3) {
-            if (lastSet.length > 0 && !lastSet.includes(vals[0])) {
-              if (volume === "on") playFail();
-              setSnack({
-                open: true,
-                variant: "error",
-                message: "One card must be from the previous set!",
-              });
-            } else if (checkSet(...vals)) {
-              handleSet(vals);
-              if (volume === "on") playSuccess();
-              setSnack({
-                open: true,
-                variant: "success",
-                message: "Found a set chain!",
-              });
-            } else {
-              if (volume === "on") playFail();
-              setSnack({
-                open: true,
-                variant: "error",
-                message: "Not a set chain!",
-              });
-            }
-            return [];
-          } else {
-            return vals;
-          }
-        }
       }
+      let [vals, done] = addCard(selected, card, gameMode, lastSet);
+      if (!done) {
+        return vals;
+      }
+      if (
+        gameMode === "setchain" &&
+        lastSet.length > 0 &&
+        !lastSet.includes(vals[0])
+      ) {
+        if (volume === "on") playFail();
+        setSnack({
+          open: true,
+          variant: "error",
+          message: "One card must be from the previous set!",
+        });
+      } else if ((vals = modes[gameMode].checkFn(...vals))) {
+        handleSet(vals);
+        if (volume === "on") playSuccess();
+        setSnack({
+          open: true,
+          variant: "success",
+          message: `Found a ${modes[gameMode].setType}!`,
+        });
+      } else {
+        if (volume === "on") playFail();
+        setSnack({
+          open: true,
+          variant: "error",
+          message: `Not a ${modes[gameMode].setType}!`,
+        });
+      }
+      return [];
     });
   }
 
@@ -313,12 +255,7 @@ function GamePage({ match }) {
   }
 
   function handleAddHint() {
-    setNumHints((numHints) => {
-      if (numHints === maxNumHints) {
-        return numHints;
-      }
-      return numHints + 1;
-    });
+    setNumHints((numHints) => numHints + 1);
   }
 
   async function handlePlayAgain() {
@@ -460,10 +397,9 @@ function GamePage({ match }) {
               {hasHint(game) && (
                 <Button
                   size="large"
-                  variant="outlined"
-                  color="primary"
+                  variant="contained"
                   fullWidth
-                  disabled={numHints === maxNumHints || !hint || gameEnded}
+                  disabled={!hint || gameEnded || numHints === answer.length}
                   onClick={handleAddHint}
                 >
                   Add hint: {numHints}
