@@ -17,6 +17,7 @@ export type GameMode =
   | "setchain"
   | "ultraset"
   | "ultra9"
+  | "megaset"
   | "ghostset";
 
 /** Generates a random seed. */
@@ -222,6 +223,11 @@ const modes = {
   ultra9: {
     setType: "UltraSet",
     traits: 4,
+    replayFn: replayEventCommon,
+  },
+  megaset: {
+    setType: "Set",
+    traits: 5,
     replayFn: replayEventCommon,
   },
   ghostset: {

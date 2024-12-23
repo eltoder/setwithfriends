@@ -3,7 +3,6 @@ import { useContext, useMemo } from "react";
 import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import { lightGreen } from "@material-ui/core/colors";
 import { animated, useSprings } from "@react-spring/web";
 import useSound from "use-sound";
 
@@ -96,7 +95,7 @@ function Game({
       positionX: gameWidth,
       positionY: gameHeight / 2 - cardHeight / 2,
       opacity: 0,
-      background: lightGreen[100],
+      hinted: false,
       inplay: false,
     };
   }
@@ -125,10 +124,7 @@ function Game({
     cards[board[i]] = {
       positionX,
       positionY,
-      background:
-        answer && answer.includes(board[i])
-          ? "rgba(0, 0, 255, 0.15)"
-          : "initial",
+      hinted: answer ? answer.includes(board[i]) : false,
       opacity: 1,
       inplay: true,
     };
@@ -248,7 +244,7 @@ function Game({
           <ResponsiveSetCard
             value={card}
             width={cardWidth}
-            background={cards[card].background}
+            hinted={cards[card].hinted}
             active={selected.includes(card)}
             onClick={cards[card].inplay ? () => onClick(card) : null}
           />
