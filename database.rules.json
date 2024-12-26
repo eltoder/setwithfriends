@@ -19,7 +19,7 @@
         },
         "mode": {
           ".write": "auth != null && auth.uid == data.parent().child('host').val() && newData.exists()",
-          ".validate": "newData.isString() && newData.val().matches(/^normal|setchain|ultraset|ultra9$/)"
+          ".validate": "newData.isString() && newData.val().matches(/^normal|junior|setchain|ultraset|ultra9$/)"
         },
         "enableHint": {
           ".write": "auth != null && auth.uid == data.parent().child('host').val() && newData.exists()",
@@ -41,16 +41,16 @@
               ".validate": "newData.isNumber() && newData.val() == now"
             },
             "c1": {
-              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{4}$/)"
+              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{3,5}$/)"
             },
             "c2": {
-              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{4}$/)"
+              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{3,5}$/)"
             },
             "c3": {
-              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{4}$/)"
+              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{3,5}$/)"
             },
             "c4": {
-              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{4}$/)"
+              ".validate": "newData.isString() && newData.val().matches(/^[0-2]{3,5}$/)"
             }
           }
         }
