@@ -1,6 +1,7 @@
 import { memo } from "react";
 
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import { cardTraits } from "../game";
 
 const useStyles = makeStyles((theme) => ({
   card: {
@@ -80,12 +81,7 @@ function Symbol(props) {
 
 function SetCard(props) {
   const classes = useStyles();
-
-  // 4-character string of 0..2
-  const color = props.value.charCodeAt(0) - 48;
-  const shape = props.value.charCodeAt(1) - 48;
-  const shade = props.value.charCodeAt(2) - 48;
-  const number = props.value.charCodeAt(3) - 48;
+  const { color, shape, shade, number } = cardTraits(props.value);
 
   let className = classes.card;
   if (props.selected) className += " " + classes.selected;

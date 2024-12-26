@@ -9,28 +9,27 @@ interface GameEvent {
   c4?: string;
 }
 
-export type GameMode = "normal" | "setchain" | "ultraset" | "ultra9";
+export type GameMode = "normal" | "junior" | "setchain" | "ultraset" | "ultra9";
 
-/** Generates a random 81-card deck using a Fisher-Yates shuffle. */
-export function generateDeck() {
-  const deck: Array<string> = [];
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 3; j++) {
-      for (let k = 0; k < 3; k++) {
-        for (let l = 0; l < 3; l++) {
-          deck.push(`${i}${j}${k}${l}`);
-        }
-      }
-    }
+/** Generates a random seed. */
+export function generateSeed() {
+  let s = "v1:";
+  for (let i = 0; i < 4; i++) {
+    s += ((Math.random() * 2 ** 32) >>> 0).toString(16).padStart(8, "0");
   }
-  // Fisher-Yates
-  for (let i = deck.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    const temp = deck[i];
-    deck[i] = deck[j];
-    deck[j] = temp;
-  }
-  return deck;
+  return s;
+}
+
+function makeCards(symbols: string[], traits: number): string[] {
+  if (traits === 1) return symbols;
+  return makeCards(symbols, traits - 1).flatMap((lhs) =>
+    symbols.map((s) => lhs + s)
+  );
+}
+
+function generateDeck(gameMode: GameMode) {
+  const deck = makeCards(["0", "1", "2"], modes[gameMode].traits);
+  return new Set(deck);
 }
 
 /** Check if three cards form a set. */
@@ -72,6 +71,7 @@ export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
       const c = conjugateCard(deck[i], deck[j]);
       if (
         gameMode === "normal" ||
+        gameMode === "junior" ||
         (gameMode === "setchain" && old!.length === 0)
       ) {
         if (deckSet.has(c)) {
@@ -146,15 +146,23 @@ function replayEventChain(
 
 const modes = {
   normal: {
+    traits: 4,
+    replayFn: replayEventCommon,
+  },
+  junior: {
+    traits: 3,
     replayFn: replayEventCommon,
   },
   setchain: {
+    traits: 4,
     replayFn: replayEventChain,
   },
   ultraset: {
+    traits: 4,
     replayFn: replayEventCommon,
   },
   ultra9: {
+    traits: 4,
     replayFn: replayEventCommon,
   },
 };
@@ -167,6 +175,9 @@ export function replayEvents(
   gameData: admin.database.DataSnapshot,
   gameMode: GameMode
 ) {
+  if (!modes.hasOwnProperty(gameMode)) {
+    throw new Error(`invalid gameMode: ${gameMode}`);
+  }
   const events: GameEvent[] = [];
   gameData.child("events").forEach((e) => {
     events.push(e.val());
@@ -174,13 +185,10 @@ export function replayEvents(
   // Array.sort() is guaranteed to be stable in Node.js, and the latest ES spec
   events.sort((e1, e2) => e1.time - e2.time);
 
-  const deck: Set<string> = new Set(gameData.child("deck").val());
+  const deck = generateDeck(gameMode);
   const history: GameEvent[] = [];
   const scores: Record<string, number> = {};
-  const replayFn = modes[gameMode]?.replayFn;
-  if (!replayFn) {
-    throw new Error(`invalid gameMode ${gameMode}`);
-  }
+  const replayFn = modes[gameMode].replayFn;
   let finalTime = 0;
   for (const event of events) {
     if (replayFn(deck, event, history)) {

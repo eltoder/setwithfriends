@@ -21,7 +21,7 @@ const stripe = !functions.config().stripe
       apiVersion: "2020-08-27",
     });
 
-import { generateDeck, replayEvents, findSet, GameMode } from "./game";
+import { generateSeed, replayEvents, findSet, GameMode } from "./game";
 
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
@@ -55,7 +55,6 @@ export const finishGame = functions.https.onCall(async (data, context) => {
       "The function must be called while authenticated."
     );
   }
-
   const gameData = await admin
     .database()
     .ref(`gameData/${gameId}`)
@@ -69,7 +68,6 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   }
 
   const gameMode = (gameSnap.child("mode").val() as GameMode) || "normal";
-
   const { lastSet, deck, finalTime, scores } = replayEvents(gameData, gameMode);
 
   if (findSet(Array.from(deck), gameMode, lastSet)) {
@@ -242,7 +240,6 @@ export const createGame = functions.https.onCall(async (data, context) => {
   }
 
   const userId = context.auth.uid;
-
   const oneHourAgo = Date.now() - 3600000;
   const recentGameIds = await admin
     .database()
@@ -268,30 +265,32 @@ export const createGame = functions.https.onCall(async (data, context) => {
     }
   }
 
-  const gameRef = admin.database().ref(`games/${gameId}`);
-  const { committed, snapshot } = await gameRef.transaction((currentData) => {
-    if (currentData === null) {
-      if (
-        unfinishedGames >= MAX_UNFINISHED_GAMES_PER_HOUR &&
-        access === "public"
-      ) {
-        throw new functions.https.HttpsError(
-          "resource-exhausted",
-          "Too many unfinished public games were recently created."
-        );
+  const { committed, snapshot } = await admin
+    .database()
+    .ref(`games/${gameId}`)
+    .transaction((currentData) => {
+      if (currentData === null) {
+        if (
+          unfinishedGames >= MAX_UNFINISHED_GAMES_PER_HOUR &&
+          access === "public"
+        ) {
+          throw new functions.https.HttpsError(
+            "resource-exhausted",
+            "Too many unfinished public games were recently created."
+          );
+        }
+        return {
+          host: userId,
+          createdAt: admin.database.ServerValue.TIMESTAMP,
+          status: "waiting",
+          access,
+          mode,
+          enableHint,
+        };
+      } else {
+        return;
       }
-      return {
-        host: userId,
-        createdAt: admin.database.ServerValue.TIMESTAMP,
-        status: "waiting",
-        access,
-        mode,
-        enableHint,
-      };
-    } else {
-      return;
-    }
-  });
+    });
   if (!committed) {
     throw new functions.https.HttpsError(
       "already-exists",
@@ -300,12 +299,12 @@ export const createGame = functions.https.onCall(async (data, context) => {
   }
 
   // After this point, the game has successfully been created.
-  // We update the database asynchronously in three different places:
+  // We update the database atomically in different places:
   //   1. /gameData/:gameId
   //   2. /stats/gameCount
   //   3. /publicGames/:gameId (if access is public)
-  const updates: { [key: string]: any } = {};
-  updates[`gameData/${gameId}`] = { deck: generateDeck() };
+  const updates: Record<string, any> = {};
+  updates[`gameData/${gameId}`] = { seed: generateSeed() };
   updates["stats/gameCount"] = admin.database.ServerValue.increment(1);
   if (access === "public") {
     updates[`publicGames/${gameId}`] = snapshot.child("createdAt").val();

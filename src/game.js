@@ -1,16 +1,50 @@
 export const BASE_RATING = 1200;
 export const SCALING_FACTOR = 800;
 
+// xoshiro128** (Vigna & Blackman, 2018) PRNG implementaion taken from
+// https://stackoverflow.com/a/47593316/5190601
+function makeRandom(seed) {
+  if (!seed.startsWith("v1:")) {
+    throw new Error(`Unknown seed version: ${seed}`);
+  }
+  let a = parseInt(seed.slice(3, 11), 16) >>> 0;
+  let b = parseInt(seed.slice(11, 19), 16) >>> 0;
+  let c = parseInt(seed.slice(19, 27), 16) >>> 0;
+  let d = parseInt(seed.slice(27, 35), 16) >>> 0;
+  return () => {
+    let t = b << 9,
+      r = b * 5;
+    r = ((r << 7) | (r >>> 25)) * 9;
+    c ^= a;
+    d ^= b;
+    b ^= c;
+    a ^= d;
+    c ^= t;
+    d = (d << 11) | (d >>> 21);
+    return (r >>> 0) / 4294967296.0;
+  };
+}
+
+function makeCards(symbols, traits) {
+  if (traits === 1) return symbols;
+  return makeCards(symbols, traits - 1).flatMap((lhs) =>
+    symbols.map((s) => lhs + s)
+  );
+}
+
 export function generateCards(gameMode) {
-  const deck = [];
-  for (let i = 0; i < 3; i++) {
-    for (let j = 0; j < 3; j++) {
-      for (let k = 0; k < 3; k++) {
-        for (let l = 0; l < 3; l++) {
-          deck.push(`${i}${j}${k}${l}`);
-        }
-      }
-    }
+  return makeCards(["0", "1", "2"], modes[gameMode].traits);
+}
+
+export function generateDeck(gameMode, seed) {
+  const deck = generateCards(gameMode);
+  // Fisher-Yates
+  const random = makeRandom(seed);
+  for (let i = deck.length - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    const temp = deck[i];
+    deck[i] = deck[j];
+    deck[j] = temp;
   }
   return deck;
 }
@@ -63,6 +97,17 @@ export function removeCard(deck, card) {
   return [...deck.slice(0, i), ...deck.slice(i + 1)];
 }
 
+export function cardTraits(card) {
+  const zeroCode = "0".charCodeAt(0);
+  const traits = card.length;
+  return {
+    color: card.charCodeAt(0) - zeroCode,
+    shape: card.charCodeAt(1) - zeroCode,
+    shade: traits < 4 ? 0 : card.charCodeAt(2) - zeroCode,
+    number: card.charCodeAt(traits - 1) - zeroCode,
+  };
+}
+
 export function findSet(deck, gameMode = "normal", old) {
   const deckSet = new Set(deck);
   const ultraConjugates = {};
@@ -71,6 +116,7 @@ export function findSet(deck, gameMode = "normal", old) {
       const c = conjugateCard(deck[i], deck[j]);
       if (
         gameMode === "normal" ||
+        gameMode === "junior" ||
         (gameMode === "setchain" && old.length === 0)
       ) {
         if (deckSet.has(c)) {
@@ -174,12 +220,18 @@ function processEventChain(internalGameState, event) {
 }
 
 export function computeState(gameData, gameMode = "normal") {
+  if (!modes.hasOwnProperty(gameMode)) {
+    throw new Error(`invalid gameMode: ${gameMode}`);
+  }
   const scores = {}; // scores of all users
   const used = {}; // set of cards that have been taken
   const history = []; // list of valid events in time order
-  const current = gameData.deck.slice(); // remaining cards in the game
+  // remaining cards in the game
+  const current = gameData.deck
+    ? gameData.deck.slice()
+    : generateDeck(gameMode, gameData.seed);
   const lastEvents = {}; // time of the last event for each user
-  const minBoardSize = gameMode === "ultra9" ? 9 : 12;
+  const minBoardSize = modes[gameMode].minBoardSize;
   const internalGameState = {
     used,
     current,
@@ -197,10 +249,7 @@ export function computeState(gameData, gameMode = "normal") {
     const events = Object.values(gameData.events).sort(
       (e1, e2) => e1.time - e2.time
     );
-    const processFn = modes[gameMode]?.processFn;
-    if (!processFn) {
-      throw new Error(`invalid gameMode ${gameMode}`);
-    }
+    const processFn = modes[gameMode].processFn;
     for (const event of events) {
       processFn(internalGameState, event);
     }
@@ -230,6 +279,19 @@ export const modes = {
     color: "purple",
     description: "Find 3 cards that form a Set.",
     setType: "Set",
+    traits: 4,
+    minBoardSize: 12,
+    checkFn: checkSet,
+    processFn: processEventCommon,
+  },
+  junior: {
+    name: "Junior",
+    color: "green",
+    description:
+      "A simplified version that only uses cards with solid shading.",
+    setType: "Set",
+    traits: 3,
+    minBoardSize: 9,
     checkFn: checkSet,
     processFn: processEventCommon,
   },
@@ -238,6 +300,8 @@ export const modes = {
     color: "teal",
     description: "In every Set, you have to use 1 card from the previous Set.",
     setType: "Set",
+    traits: 4,
+    minBoardSize: 12,
     checkFn: checkSet,
     processFn: processEventChain,
   },
@@ -247,6 +311,8 @@ export const modes = {
     description:
       "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
     setType: "UltraSet",
+    traits: 4,
+    minBoardSize: 12,
     checkFn: checkSetUltra,
     processFn: processEventCommon,
   },
@@ -256,6 +322,8 @@ export const modes = {
     description:
       "Same as UltraSet, but only 9 cards are dealt at a time, unless they don't contain any sets.",
     setType: "UltraSet",
+    traits: 4,
+    minBoardSize: 9,
     checkFn: checkSetUltra,
     processFn: processEventCommon,
   },

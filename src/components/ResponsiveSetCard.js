@@ -2,6 +2,7 @@ import { memo } from "react";
 
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import clsx from "clsx";
+import { cardTraits } from "../game";
 
 const useStyles = makeStyles((theme) => ({
   symbol: {
@@ -77,12 +78,7 @@ function ResponsiveSetCard(props) {
   const margin = Math.round(width * 0.035);
   const contentWidth = width - 2 * margin;
   const contentHeight = height - 2 * margin;
-
-  // 4-character string of 0..2
-  const color = value.charCodeAt(0) - 48;
-  const shape = value.charCodeAt(1) - 48;
-  const shade = value.charCodeAt(2) - 48;
-  const number = value.charCodeAt(3) - 48;
+  const { color, shape, shade, number } = cardTraits(value);
 
   return (
     <div

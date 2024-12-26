@@ -28,6 +28,7 @@ import {
   addCard,
   computeState,
   findSet,
+  generateDeck,
   hasHint,
   modes,
   removeCard,
@@ -129,9 +130,15 @@ function GamePage({ match }) {
   });
 
   const gameMode = game?.mode || "normal";
+  const deck = useMemo(() => {
+    return (
+      gameData?.deck ??
+      (gameData?.seed ? generateDeck(gameMode, gameData.seed) : null)
+    );
+  }, [gameMode, gameData?.deck, gameData?.seed]);
   const { current, scores, lastEvents, history, boardSize } = useMemo(() => {
-    return gameData ? computeState(gameData, gameMode) : {};
-  }, [gameData, gameMode]);
+    return gameData ? computeState({ ...gameData, deck }, gameMode) : {};
+  }, [gameMode, gameData, deck]);
 
   if (redirect) return <Redirect push to={redirect} />;
 
