@@ -77,8 +77,21 @@ export function checkSetUltra(a, b, c, d) {
   return null;
 }
 
+export function checkSetGhost(a, b, c, d, e, f) {
+  for (let i = 0; i < a.length; i++) {
+    const sum =
+      a.charCodeAt(i) +
+      b.charCodeAt(i) +
+      c.charCodeAt(i) +
+      d.charCodeAt(i) +
+      e.charCodeAt(i) +
+      f.charCodeAt(i);
+    if (sum % 3 !== 0) return null;
+  }
+  return [a, b, c, d, e, f];
+}
+
 export function addCard(deck, card, gameMode, lastSet) {
-  const cardsInSet = modes[gameMode].setType === "UltraSet" ? 4 : 3;
   let res;
   if (gameMode === "setchain" && lastSet.includes(card)) {
     // Move the card from lastSet to the front and remove one if it was already there
@@ -89,7 +102,7 @@ export function addCard(deck, card, gameMode, lastSet) {
   } else {
     res = [...deck, card];
   }
-  return [res, res.length === cardsInSet];
+  return [res, res.length === modes[gameMode].cardsInSet];
 }
 
 export function removeCard(deck, card) {
@@ -131,6 +144,27 @@ export function findSet(deck, gameMode = "normal", old) {
           return [...ultraConjugates[c], deck[i], deck[j]];
         }
         ultraConjugates[c] = [deck[i], deck[j]];
+      } else if (gameMode === "ghostset") {
+        for (let k = j + 1; k < deck.length; k++) {
+          for (let l = k + 1; l < deck.length; l++) {
+            for (let m = l + 1; m < deck.length; m++) {
+              for (let n = m + 1; n < deck.length; n++) {
+                if (
+                  checkSetGhost(
+                    deck[i],
+                    deck[j],
+                    deck[k],
+                    deck[l],
+                    deck[m],
+                    deck[n]
+                  )
+                ) {
+                  return [deck[i], deck[j], deck[k], deck[l], deck[m], deck[n]];
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -199,6 +233,8 @@ function processEventCommon(internalGameState, event) {
   const { used } = internalGameState;
   const cards = [event.c1, event.c2, event.c3];
   if (event.c4) cards.push(event.c4);
+  if (event.c5) cards.push(event.c5);
+  if (event.c6) cards.push(event.c6);
   if (hasDuplicates(cards) || hasUsedCards(used, cards)) return;
   processValidEvent(internalGameState, event, cards);
   updateBoard(internalGameState, cards);
@@ -279,6 +315,7 @@ export const modes = {
     color: "purple",
     description: "Find 3 cards that form a Set.",
     setType: "Set",
+    cardsInSet: 3,
     traits: 4,
     minBoardSize: 12,
     checkFn: checkSet,
@@ -290,6 +327,7 @@ export const modes = {
     description:
       "A simplified version that only uses cards with solid shading.",
     setType: "Set",
+    cardsInSet: 3,
     traits: 3,
     minBoardSize: 9,
     checkFn: checkSet,
@@ -300,6 +338,7 @@ export const modes = {
     color: "teal",
     description: "In every Set, you have to use 1 card from the previous Set.",
     setType: "Set",
+    cardsInSet: 3,
     traits: 4,
     minBoardSize: 12,
     checkFn: checkSet,
@@ -311,6 +350,7 @@ export const modes = {
     description:
       "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
     setType: "UltraSet",
+    cardsInSet: 4,
     traits: 4,
     minBoardSize: 12,
     checkFn: checkSetUltra,
@@ -322,9 +362,22 @@ export const modes = {
     description:
       "Same as UltraSet, but only 9 cards are dealt at a time, unless they don't contain any sets.",
     setType: "UltraSet",
+    cardsInSet: 4,
     traits: 4,
     minBoardSize: 9,
     checkFn: checkSetUltra,
+    processFn: processEventCommon,
+  },
+  ghostset: {
+    name: "GhostSet",
+    color: "lightBlue",
+    description:
+      "Find 3 disjoint pairs of cards in which the cards needed to complete each Set also form a Set.",
+    setType: "GhostSet",
+    cardsInSet: 6,
+    traits: 4,
+    minBoardSize: 10,
+    checkFn: checkSetGhost,
     processFn: processEventCommon,
   },
 };

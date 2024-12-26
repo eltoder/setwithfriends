@@ -7,9 +7,17 @@ interface GameEvent {
   c2: string;
   c3: string;
   c4?: string;
+  c5?: string;
+  c6?: string;
 }
 
-export type GameMode = "normal" | "junior" | "setchain" | "ultraset" | "ultra9";
+export type GameMode =
+  | "normal"
+  | "junior"
+  | "setchain"
+  | "ultraset"
+  | "ultra9"
+  | "ghostset";
 
 /** Generates a random seed. */
 export function generateSeed() {
@@ -62,6 +70,28 @@ export function checkSetUltra(a: string, b: string, c: string, d: string) {
   return null;
 }
 
+/** Check if six cards form a ghostset */
+export function checkSetGhost(
+  a: string,
+  b: string,
+  c: string,
+  d: string,
+  e: string,
+  f: string
+) {
+  for (let i = 0; i < a.length; i++) {
+    const sum =
+      a.charCodeAt(i) +
+      b.charCodeAt(i) +
+      c.charCodeAt(i) +
+      d.charCodeAt(i) +
+      e.charCodeAt(i) +
+      f.charCodeAt(i);
+    if (sum % 3 !== 0) return false;
+  }
+  return true;
+}
+
 /** Find a set in an unordered collection of cards, if any, depending on mode. */
 export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
   const deckSet = new Set(deck);
@@ -86,6 +116,27 @@ export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
           return [...ultraConjugates[c], deck[i], deck[j]];
         }
         ultraConjugates[c] = [deck[i], deck[j]];
+      } else if (gameMode === "ghostset") {
+        for (let k = j + 1; k < deck.length; k++) {
+          for (let l = k + 1; l < deck.length; l++) {
+            for (let m = l + 1; m < deck.length; m++) {
+              for (let n = m + 1; n < deck.length; n++) {
+                if (
+                  checkSetGhost(
+                    deck[i],
+                    deck[j],
+                    deck[k],
+                    deck[l],
+                    deck[m],
+                    deck[n]
+                  )
+                ) {
+                  return [deck[i], deck[j], deck[k], deck[l], deck[m], deck[n]];
+                }
+              }
+            }
+          }
+        }
       }
     }
   }
@@ -112,7 +163,7 @@ function deleteCards(deck: Set<string>, cards: string[]) {
   for (const c of cards) deck.delete(c);
 }
 
-/** Replay game event for normal and ultra modes */
+/** Replay game event for normal, ultra and ghost modes */
 function replayEventCommon(
   deck: Set<string>,
   event: GameEvent,
@@ -120,6 +171,8 @@ function replayEventCommon(
 ) {
   const cards = [event.c1, event.c2, event.c3];
   if (event.c4) cards.push(event.c4);
+  if (event.c5) cards.push(event.c5);
+  if (event.c6) cards.push(event.c6);
   if (hasDuplicates(cards) || !validCards(deck, cards)) return false;
   deleteCards(deck, cards);
   return true;
@@ -162,6 +215,10 @@ const modes = {
     replayFn: replayEventCommon,
   },
   ultra9: {
+    traits: 4,
+    replayFn: replayEventCommon,
+  },
+  ghostset: {
     traits: 4,
     replayFn: replayEventCommon,
   },

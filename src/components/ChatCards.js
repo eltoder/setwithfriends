@@ -21,10 +21,14 @@ const useStyles = makeStyles((theme) => ({
     justifyContent: "center",
     whiteSpace: "nowrap",
   },
-  ultraSetCards: {
+  setCards: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
+  },
+  cardsColumn: {
+    display: "flex",
+    flexDirection: "column",
   },
 }));
 
@@ -54,15 +58,31 @@ function ChatCards({ item, gameMode, startedAt }) {
           </div>
         )}
         {setType === "UltraSet" && (
-          <div className={classes.ultraSetCards}>
-            <div style={{ display: "flex", flexDirection: "column" }}>
+          <div className={classes.setCards}>
+            <div className={classes.cardsColumn}>
               <SetCard size="sm" value={item.c1} />
               <SetCard size="sm" value={item.c2} />
             </div>
             <SetCard size="sm" value={conjugateCard(item.c1, item.c2)} />
-            <div style={{ display: "flex", flexDirection: "column" }}>
+            <div className={classes.cardsColumn}>
               <SetCard size="sm" value={item.c3} />
               <SetCard size="sm" value={item.c4} />
+            </div>
+          </div>
+        )}
+        {setType === "GhostSet" && (
+          <div className={classes.setCards}>
+            <div className={classes.cardsColumn}>
+              <SetCard size="sm" value={item.c1} />
+              <SetCard size="sm" value={item.c4} />
+            </div>
+            <div className={classes.cardsColumn}>
+              <SetCard size="sm" value={item.c2} />
+              <SetCard size="sm" value={item.c5} />
+            </div>
+            <div className={classes.cardsColumn}>
+              <SetCard size="sm" value={item.c3} />
+              <SetCard size="sm" value={item.c6} />
             </div>
           </div>
         )}
