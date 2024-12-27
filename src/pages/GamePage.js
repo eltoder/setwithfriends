@@ -170,8 +170,8 @@ function GamePage({ match }) {
   );
 
   function handleSet(cards) {
-    const event = { c1: cards[0], c2: cards[1], c3: cards[2] };
-    if (cards.length === 4) event.c4 = cards[3];
+    const fields = ["c1", "c2", "c3", "c4", "c5", "c6"];
+    const event = Object.fromEntries(cards.map((c, i) => [fields[i], c]));
     firebase.analytics().logEvent("find_set", event);
     firebase
       .database()
