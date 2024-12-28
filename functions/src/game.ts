@@ -44,9 +44,9 @@ function generateDeck(gameMode: GameMode) {
 export function checkSet(a: string, b: string, c: string) {
   for (let i = 0; i < a.length; i++) {
     if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3 !== 0)
-      return false;
+      return null;
   }
-  return true;
+  return [a, b, c];
 }
 
 /** Returns the unique card c such that {a, b, c} form a set. */
@@ -87,52 +87,53 @@ export function checkSetGhost(
       d.charCodeAt(i) +
       e.charCodeAt(i) +
       f.charCodeAt(i);
-    if (sum % 3 !== 0) return false;
+    if (sum % 3 !== 0) return null;
   }
-  return true;
+  return [a, b, c, d, e, f];
 }
 
 /** Find a set in an unordered collection of cards, if any, depending on mode. */
 export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
-  const deckSet = new Set(deck);
-  const ultraConjugates: Record<string, [string, string]> = {};
-  for (let i = 0; i < deck.length; i++) {
-    for (let j = i + 1; j < deck.length; j++) {
-      const c = conjugateCard(deck[i], deck[j]);
-      if (
-        gameMode === "normal" ||
-        gameMode === "junior" ||
-        (gameMode === "setchain" && old!.length === 0)
-      ) {
+  const setType = modes[gameMode].setType;
+  if (setType === "Set") {
+    const deckSet = new Set(
+      gameMode === "setchain" && old!.length > 0 ? old : deck
+    );
+    for (let i = 0; i < deck.length; i++) {
+      for (let j = i + 1; j < deck.length; j++) {
+        const c = conjugateCard(deck[i], deck[j]);
         if (deckSet.has(c)) {
-          return [deck[i], deck[j], c];
-        }
-      } else if (gameMode === "setchain") {
-        if (old!.includes(c)) {
           return [c, deck[i], deck[j]];
         }
-      } else if (gameMode === "ultraset" || gameMode === "ultra9") {
-        if (c in ultraConjugates) {
-          return [...ultraConjugates[c], deck[i], deck[j]];
+      }
+    }
+  } else if (setType === "UltraSet") {
+    const conjugates: Map<string, [string, string]> = new Map();
+    for (let i = 0; i < deck.length; i++) {
+      for (let j = i + 1; j < deck.length; j++) {
+        const c = conjugateCard(deck[i], deck[j]);
+        if (conjugates.has(c)) {
+          return [...conjugates.get(c)!, deck[i], deck[j]];
         }
-        ultraConjugates[c] = [deck[i], deck[j]];
-      } else if (gameMode === "ghostset") {
+        conjugates.set(c, [deck[i], deck[j]]);
+      }
+    }
+  } else if (setType === "GhostSet") {
+    for (let i = 0; i < deck.length; i++) {
+      for (let j = i + 1; j < deck.length; j++) {
         for (let k = j + 1; k < deck.length; k++) {
           for (let l = k + 1; l < deck.length; l++) {
             for (let m = l + 1; m < deck.length; m++) {
               for (let n = m + 1; n < deck.length; n++) {
-                if (
-                  checkSetGhost(
-                    deck[i],
-                    deck[j],
-                    deck[k],
-                    deck[l],
-                    deck[m],
-                    deck[n]
-                  )
-                ) {
-                  return [deck[i], deck[j], deck[k], deck[l], deck[m], deck[n]];
-                }
+                const cand = checkSetGhost(
+                  deck[i],
+                  deck[j],
+                  deck[k],
+                  deck[l],
+                  deck[m],
+                  deck[n]
+                );
+                if (cand) return cand;
               }
             }
           }
@@ -199,26 +200,32 @@ function replayEventChain(
 
 const modes = {
   normal: {
+    setType: "Set",
     traits: 4,
     replayFn: replayEventCommon,
   },
   junior: {
+    setType: "Set",
     traits: 3,
     replayFn: replayEventCommon,
   },
   setchain: {
+    setType: "Set",
     traits: 4,
     replayFn: replayEventChain,
   },
   ultraset: {
+    setType: "UltraSet",
     traits: 4,
     replayFn: replayEventCommon,
   },
   ultra9: {
+    setType: "UltraSet",
     traits: 4,
     replayFn: replayEventCommon,
   },
   ghostset: {
+    setType: "GhostSet",
     traits: 4,
     replayFn: replayEventCommon,
   },
