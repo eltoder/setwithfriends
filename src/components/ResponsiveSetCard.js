@@ -32,8 +32,7 @@ const useStyles = makeStyles((theme) => ({
     boxShadow: "0px 0px 5px 3px #4b9e9e !important",
   },
   hinted: {
-    backgroundImage: `repeating-linear-gradient(135deg, ${theme.palette.text.primary} 0, ${theme.palette.text.primary} 4%, transparent 0, transparent 50%)`,
-    backgroundSize: "20px 20px",
+    backgroundColor: theme.setCard.hinted,
   },
 }));
 
@@ -74,7 +73,7 @@ function ResponsiveSetCard(props) {
   const margin = Math.round(width * 0.035);
   const contentWidth = width - 2 * margin;
   const contentHeight = height - 2 * margin;
-  const { color, shape, shade, background, number } = cardTraits(value);
+  const { color, shape, shade, border, number } = cardTraits(value);
 
   // Override is used to help visualize new colors in color picker dialog.
   const COLORS = props.colorOverride
@@ -85,10 +84,7 @@ function ResponsiveSetCard(props) {
       ]
     : [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
 
-  const backgroundColor =
-    background >= 0
-      ? `color-mix(in srgb, ${theme.setCard.background} ${theme.setCard.backgroundMix}, ${COLORS[background]})`
-      : undefined;
+  const BORDERS = ["3px solid", "4px dotted", "6px double"];
 
   return (
     <div
@@ -102,7 +98,7 @@ function ResponsiveSetCard(props) {
         height: contentHeight,
         margin: margin,
         borderRadius: margin,
-        backgroundColor,
+        border: BORDERS[border],
         transition: "width 0.5s, height 0.5s",
       }}
       onClick={onClick}

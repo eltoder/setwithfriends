@@ -89,15 +89,15 @@ function Game({
   }
 
   // Compute coordinate positions of each card, in and out of play
-  const cards = {};
+  const cards = new Map();
   for (const c of cardArray) {
-    cards[c] = {
+    cards.set(c, {
       positionX: gameWidth,
       positionY: gameHeight / 2 - cardHeight / 2,
       opacity: 0,
       hinted: false,
       inplay: false,
-    };
+    });
   }
 
   for (let i = 0; i < board.length; i++) {
@@ -121,21 +121,22 @@ function Game({
     } else {
       positionX = positionX + (i >= 3 ? lineSpacing : 0);
     }
-    cards[board[i]] = {
+    cards.set(board[i], {
       positionX,
       positionY,
-      hinted: answer ? answer.includes(board[i]) : false,
       opacity: 1,
+      hinted: answer ? answer.includes(board[i]) : false,
       inplay: true,
-    };
+    });
   }
   for (const c of unplayed) {
-    cards[c] = {
+    cards.set(c, {
       positionX: -cardWidth,
       positionY: gameHeight / 2 - cardHeight / 2,
       opacity: 0,
+      hinted: false,
       inplay: false,
-    };
+    });
   }
 
   const rotateAmount = isHorizontal ? "90deg" : "0deg";
@@ -144,8 +145,10 @@ function Game({
     cardArray.length,
     cardArray.map((c) => ({
       to: {
-        transform: `translate(${cards[c].positionX}px, ${cards[c].positionY}px) rotate(${rotateAmount})`,
-        opacity: cards[c].opacity,
+        transform: `translate(${cards.get(c).positionX}px, ${
+          cards.get(c).positionY
+        }px) rotate(${rotateAmount})`,
+        opacity: cards.get(c).opacity,
       },
       config: {
         tension: 64,
@@ -239,14 +242,15 @@ function Game({
             visibility: springProps[idx].opacity.to((x) =>
               x > 0 ? "visible" : "hidden"
             ),
+            zIndex: cards.get(card).opacity ? "auto" : 1,
           }}
         >
           <ResponsiveSetCard
             value={card}
             width={cardWidth}
-            hinted={cards[card].hinted}
+            hinted={cards.get(card).hinted}
             active={selected.includes(card)}
-            onClick={cards[card].inplay ? () => onClick(card) : null}
+            onClick={cards.get(card).inplay ? () => onClick(card) : null}
           />
         </animated.div>
       ))}

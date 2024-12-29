@@ -46,8 +46,8 @@ export const darkTheme = createTheme({
     purple: "#ff47ff",
     green: "#00b803",
     red: "#ffb047",
-    background: "#404040",
-    backgroundMix: "85%",
+    background: "#262626",
+    hinted: "#606060",
   },
   alarm: red[700],
   profileTable: {
@@ -96,7 +96,7 @@ export const lightTheme = createTheme({
     green: "#008002",
     red: "#ff0101",
     background: "#fff",
-    backgroundMix: "90%",
+    hinted: "#e8e8ff",
   },
   alarm: red[700],
   profileTable: {
