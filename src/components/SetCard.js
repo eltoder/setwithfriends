@@ -1,6 +1,7 @@
 import { memo } from "react";
 
 import { makeStyles, useTheme } from "@material-ui/core/styles";
+import clsx from "clsx";
 import { cardTraits } from "../game";
 
 const useStyles = makeStyles((theme) => ({
@@ -51,20 +52,17 @@ const SHADES = ["filled", "outline", "striped"];
 
 function Symbol(props) {
   const classes = useStyles();
-  const theme = useTheme();
 
-  const COLORS = [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
-
-  const color = COLORS[props.color];
+  const color = props.color;
   const shape = SHAPES[props.shape];
   const shade = SHADES[props.shade];
   const width = props.size === "sm" ? 8 : 36;
   const height = props.size === "sm" ? 16 : 72;
-  let className = classes.symbol;
-  if (props.size === "sm") className += " " + classes.smallSymbol;
   return (
     <svg
-      className={className}
+      className={clsx(classes.symbol, {
+        [classes.smallSymbol]: props.size === "sm",
+      })}
       width={width}
       height={height}
       viewBox="0 0 200 400"
@@ -81,20 +79,30 @@ function Symbol(props) {
 
 function SetCard(props) {
   const classes = useStyles();
-  const { color, shape, shade, number } = cardTraits(props.value);
+  const theme = useTheme();
+  const { color, shape, shade, background, number } = cardTraits(props.value);
 
-  let className = classes.card;
-  if (props.selected) className += " " + classes.selected;
-  if (props.onClick) className += " " + classes.active;
-  if (props.size === "sm") className += " " + classes.smallCard;
-  const styles = props.color ? { background: props.color } : {};
+  const COLORS = [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
+
+  const backgroundColor =
+    background >= 0
+      ? `color-mix(in srgb, ${theme.setCard.background} ${theme.setCard.backgroundMix}, ${COLORS[background]})`
+      : undefined;
 
   return (
-    <div onClick={props.onClick} className={className} style={styles}>
+    <div
+      className={clsx(classes.card, {
+        [classes.selected]: props.selected,
+        [classes.active]: props.onClick,
+        [classes.smallCard]: props.size === "sm",
+      })}
+      style={{ backgroundColor }}
+      onClick={props.onClick}
+    >
       {[...Array(number + 1)].map((_, i) => (
         <Symbol
           key={i}
-          color={color}
+          color={COLORS[color]}
           shape={shape}
           shade={shade}
           size={props.size}

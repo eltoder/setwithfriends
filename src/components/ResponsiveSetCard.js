@@ -31,6 +31,10 @@ const useStyles = makeStyles((theme) => ({
   active: {
     boxShadow: "0px 0px 5px 3px #4b9e9e !important",
   },
+  hinted: {
+    backgroundImage: `repeating-linear-gradient(135deg, ${theme.palette.text.primary} 0, ${theme.palette.text.primary} 4%, transparent 0, transparent 50%)`,
+    backgroundSize: "20px 20px",
+  },
 }));
 
 const SHAPES = ["squiggle", "oval", "diamond"];
@@ -38,18 +42,7 @@ const SHADES = ["filled", "outline", "striped"];
 
 function ResponsiveSymbol(props) {
   const classes = useStyles();
-  const theme = useTheme();
-
-  // Override is used to help visualize new colors in color picker dialog.
-  const COLORS = props.colorOverride
-    ? [
-        props.colorOverride.purple,
-        props.colorOverride.green,
-        props.colorOverride.red,
-      ]
-    : [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
-
-  const color = COLORS[props.color];
+  const color = props.color;
   const shape = SHAPES[props.shape];
   const shade = SHADES[props.shade];
 
@@ -73,27 +66,43 @@ function ResponsiveSymbol(props) {
 
 function ResponsiveSetCard(props) {
   const classes = useStyles();
+  const theme = useTheme();
 
   // Black magic below to scale cards given any width
-  const { width, value, onClick, background, active } = props;
+  const { width, value, onClick, hinted, active } = props;
   const height = Math.round(width / 1.6);
   const margin = Math.round(width * 0.035);
   const contentWidth = width - 2 * margin;
   const contentHeight = height - 2 * margin;
-  const { color, shape, shade, number } = cardTraits(value);
+  const { color, shape, shade, background, number } = cardTraits(value);
+
+  // Override is used to help visualize new colors in color picker dialog.
+  const COLORS = props.colorOverride
+    ? [
+        props.colorOverride.purple,
+        props.colorOverride.green,
+        props.colorOverride.red,
+      ]
+    : [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
+
+  const backgroundColor =
+    background >= 0
+      ? `color-mix(in srgb, ${theme.setCard.background} ${theme.setCard.backgroundMix}, ${COLORS[background]})`
+      : undefined;
 
   return (
     <div
       className={clsx(classes.card, {
         [classes.clickable]: onClick,
         [classes.active]: active,
+        [classes.hinted]: hinted,
       })}
       style={{
         width: contentWidth,
         height: contentHeight,
         margin: margin,
         borderRadius: margin,
-        background,
+        backgroundColor,
         transition: "width 0.5s, height 0.5s",
       }}
       onClick={onClick}
@@ -101,7 +110,7 @@ function ResponsiveSetCard(props) {
       {[...Array(number + 1)].map((_, i) => (
         <ResponsiveSymbol
           key={i}
-          color={color}
+          color={COLORS[color]}
           shape={shape}
           shade={shade}
           size={Math.round(contentHeight * 0.36)}

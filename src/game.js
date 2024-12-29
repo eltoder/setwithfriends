@@ -118,6 +118,7 @@ export function cardTraits(card) {
     color: card.charCodeAt(0) - zeroCode,
     shape: card.charCodeAt(1) - zeroCode,
     shade: traits < 4 ? 0 : card.charCodeAt(2) - zeroCode,
+    background: traits < 5 ? -1 : card.charCodeAt(3) - zeroCode,
     number: card.charCodeAt(traits - 1) - zeroCode,
   };
 }
@@ -369,6 +370,16 @@ export const modes = {
     traits: 4,
     minBoardSize: 9,
     checkFn: checkSetUltra,
+    processFn: processEventCommon,
+  },
+  megaset: {
+    name: "MegaSet",
+    color: "green",
+    description: "Each card has 5 traits instead of 4.",
+    setType: "Set",
+    traits: 5,
+    minBoardSize: 16,
+    checkFn: checkSet,
     processFn: processEventCommon,
   },
   ghostset: {
