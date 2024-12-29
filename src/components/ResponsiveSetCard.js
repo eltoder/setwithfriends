@@ -22,8 +22,10 @@ const useStyles = makeStyles((theme) => ({
   },
   clickable: {
     cursor: "pointer",
-    "&:hover": {
-      boxShadow: "0px 0px 5px 3px #bbb",
+    "@media(hover: hover) and (pointer: fine)": {
+      "&:hover": {
+        boxShadow: "0px 0px 5px 3px #bbb",
+      },
     },
   },
   active: {
