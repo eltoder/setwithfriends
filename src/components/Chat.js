@@ -6,6 +6,7 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 import MenuItem from "@material-ui/core/MenuItem";
 import Menu from "@material-ui/core/Menu";
 import { makeStyles } from "@material-ui/core/styles";
+import clsx from "clsx";
 
 import User from "./User";
 import InternalLink from "./InternalLink";
@@ -124,10 +125,6 @@ function Chat({
   const messages = useFirebaseQuery(isHidden ? null : messagesQuery);
   const mentionRE = useMemo(() => makeMentionRE(user.name), [user.name]);
 
-  const addMentioned = (cls, message) => {
-    return mentionRE.test(message) ? `${cls} ${classes.mentioned}` : cls;
-  };
-
   function handleSubmit(event) {
     event.preventDefault();
     const trimmed = input.trim();
@@ -216,7 +213,7 @@ function Chat({
 
   return (
     <section
-      className={`${classes.chatPanel} ${isHidden ? classes.chatHidden : ""}`}
+      className={clsx(classes.chatPanel, { [classes.chatHidden]: isHidden })}
       style={{ flexGrow: 1, overflowY: "hidden" }}
     >
       <Subheading className={classes.chatHeader} onClick={toggleChat}>
@@ -237,7 +234,9 @@ function Chat({
               <div
                 key={key}
                 style={{ display: "flex", flexDirection: "row" }}
-                className={addMentioned(classes.message, item.message)}
+                className={clsx(classes.message, {
+                  [classes.mentioned]: mentionRE.test(item.message),
+                })}
               >
                 {timeTooltip(
                   item.time,

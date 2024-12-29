@@ -127,6 +127,10 @@ function GamePage({ match }) {
         handlePlayAgain();
       }
     }
+    if (event.key === "q" && event.ctrlKey && !event.shiftKey) {
+      event.preventDefault();
+      setRedirect("/");
+    }
   });
 
   const gameMode = game?.mode || "normal";

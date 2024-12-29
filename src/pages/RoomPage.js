@@ -139,7 +139,12 @@ function RoomPage({ match, location }) {
         <Box clone order={{ xs: 2, sm: 1 }}>
           <Grid item xs={12} sm={4} md={3}>
             <Paper className={classes.chatPanel}>
-              <Chat title="Game Chat" messageLimit={200} gameId={gameId} />
+              <Chat
+                title="Game Chat"
+                messageLimit={200}
+                gameId={gameId}
+                showMessageTimes
+              />
             </Paper>
           </Grid>
         </Box>
