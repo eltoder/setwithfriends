@@ -92,6 +92,7 @@ export function checkSetGhost(a, b, c, d, e, f) {
 }
 
 export function addCard(deck, card, gameMode, lastSet) {
+  const setSize = setTypes[modes[gameMode].setType].size;
   let res;
   if (gameMode === "setchain" && lastSet.includes(card)) {
     // Move the card from lastSet to the front and remove one if it was already there
@@ -102,7 +103,7 @@ export function addCard(deck, card, gameMode, lastSet) {
   } else {
     res = [...deck, card];
   }
-  return [res, res.length === modes[gameMode].cardsInSet];
+  return [res, res.length === setSize];
 }
 
 export function removeCard(deck, card) {
@@ -122,45 +123,46 @@ export function cardTraits(card) {
 }
 
 export function findSet(deck, gameMode = "normal", old) {
-  const deckSet = new Set(deck);
-  const ultraConjugates = {};
-  for (let i = 0; i < deck.length; i++) {
-    for (let j = i + 1; j < deck.length; j++) {
-      const c = conjugateCard(deck[i], deck[j]);
-      if (
-        gameMode === "normal" ||
-        gameMode === "junior" ||
-        (gameMode === "setchain" && old.length === 0)
-      ) {
+  const setType = modes[gameMode].setType;
+  if (setType === "Set") {
+    const deckSet = new Set(
+      gameMode === "setchain" && old.length > 0 ? old : deck
+    );
+    for (let i = 0; i < deck.length; i++) {
+      for (let j = i + 1; j < deck.length; j++) {
+        const c = conjugateCard(deck[i], deck[j]);
         if (deckSet.has(c)) {
-          return [deck[i], deck[j], c];
-        }
-      } else if (gameMode === "setchain") {
-        if (old.includes(c)) {
           return [c, deck[i], deck[j]];
         }
-      } else if (gameMode === "ultraset" || gameMode === "ultra9") {
-        if (c in ultraConjugates) {
-          return [...ultraConjugates[c], deck[i], deck[j]];
+      }
+    }
+  } else if (setType === "UltraSet") {
+    const conjugates = new Map();
+    for (let i = 0; i < deck.length; i++) {
+      for (let j = i + 1; j < deck.length; j++) {
+        const c = conjugateCard(deck[i], deck[j]);
+        if (conjugates.has(c)) {
+          return [...conjugates.get(c), deck[i], deck[j]];
         }
-        ultraConjugates[c] = [deck[i], deck[j]];
-      } else if (gameMode === "ghostset") {
+        conjugates.set(c, [deck[i], deck[j]]);
+      }
+    }
+  } else if (setType === "GhostSet") {
+    for (let i = 0; i < deck.length; i++) {
+      for (let j = i + 1; j < deck.length; j++) {
         for (let k = j + 1; k < deck.length; k++) {
           for (let l = k + 1; l < deck.length; l++) {
             for (let m = l + 1; m < deck.length; m++) {
               for (let n = m + 1; n < deck.length; n++) {
-                if (
-                  checkSetGhost(
-                    deck[i],
-                    deck[j],
-                    deck[k],
-                    deck[l],
-                    deck[m],
-                    deck[n]
-                  )
-                ) {
-                  return [deck[i], deck[j], deck[k], deck[l], deck[m], deck[n]];
-                }
+                const cand = checkSetGhost(
+                  deck[i],
+                  deck[j],
+                  deck[k],
+                  deck[l],
+                  deck[m],
+                  deck[n]
+                );
+                if (cand) return cand;
               }
             }
           }
@@ -309,13 +311,18 @@ export function hasHint(game) {
   );
 }
 
+const setTypes = {
+  Set: { size: 3 },
+  UltraSet: { size: 4 },
+  GhostSet: { size: 6 },
+};
+
 export const modes = {
   normal: {
     name: "Normal",
     color: "purple",
     description: "Find 3 cards that form a Set.",
     setType: "Set",
-    cardsInSet: 3,
     traits: 4,
     minBoardSize: 12,
     checkFn: checkSet,
@@ -327,7 +334,6 @@ export const modes = {
     description:
       "A simplified version that only uses cards with solid shading.",
     setType: "Set",
-    cardsInSet: 3,
     traits: 3,
     minBoardSize: 9,
     checkFn: checkSet,
@@ -338,7 +344,6 @@ export const modes = {
     color: "teal",
     description: "In every Set, you have to use 1 card from the previous Set.",
     setType: "Set",
-    cardsInSet: 3,
     traits: 4,
     minBoardSize: 12,
     checkFn: checkSet,
@@ -350,7 +355,6 @@ export const modes = {
     description:
       "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
     setType: "UltraSet",
-    cardsInSet: 4,
     traits: 4,
     minBoardSize: 12,
     checkFn: checkSetUltra,
@@ -362,7 +366,6 @@ export const modes = {
     description:
       "Same as UltraSet, but only 9 cards are dealt at a time, unless they don't contain any sets.",
     setType: "UltraSet",
-    cardsInSet: 4,
     traits: 4,
     minBoardSize: 9,
     checkFn: checkSetUltra,
@@ -372,9 +375,8 @@ export const modes = {
     name: "GhostSet",
     color: "lightBlue",
     description:
-      "Find 3 disjoint pairs of cards in which the cards needed to complete each Set also form a Set.",
+      "Find 3 disjoint pairs of cards such that the cards that complete them to Sets themselves form a Set.",
     setType: "GhostSet",
-    cardsInSet: 6,
     traits: 4,
     minBoardSize: 10,
     checkFn: checkSetGhost,
