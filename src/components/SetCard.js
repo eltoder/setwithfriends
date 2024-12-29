@@ -80,14 +80,13 @@ function Symbol(props) {
 function SetCard(props) {
   const classes = useStyles();
   const theme = useTheme();
-  const { color, shape, shade, background, number } = cardTraits(props.value);
+  const { color, shape, shade, border, number } = cardTraits(props.value);
 
   const COLORS = [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
-
-  const backgroundColor =
-    background >= 0
-      ? `color-mix(in srgb, ${theme.setCard.background} ${theme.setCard.backgroundMix}, ${COLORS[background]})`
-      : undefined;
+  const BORDERS =
+    props.size === "sm"
+      ? ["2px solid", "2px dotted", "3px double"]
+      : ["3px solid", "4px dotted", "6px double"];
 
   return (
     <div
@@ -96,7 +95,7 @@ function SetCard(props) {
         [classes.active]: props.onClick,
         [classes.smallCard]: props.size === "sm",
       })}
-      style={{ backgroundColor }}
+      style={{ border: BORDERS[border] }}
       onClick={props.onClick}
     >
       {[...Array(number + 1)].map((_, i) => (

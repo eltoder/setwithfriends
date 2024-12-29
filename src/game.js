@@ -118,7 +118,7 @@ export function cardTraits(card) {
     color: card.charCodeAt(0) - zeroCode,
     shape: card.charCodeAt(1) - zeroCode,
     shade: traits < 4 ? 0 : card.charCodeAt(2) - zeroCode,
-    background: traits < 5 ? -1 : card.charCodeAt(3) - zeroCode,
+    border: traits < 5 ? -1 : card.charCodeAt(3) - zeroCode,
     number: card.charCodeAt(traits - 1) - zeroCode,
   };
 }

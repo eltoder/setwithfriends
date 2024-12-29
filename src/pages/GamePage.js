@@ -62,7 +62,7 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: 4,
     background: "rgba(0, 0, 0, 0.5)",
     transition: "opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
-    zIndex: 1,
+    zIndex: 2,
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
