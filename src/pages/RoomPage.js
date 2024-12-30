@@ -14,7 +14,7 @@ import DoneIcon from "@material-ui/icons/Done";
 import { Redirect, useHistory } from "react-router-dom";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import useKeydown from "../hooks/useKeydown";
+import useKeydown, { getModifierState } from "../hooks/useKeydown";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 import SimpleInput from "../components/SimpleInput";
@@ -82,7 +82,8 @@ function RoomPage({ match, location }) {
   }, [user.id, game, gameId, leaving]);
 
   useKeydown((event) => {
-    if (event.key === "Enter" && event.ctrlKey && !event.shiftKey) {
+    const mod = getModifierState(event);
+    if (event.key === "Enter" && mod === "Control") {
       event.preventDefault();
       if (!leaving && user.id === game?.host) {
         startGame();

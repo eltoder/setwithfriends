@@ -23,7 +23,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import useKeydown from "../hooks/useKeydown";
+import useKeydown, { getModifierState } from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
 import InternalLink from "../components/InternalLink";
 import GameInfoRow from "../components/GameInfoRow";
@@ -150,13 +150,13 @@ function LobbyPage() {
 
   useKeydown((event) => {
     if (event.key === "Enter") {
-      if (event.ctrlKey && !event.shiftKey) {
+      const mod = getModifierState(event);
+      if (mod === "Control") {
         event.preventDefault();
         if (!waiting) {
           newRoom("public");
         }
-      }
-      if (event.shiftKey && !event.ctrlKey) {
+      } else if (mod === "Shift") {
         event.preventDefault();
         if (!waiting) {
           newRoom("private");
@@ -307,6 +307,7 @@ function LobbyPage() {
       <Typography variant="body1" align="center" style={{ padding: "16px 0" }}>
         <InternalLink to="/help">Help</InternalLink> •{" "}
         <InternalLink to="/about">About</InternalLink> •{" "}
+        <InternalLink to="/conduct">Conduct</InternalLink> •{" "}
         <Link
           target="_blank"
           rel="noopener"
@@ -314,8 +315,7 @@ function LobbyPage() {
         >
           GitHub
         </Link>{" "}
-        • <InternalLink to="/conduct">Conduct</InternalLink> •{" "}
-        <InternalLink to="/legal">Legal</InternalLink> •{" "}
+        •{" "}
         <Link target="_blank" rel="noopener" href="https://discord.gg/XbjJyc9">
           Discord
         </Link>
