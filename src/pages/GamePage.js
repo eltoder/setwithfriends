@@ -15,7 +15,7 @@ import useSound from "use-sound";
 import SnackContent from "../components/SnackContent";
 import firebase, { createGame, finishGame } from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import useKeydown from "../hooks/useKeydown";
+import useKeydown, { getModifierState } from "../hooks/useKeydown";
 import Game from "../components/Game";
 import User from "../components/User";
 import Loading from "../components/Loading";
@@ -121,13 +121,14 @@ function GamePage({ match }) {
   }, [finished.gameId, gameId]);
 
   useKeydown((event) => {
-    if (event.key === "Enter" && event.ctrlKey && !event.shiftKey) {
+    const mod = getModifierState(event);
+    if (event.key === "Enter" && mod === "Control") {
       event.preventDefault();
       if (game?.status === "done" && !(spectating || waiting)) {
         handlePlayAgain();
       }
     }
-    if (event.key === "q" && event.ctrlKey && !event.shiftKey) {
+    if (event.key === "q" && mod === "Control") {
       event.preventDefault();
       setRedirect("/");
     }

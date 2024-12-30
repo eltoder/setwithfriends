@@ -10,7 +10,7 @@ import { generateCards } from "../game";
 import { standardLayouts } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
-import useKeydown from "../hooks/useKeydown";
+import useKeydown, { getModifierState } from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
 import { SettingsContext } from "../context";
 import layoutSfx from "../assets/layoutChangeSound.mp3";
@@ -162,24 +162,28 @@ function Game({
     ? keyboardLayoutDesc.horizontalLayout
     : keyboardLayoutDesc.verticalLayout;
   useKeydown((event) => {
-    const { key } = event;
-    if (key === "Escape" || key === " ") {
-      event.preventDefault();
-      onClear();
-    } else if (key.length === 1 && shortcuts.includes(key.toLowerCase())) {
-      event.preventDefault();
-      const index = shortcuts.indexOf(key.toLowerCase());
-      if (index < board.length) {
-        onClick(board[index]);
+    if (getModifierState(event) === "") {
+      const { key } = event;
+      if (key === "Escape" || key === " ") {
+        event.preventDefault();
+        onClear();
+      } else if (key.length === 1 && shortcuts.includes(key.toLowerCase())) {
+        event.preventDefault();
+        const index = shortcuts.indexOf(key.toLowerCase());
+        if (index < board.length) {
+          onClick(board[index]);
+        }
+      } else if (
+        key.toLowerCase() === keyboardLayoutDesc.orientationChangeKey
+      ) {
+        event.preventDefault();
+        if (volume === "on") playLayout();
+        setCardOrientation(isHorizontal ? "vertical" : "horizontal");
+      } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
+        event.preventDefault();
+        if (volume === "on") playLayout();
+        setLayoutOrientation(isLandscape ? "portrait" : "landscape");
       }
-    } else if (key.toLowerCase() === keyboardLayoutDesc.orientationChangeKey) {
-      event.preventDefault();
-      if (volume === "on") playLayout();
-      setCardOrientation(isHorizontal ? "vertical" : "horizontal");
-    } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
-      event.preventDefault();
-      if (volume === "on") playLayout();
-      setLayoutOrientation(isLandscape ? "portrait" : "landscape");
     }
   });
 

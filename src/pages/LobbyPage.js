@@ -23,7 +23,7 @@ import Tooltip from "@material-ui/core/Tooltip";
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import useKeydown from "../hooks/useKeydown";
+import useKeydown, { getModifierState } from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
 import InternalLink from "../components/InternalLink";
 import GameInfoRow from "../components/GameInfoRow";
@@ -150,13 +150,13 @@ function LobbyPage() {
 
   useKeydown((event) => {
     if (event.key === "Enter") {
-      if (event.ctrlKey && !event.shiftKey) {
+      const mod = getModifierState(event);
+      if (mod === "Control") {
         event.preventDefault();
         if (!waiting) {
           newRoom("public");
         }
-      }
-      if (event.shiftKey && !event.ctrlKey) {
+      } else if (mod === "Shift") {
         event.preventDefault();
         if (!waiting) {
           newRoom("private");
