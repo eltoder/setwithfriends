@@ -18,7 +18,8 @@ export type GameMode =
   | "ultraset"
   | "ultra9"
   | "megaset"
-  | "ghostset";
+  | "ghostset"
+  | "memory";
 
 /** Generates a random seed. */
 export function generateSeed() {
@@ -232,6 +233,11 @@ const modes = {
   },
   ghostset: {
     setType: "GhostSet",
+    traits: 4,
+    replayFn: replayEventCommon,
+  },
+  memory: {
+    setType: "Set",
     traits: 4,
     replayFn: replayEventCommon,
   },

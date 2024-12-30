@@ -374,7 +374,7 @@ export const modes = {
   },
   megaset: {
     name: "MegaSet",
-    color: "green",
+    color: "lime",
     description: "Each card has 5 traits instead of 4.",
     setType: "Set",
     traits: 5,
@@ -391,6 +391,16 @@ export const modes = {
     traits: 4,
     minBoardSize: 10,
     checkFn: checkSetGhost,
+    processFn: processEventCommon,
+  },
+  memory: {
+    name: "Memory",
+    color: "red",
+    description: "Cards are dealt face down and are turned up 3 at a time.",
+    setType: "Set",
+    traits: 4,
+    minBoardSize: 12,
+    checkFn: checkSet,
     processFn: processEventCommon,
   },
 };
