@@ -253,7 +253,63 @@ function HelpPage() {
           Note that you do not have to select the four cards in any particular
           order while playing.
         </Typography>
-
+        <Typography variant="h6" gutterBottom>
+          Junior
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Set Junior is a simplified version of normal Set that only uses cards with solid shading. 
+          You won't see any striped or outlined cards.
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="2000" />
+          <SetCard value="0101" />
+          <SetCard value="1202" />
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          Ultra9
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Ultra9 follows the same rules as UltraSet, but 9 cards are dealt at a time instead of 12. 
+          Additional cards are dealt out in multiples of 3 if there are no sets among those initially dealt.
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          MegaSet
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          In MegaSet, a fifth trait is added.
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          GhostSet
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          In GhostSet, you should pick out 3 disjoint pairs of cards (6 cards total) at a time.
+          The 3 cards <em>that would complete the set</em> with each of these pairs <strong>must themselves form a set. </strong>
+          These 3 cards do not need to be present on the board.
+          For example, one valid selection of six cards could be: 
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0211" />
+          <SetCard value="2211" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1100" />
+          <SetCard value="2222" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0210" />
+          <SetCard value="1012" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+        The first pair consists of the two cards in the first row, 
+        the second pair consists of the two cards in the second row,
+        and the third pair consists of the two cards in the third row. 
+        The corresponding 'ghost' set is shown below.
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1211" />
+          <SetCard value="0011" />
+          <SetCard value="2111" />
+        </Typography>
         <hr />
 
         <Typography variant="h5" gutterBottom>
