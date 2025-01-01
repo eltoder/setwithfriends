@@ -178,8 +178,21 @@ function HelpPage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           For experienced players, there are many interesting variations on the
-          standard Set game. Currently this site lets you play two of these
-          variants: <em>Set-Chain</em> and <em>UltraSet</em>. Here's how.
+          standard Set game. Currently this site lets you play six of these
+          variants: <em>Junior,</em> <em>Set-Chain,</em> <em>UltraSet,</em> 
+          <em>Ultra9,</em> <em>MegaSet</em> and <em>GhostSet.</em> Here's how.
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          Junior
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Set Junior is a simplified version of normal Set that only uses cards with solid shading. 
+          In this mode, players won't deal with any striped or outlined cards—great for beginners!
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="2000" />
+          <SetCard value="0101" />
+          <SetCard value="1202" />
         </Typography>
         <Typography variant="h6" gutterBottom>
           Set-Chain
@@ -254,29 +267,19 @@ function HelpPage() {
           order while playing.
         </Typography>
         <Typography variant="h6" gutterBottom>
-          Junior
-        </Typography>
-        <Typography variant="body1" gutterBottom>
-          Set Junior is a simplified version of normal Set that only uses cards with solid shading. 
-          You won't see any striped or outlined cards.
-        </Typography>
-        <Typography component="div" align="center" gutterBottom>
-          <SetCard value="2000" />
-          <SetCard value="0101" />
-          <SetCard value="1202" />
-        </Typography>
-        <Typography variant="h6" gutterBottom>
           Ultra9
         </Typography>
         <Typography variant="body1" gutterBottom>
           Ultra9 follows the same rules as UltraSet, but 9 cards are dealt at a time instead of 12. 
           Additional cards are dealt out in multiples of 3 if there are no sets among those initially dealt.
-        </Typography>
+        </Typography>      
         <Typography variant="h6" gutterBottom>
           MegaSet
         </Typography>
         <Typography variant="body1" gutterBottom>
-          In MegaSet, a fifth trait is added.
+        Just like Set, the goal is to find sets of three cards that share common features or are completely 
+        different across all features.  In MegaSet, a <strong>fifth</strong> feature<strong>border style</strong> 
+        is added: cards have a single, double or dotted border. 
         </Typography>
         <Typography variant="h6" gutterBottom>
           GhostSet
@@ -303,7 +306,7 @@ function HelpPage() {
         The first pair consists of the two cards in the first row, 
         the second pair consists of the two cards in the second row,
         and the third pair consists of the two cards in the third row. 
-        The corresponding 'ghost' set is shown below.
+        The corresponding 'ghost' set is shown below. 
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="1211" />
