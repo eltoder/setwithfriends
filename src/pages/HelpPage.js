@@ -180,7 +180,7 @@ function HelpPage() {
           For experienced players, there are many interesting variations on the
           standard Set game. Currently this site lets you play six of these
           variants: <em>Junior,</em> <em>Set-Chain,</em> <em>UltraSet,</em> 
-          <em>Ultra9,</em> <em>MegaSet</em> and <em>GhostSet.</em> Here's how.
+          <em> Ultra9,</em> <em>MegaSet</em> and <em>GhostSet.</em> Here's how.
         </Typography>
         <Typography variant="h6" gutterBottom>
           Junior
@@ -278,8 +278,13 @@ function HelpPage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
         Just like Set, the goal is to find sets of three cards that share common features or are completely 
-        different across all features.  In MegaSet, a <strong>fifth</strong> feature<strong>border style</strong> 
-        is added: cards have a single, double or dotted border. 
+        different across all features.  In MegaSet, a <strong>fifth</strong> feature—<strong>border style</strong>—is
+        added: cards have a single, double or dotted border. 
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="02000" />
+          <SetCard value="12011" />
+          <SetCard value="22022" />
         </Typography>
         <Typography variant="h6" gutterBottom>
           GhostSet
