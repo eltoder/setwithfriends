@@ -20,6 +20,7 @@ const gamePadding = 8;
 function Game({
   deck,
   boardSize,
+  faceDown,
   onClick,
   onClear,
   selected,
@@ -95,7 +96,6 @@ function Game({
       positionX: gameWidth,
       positionY: gameHeight / 2 - cardHeight / 2,
       opacity: 0,
-      hinted: false,
       inplay: false,
     });
   }
@@ -125,7 +125,6 @@ function Game({
       positionX,
       positionY,
       opacity: 1,
-      hinted: answer ? answer.includes(board[i]) : false,
       inplay: true,
     });
   }
@@ -134,7 +133,6 @@ function Game({
       positionX: -cardWidth,
       positionY: gameHeight / 2 - cardHeight / 2,
       opacity: 0,
-      hinted: false,
       inplay: false,
     });
   }
@@ -243,17 +241,20 @@ function Game({
           style={{
             position: "absolute",
             ...springProps[idx],
-            visibility: springProps[idx].opacity.to((x) =>
-              x > 0 ? "visible" : "hidden"
+            display: springProps[idx].opacity.to((x) =>
+              x > 0 ? "block" : "none"
             ),
-            zIndex: cards.get(card).opacity ? "auto" : 1,
+            zIndex: springProps[idx].opacity.to((x) => (x === 1 ? "auto" : 1)),
           }}
         >
           <ResponsiveSetCard
             value={card}
             width={cardWidth}
-            hinted={cards.get(card).hinted}
+            hinted={answer && answer.includes(card)}
             active={selected.includes(card)}
+            faceDown={
+              faceDown && cards.get(card).opacity && !selected.includes(card)
+            }
             onClick={cards.get(card).inplay ? () => onClick(card) : null}
           />
         </animated.div>

@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo, useContext } from "react";
+import { useState, useEffect, useMemo, useContext, useRef } from "react";
 
 import { makeStyles } from "@material-ui/core/styles";
 import Grid from "@material-ui/core/Grid";
@@ -82,6 +82,7 @@ function GamePage({ match }) {
   const [waiting, setWaiting] = useState(false);
   const [redirect, setRedirect] = useState(null);
   const [selected, setSelected] = useState([]);
+  const clearSelected = useRef(false);
   const [snack, setSnack] = useState({ open: false });
   const [numHints, setNumHints] = useState(0);
 
@@ -93,6 +94,7 @@ function GamePage({ match }) {
   // Reset card selection and number of hints on update to game data
   useEffect(() => {
     setSelected([]);
+    clearSelected.current = false;
     setNumHints(0);
   }, [gameData]);
 
@@ -219,39 +221,52 @@ function GamePage({ match }) {
       return;
     }
     setSelected((selected) => {
+      if (clearSelected.current) {
+        selected = [];
+        clearSelected.current = false;
+      }
       if (selected.includes(card)) {
-        return removeCard(selected, card);
+        return gameMode === "memory" ? selected : removeCard(selected, card);
       }
       let [vals, done] = addCard(selected, card, gameMode, lastSet);
       if (!done) {
         return vals;
       }
+      let failed = true;
       if (
         gameMode === "setchain" &&
         lastSet.length > 0 &&
         !lastSet.includes(vals[0])
       ) {
-        if (volume === "on") playFail();
         setSnack({
           open: true,
           variant: "error",
           message: "One card must be from the previous set!",
         });
-      } else if ((vals = modes[gameMode].checkFn(...vals))) {
-        handleSet(vals);
-        if (volume === "on") playSuccess();
-        setSnack({
-          open: true,
-          variant: "success",
-          message: `Found a ${modes[gameMode].setType}!`,
-        });
       } else {
-        if (volume === "on") playFail();
-        setSnack({
-          open: true,
-          variant: "error",
-          message: `Not a ${modes[gameMode].setType}!`,
-        });
+        const set = modes[gameMode].checkFn(...vals);
+        if (set) {
+          failed = false;
+          handleSet(set);
+          setSnack({
+            open: true,
+            variant: "success",
+            message: `Found a ${modes[gameMode].setType}!`,
+          });
+        } else {
+          setSnack({
+            open: true,
+            variant: "error",
+            message: `Not a ${modes[gameMode].setType}!`,
+          });
+        }
+      }
+      if (volume === "on") {
+        (failed ? playFail : playSuccess)();
+      }
+      if (gameMode === "memory" && failed) {
+        clearSelected.current = true;
+        return vals;
       }
       return [];
     });
@@ -382,6 +397,7 @@ function GamePage({ match }) {
             <Game
               deck={current}
               boardSize={boardSize}
+              faceDown={gameMode === "memory"}
               selected={selected}
               onClick={handleClick}
               onClear={handleClear}

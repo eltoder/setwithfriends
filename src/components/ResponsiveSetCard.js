@@ -68,7 +68,7 @@ function ResponsiveSetCard(props) {
   const theme = useTheme();
 
   // Black magic below to scale cards given any width
-  const { width, value, onClick, hinted, active } = props;
+  const { width, value, onClick, hinted, active, faceDown } = props;
   const height = Math.round(width / 1.6);
   const margin = Math.round(width * 0.035);
   const contentWidth = width - 2 * margin;
@@ -86,6 +86,30 @@ function ResponsiveSetCard(props) {
 
   const BORDERS = ["3px solid", "4px dotted", "6px double"];
 
+  let extraStyle;
+  if (faceDown) {
+    const bgSize = contentWidth / 6;
+    const c = hinted
+      ? theme.setCard.backColorsHinted
+      : theme.setCard.backColors;
+    const grad = `radial-gradient(
+      closest-side, transparent 0%, transparent 75%,
+      ${c[1]} 76%, ${c[1]} 85%, ${c[4]} 86%, ${c[4]} 94%, ${c[5]} 95%, ${c[5]} 103%,
+      ${c[2]} 104%, ${c[2]} 112%, ${c[0]} 113%, ${c[0]} 121%, ${c[5]} 122%, ${c[5]} 130%,
+      ${c[3]} 131%, ${c[3]} 140%
+    )`;
+    extraStyle = {
+      backgroundImage: `${grad}, ${grad}`,
+      backgroundSize: `${bgSize}px ${bgSize}px`,
+      backgroundColor: c[1],
+      backgroundPosition: `0 0, ${bgSize / 2}px ${bgSize / 2}px`,
+      backgroundClip: "content-box",
+      padding: margin,
+      outline: "1px solid",
+      outlineOffset: -(margin + 1),
+    };
+  }
+
   return (
     <div
       className={clsx(classes.card, {
@@ -94,25 +118,27 @@ function ResponsiveSetCard(props) {
         [classes.hinted]: hinted,
       })}
       style={{
+        ...extraStyle,
         width: contentWidth,
         height: contentHeight,
         margin: margin,
         borderRadius: margin,
-        border: BORDERS[border],
+        border: faceDown ? undefined : BORDERS[border],
         transition: "width 0.5s, height 0.5s",
       }}
       onClick={onClick}
     >
-      {[...Array(number + 1)].map((_, i) => (
-        <ResponsiveSymbol
-          key={i}
-          color={COLORS[color]}
-          shape={shape}
-          shade={shade}
-          size={Math.round(contentHeight * 0.36)}
-          colorOverride={props.colorOverride}
-        />
-      ))}
+      {faceDown ||
+        [...Array(number + 1)].map((_, i) => (
+          <ResponsiveSymbol
+            key={i}
+            color={COLORS[color]}
+            shape={shape}
+            shade={shade}
+            size={Math.round(contentHeight * 0.36)}
+            colorOverride={props.colorOverride}
+          />
+        ))}
     </div>
   );
 }
