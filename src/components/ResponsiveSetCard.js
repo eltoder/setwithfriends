@@ -31,7 +31,10 @@ const useStyles = makeStyles((theme) => ({
   active: {
     boxShadow: "0px 0px 5px 3px #4b9e9e !important",
   },
-  hinted: {
+  hintedOverlay: {
+    position: "absolute",
+    inset: 0,
+    pointerEvents: "none",
     backgroundColor: theme.setCard.hinted,
   },
 }));
@@ -89,9 +92,7 @@ function ResponsiveSetCard(props) {
   let extraStyle;
   if (faceDown) {
     const bgSize = contentWidth / 6;
-    const c = hinted
-      ? theme.setCard.backColorsHinted
-      : theme.setCard.backColors;
+    const c = theme.setCard.backColors;
     const grad = `radial-gradient(
       closest-side, transparent 0%, transparent 75%,
       ${c[1]} 76%, ${c[1]} 85%, ${c[4]} 86%, ${c[4]} 94%, ${c[5]} 95%, ${c[5]} 103%,
@@ -115,10 +116,10 @@ function ResponsiveSetCard(props) {
       className={clsx(classes.card, {
         [classes.clickable]: onClick,
         [classes.active]: active,
-        [classes.hinted]: hinted,
       })}
       style={{
         ...extraStyle,
+        position: "relative",
         width: contentWidth,
         height: contentHeight,
         margin: margin,
@@ -139,6 +140,12 @@ function ResponsiveSetCard(props) {
             colorOverride={props.colorOverride}
           />
         ))}
+      {hinted && (
+        <div
+          className={classes.hintedOverlay}
+          style={{ borderRadius: margin }}
+        />
+      )}
     </div>
   );
 }

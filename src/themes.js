@@ -1,8 +1,6 @@
 import { createTheme } from "@material-ui/core/styles";
-import { blueGrey } from "@material-ui/core/colors";
 import { grey } from "@material-ui/core/colors";
 import { indigo } from "@material-ui/core/colors";
-import { lightBlue } from "@material-ui/core/colors";
 import { red } from "@material-ui/core/colors";
 import snowLightImage from "./assets/snow.jpg";
 import snowDarkImage from "./assets/snow-dark.jpg";
@@ -51,21 +49,13 @@ export const darkTheme = createTheme({
     green: "#00b803",
     red: "#ffb047",
     background: "#262626",
-    hinted: "#455A64",
+    hinted: "rgba(41, 182, 246, 0.25)",
     backColors: [
       grey[900],
       grey[800],
       grey[700],
       grey[600],
       grey[500],
-      "#262626",
-    ],
-    backColorsHinted: [
-      blueGrey[900],
-      blueGrey[800],
-      blueGrey[700],
-      blueGrey[600],
-      blueGrey[500],
       "#262626",
     ],
   },
@@ -116,21 +106,13 @@ export const lightTheme = createTheme({
     green: "#008002",
     red: "#ff0101",
     background: "#fff",
-    hinted: "#E1F5FE",
+    hinted: "rgba(3, 169, 244, 0.2)",
     backColors: [
       indigo[600],
       indigo[300],
       indigo[200],
       indigo[200],
       indigo[50],
-      "#fff",
-    ],
-    backColorsHinted: [
-      lightBlue[600],
-      lightBlue[300],
-      lightBlue[200],
-      lightBlue[200],
-      lightBlue[50],
       "#fff",
     ],
   },
