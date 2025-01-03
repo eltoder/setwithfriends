@@ -178,9 +178,9 @@ function HelpPage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           For experienced players, there are many interesting variations on the
-          standard Set game. Currently this site lets you play six of these
+          standard Set game. Currently this site lets you play seven of these
           variants: <em>Junior,</em> <em>Set-Chain,</em> <em>UltraSet,</em> 
-          <em> Ultra9,</em> <em>MegaSet</em> and <em>GhostSet.</em> Here's how.
+          <em> Ultra9,</em> <em>MegaSet,</em> <em>GhostSet</em> and <em>Memory</em>. Here's how.
         </Typography>
         <Typography variant="h6" gutterBottom>
           Junior
@@ -312,6 +312,18 @@ function HelpPage() {
         the second pair consists of the two cards in the second row,
         and the third pair consists of the two cards in the third row. 
         The corresponding 'ghost' set is shown below. 
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1211" />
+          <SetCard value="0011" />
+          <SetCard value="2111" />
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          Memory
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+        In the Memory variant, the rules are the same as Normal Set, but all cards are dealt face down. 
+        Players reveal 3 cards at a time. 
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="1211" />
