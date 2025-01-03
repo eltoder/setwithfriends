@@ -325,11 +325,6 @@ function HelpPage() {
         In the Memory variant, the rules are the same as Normal Set, but all cards are dealt face down. 
         Players reveal 3 cards at a time. 
         </Typography>
-        <Typography component="div" align="center" gutterBottom>
-          <SetCard value="1211" />
-          <SetCard value="0011" />
-          <SetCard value="2111" />
-        </Typography>
         <hr />
 
         <Typography variant="h5" gutterBottom>
