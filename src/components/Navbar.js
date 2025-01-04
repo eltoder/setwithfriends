@@ -14,7 +14,6 @@ import Brightness4Icon from "@material-ui/icons/Brightness4";
 import Brightness7Icon from "@material-ui/icons/Brightness7";
 import VolumeOffIcon from "@material-ui/icons/VolumeOff";
 import VolumeUpIcon from "@material-ui/icons/VolumeUp";
-import { makeStyles } from "@material-ui/core/styles";
 
 import firebase from "../firebase";
 import { UserContext, SettingsContext } from "../context";
@@ -26,17 +25,6 @@ import UserColorDialog from "./UserColorDialog";
 import ColorChoiceDialog from "./ColorChoiceDialog";
 import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
-import hatImage from "../assets/hat.png";
-
-const useStyles = makeStyles((theme) => ({
-  treeIcon: {
-    verticalAlign: "top",
-    fontSize: "0.9em",
-    [theme.breakpoints.up("md")]: {
-      marginLeft: "-0.2em",
-    },
-  },
-}));
 
 function Navbar({
   themeType,
@@ -46,7 +34,6 @@ function Navbar({
 }) {
   const user = useContext(UserContext);
   const settings = useContext(SettingsContext);
-  const classes = useStyles();
   const [anchorEl, setAnchorEl] = useState(null);
   const [changeName, setChangeName] = useState(false);
   const [changeUserColor, setChangeUserColor] = useState(false);
@@ -86,21 +73,9 @@ function Navbar({
     <AppBar position="relative" color="transparent" elevation={0}>
       <Toolbar variant="dense">
         <Typography variant="h6" style={{ flexGrow: 1, whiteSpace: "nowrap" }}>
-          <img
-            style={{
-              height: "0.5em",
-              verticalAlign: "text-top",
-              marginRight: "-0.5em",
-              position: "relative",
-              zIndex: 1,
-            }}
-            alt="Santa Hat"
-            src={hatImage}
-          />
           <InternalLink underline="none" color="inherit" to="/">
             Set with Friends
           </InternalLink>
-          <span className={classes.treeIcon}>🎄</span>
         </Typography>
         <Typography
           variant="subtitle1"
