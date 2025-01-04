@@ -2,8 +2,6 @@ import { createTheme } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
 import { indigo } from "@material-ui/core/colors";
 import { red } from "@material-ui/core/colors";
-import snowLightImage from "./assets/snow.jpg";
-import snowDarkImage from "./assets/snow-dark.jpg";
 
 export const darkTheme = createTheme({
   palette: {
@@ -64,15 +62,6 @@ export const darkTheme = createTheme({
     row: "#282828",
   },
   setFoundEntry: "rgba(130, 170, 100, 0.15)",
-  overrides: {
-    MuiCssBaseline: {
-      "@global": {
-        body: {
-          backgroundImage: `url("${snowDarkImage}")`,
-        },
-      },
-    },
-  },
 });
 
 export const lightTheme = createTheme({
@@ -121,13 +110,4 @@ export const lightTheme = createTheme({
     row: "#fff",
   },
   setFoundEntry: "rgba(130, 170, 100, 0.15)",
-  overrides: {
-    MuiCssBaseline: {
-      "@global": {
-        body: {
-          backgroundImage: `url("${snowLightImage}")`,
-        },
-      },
-    },
-  },
 });
