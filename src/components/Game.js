@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useMemo } from "react";
 
 import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
@@ -11,6 +11,18 @@ import useKeydown, { getModifierState } from "../hooks/useKeydown";
 import { SettingsContext } from "../context";
 
 const gamePadding = 8;
+
+function addLastSet(board, lastSet) {
+  if (lastSet?.length) {
+    const n = lastSet?.length % 3;
+    if (n > 0) {
+      lastSet = lastSet.concat([null]);
+      if (n === 1) lastSet.splice(-3, 0, null);
+    }
+    board = lastSet.concat(board);
+  }
+  return [board, lastSet];
+}
 
 function Game({
   board,
@@ -29,10 +41,14 @@ function Game({
   const isLandscape = layoutOrientation === "landscape";
   const [gameDimensions, gameEl] = useDimensions();
 
-  if (lastSet) {
-    board = lastSet.concat(board);
-  }
-  const lineSpacing = lastSet?.length ? 2 * gamePadding : 0;
+  [board, lastSet] = useMemo(
+    () => addLastSet(board, lastSet),
+    [board, lastSet]
+  );
+
+  const lastSetSize = lastSet?.length ?? 0;
+  const lastSetRows = Math.ceil(lastSetSize / 3);
+  const lineSpacing = lastSetSize ? 2 * gamePadding : 0;
 
   // Calculate widths and heights in pixels to fit cards in the game container
   // (The default value for `gameWidth` is a hack since we don't know the
@@ -91,9 +107,9 @@ function Game({
       positionY = cardWidth * r + gamePadding + delta;
     }
     if (!isLandscape) {
-      positionY += i >= lastSet?.length ? lineSpacing : 0;
+      positionY += i >= lastSetSize ? lineSpacing : 0;
     } else {
-      positionX += i >= lastSet?.length ? lineSpacing : 0;
+      positionX += i >= lastSetSize ? lineSpacing : 0;
     }
     return {
       left: positionX,
@@ -142,7 +158,7 @@ function Game({
       const index = shortcuts.indexOf(key);
       if (index >= 0) {
         event.preventDefault();
-        if (index < board.length) onClick(board[index]);
+        if (board[index]) onClick(board[index]);
       }
     }
   });
@@ -150,13 +166,13 @@ function Game({
   const lastSetLineStyle = isLandscape
     ? {
         left:
-          (isHorizontal ? cardHeight : cardWidth) +
+          (isHorizontal ? cardHeight : cardWidth) * lastSetRows +
           gamePadding +
           lineSpacing / 2,
       }
     : {
         top:
-          (isHorizontal ? cardWidth : cardHeight) +
+          (isHorizontal ? cardWidth : cardHeight) * lastSetRows +
           gamePadding +
           lineSpacing / 2,
       };
@@ -179,7 +195,7 @@ function Game({
           style={{
             position: "absolute",
             left:
-              isLandscape && lastSet?.length
+              isLandscape && lastSetSize
                 ? gamePadding + (isHorizontal ? cardHeight : cardWidth) / 2
                 : 0,
             bottom: gamePadding,
@@ -189,7 +205,7 @@ function Game({
           <strong>{remaining}</strong> cards remaining in the deck
         </Typography>
       )}
-      {lastSet?.length ? (
+      {lastSetSize ? (
         <Divider
           orientation={isLandscape ? "vertical" : "horizontal"}
           variant="fullWidth"
@@ -197,48 +213,53 @@ function Game({
           style={lastSetLineStyle}
         />
       ) : null}
-      {transitions((style, card) => (
-        <animated.div
-          key={card}
-          style={{
-            position: "absolute",
-            zIndex: style.opacity.to((x) => (x === 1 ? "auto" : 1)),
-            ...style,
-          }}
-        >
-          {showShortcuts ? (
-            <div
+      {transitions(
+        (style, card) =>
+          card && (
+            <animated.div
+              key={card}
               style={{
-                width: cardWidth - margin * 2,
-                height: cardHeight - margin * 2,
-                margin: margin,
-                borderRadius: margin,
-                boxSizing: "border-box",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                border: "1px solid",
-                fontWeight: "bold",
+                position: "absolute",
+                zIndex: style.opacity.to((x) => (x === 1 ? "auto" : 1)),
+                ...style,
               }}
             >
-              <span style={{ transform: `rotate(${-rotateAmount}deg)` }}>
-                {shortcuts[board.indexOf(card)]}
-              </span>
-            </div>
-          ) : (
-            <ResponsiveSetCard
-              value={card}
-              width={cardWidth}
-              hinted={answer?.includes(card)}
-              active={selected?.includes(card)}
-              faceDown={
-                faceDown && !selected?.includes(card) && board.includes(card)
-              }
-              onClick={() => onClick(card)}
-            />
-          )}
-        </animated.div>
-      ))}
+              {showShortcuts ? (
+                <div
+                  style={{
+                    width: cardWidth - margin * 2,
+                    height: cardHeight - margin * 2,
+                    margin: margin,
+                    borderRadius: margin,
+                    boxSizing: "border-box",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    border: "1px solid",
+                    fontWeight: "bold",
+                  }}
+                >
+                  <span style={{ transform: `rotate(${-rotateAmount}deg)` }}>
+                    {shortcuts[board.indexOf(card)]}
+                  </span>
+                </div>
+              ) : (
+                <ResponsiveSetCard
+                  value={card}
+                  width={cardWidth}
+                  hinted={answer?.includes(card)}
+                  active={selected?.includes(card)}
+                  faceDown={
+                    faceDown &&
+                    !selected?.includes(card) &&
+                    board.includes(card)
+                  }
+                  onClick={() => onClick(card)}
+                />
+              )}
+            </animated.div>
+          )
+      )}
     </Paper>
   );
 }

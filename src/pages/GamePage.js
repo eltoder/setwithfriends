@@ -152,7 +152,7 @@ function GamePage({ match }) {
       const state = computeState({ ...gameData, deck }, gameMode);
       const { history, current, boardSize } = state;
       const lastSet =
-        gameMode === "setchain" && history.length > 0
+        modes[gameMode].chain && history.length > 0
           ? cardsFromEvent(history[history.length - 1])
           : [];
       const board = current.slice(0, boardSize);
@@ -234,47 +234,33 @@ function GamePage({ match }) {
       if (selected.includes(card)) {
         return gameMode === "memory" ? selected : removeCard(selected, card);
       }
-      let [vals, done] = addCard(selected, card, gameMode, lastSet);
-      if (!done) {
-        return vals;
-      }
-      let failed = true;
-      if (
-        gameMode === "setchain" &&
-        lastSet.length > 0 &&
-        !lastSet.includes(vals[0])
-      ) {
-        setSnack({
-          open: true,
-          variant: "error",
-          message: "One card must be from the previous set!",
-        });
-      } else {
-        const set = modes[gameMode].checkFn(...vals);
-        if (set) {
-          failed = false;
-          handleSet(set);
+      const state = addCard(selected, card, gameMode, lastSet);
+      switch (state.kind) {
+        case "pending":
+          return state.cards;
+        case "set":
+          handleSet(state.cards);
+          if (volume === "on") playSuccess();
           setSnack({
             open: true,
             variant: "success",
-            message: `Found a ${modes[gameMode].setType}!`,
+            message: `Found a ${state.setType}`,
           });
-        } else {
+          return [];
+        case "error":
+          if (volume === "on") playFail();
           setSnack({
             open: true,
             variant: "error",
-            message: `Not a ${modes[gameMode].setType}!`,
+            message: state.error,
           });
-        }
+          if (gameMode === "memory") {
+            clearSelected.current = true;
+            return state.cards;
+          }
+          return [];
+        // no default
       }
-      if (volume === "on") {
-        (failed ? playFail : playSuccess)();
-      }
-      if (gameMode === "memory" && failed) {
-        clearSelected.current = true;
-        return vals;
-      }
-      return [];
     });
   }
 
