@@ -46,7 +46,7 @@ function HelpPage() {
           <SetCard value="0202" />
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Set is played with a special deck of 81 = 3×3×3×3 cards. You can see
+          Set is played with a special deck of 3×3×3×3 = 81 cards. You can see
           some examples of Set cards above. Each card has four features that
           distinguish it from the others: color, shape, shading, and number. For
           each feature, there are three variants, as shown in the example.
@@ -178,8 +178,22 @@ function HelpPage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           For experienced players, there are many interesting variations on the
-          standard Set game. Currently this site lets you play two of these
-          variants: <em>Set-Chain</em> and <em>UltraSet</em>. Here's how.
+          standard Set game. Currently this site lets you play the following
+          variants:
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          Junior
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Set Junior is a simplified version of the standard Set that only uses
+          cards with solid shading. This means that every card has only{" "}
+          <strong>three</strong> features instead of four &mdash; great for
+          beginners!
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="200" />
+          <SetCard value="011" />
+          <SetCard value="122" />
         </Typography>
         <Typography variant="h6" gutterBottom>
           Set-Chain
@@ -253,7 +267,97 @@ function HelpPage() {
           Note that you do not have to select the four cards in any particular
           order while playing.
         </Typography>
-
+        <Typography variant="h6" gutterBottom>
+          Ultra9
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Ultra9 follows the same rules as UltraSet, but 9 cards are dealt
+          instead of 12. This makes the game harder because there are many fewer
+          UltraSets on the board. In the very rare case that there are no
+          UltraSets among the 9 cards, 3 additional cards are dealt. (There is
+          always an UltraSet in any 10 cards.)
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          MegaSet
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          This is an extended version of Set where each card has a{" "}
+          <strong>fifth</strong> feature &mdash; border style. Every card has
+          either a single, double or dotted border.
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="02000" />
+          <SetCard value="12011" />
+          <SetCard value="22022" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          The goal is the same as in the standard Set &mdash; find sets of three
+          cards that, for each of the five features, have variants of that
+          feature that are either all the same or all different. Since the
+          probability of 3 cards forming a five-feature set is lower, 16 cards
+          are dealt instead of 12.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          With 5 features, there are 3×3×3×3×3 = 243 cards in the deck. Be
+          prepared for a long game.
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          GhostSet
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          In GhostSet, you should pick out 3 disjoint pairs of cards (6 cards in
+          total) at a time. The 3 cards{" "}
+          <em>that complete each of the pairs to sets</em> should themselves
+          form a set. The game is called &ldquo;ghost set&rdquo; because these 3
+          cards do not need to be present on the board. For example, one valid
+          selection of the six cards could be:
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0211" />
+          <SetCard value="2211" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1100" />
+          <SetCard value="2222" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0210" />
+          <SetCard value="1012" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Each row is one of the pairs. The corresponding &ldquo;ghost
+          set&rdquo; is shown below.
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1211" />
+          <SetCard value="0011" />
+          <SetCard value="2111" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Finding a GhostSet can be quite hard in general, but there are two
+          easy special cases &mdash; 2 disjoint regular sets and a 3-pair
+          UltraSet (that is, 3 pairs of cards that form sets with the same
+          additional card).
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          Memory
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          <strong>
+            Memory variant is experimental and details are likely to change in
+            the future.
+          </strong>
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          This variant is a hybrid of Set with the game{" "}
+          <Link href="https://en.wikipedia.org/wiki/Concentration_(card_game)">
+            Memory
+          </Link>
+          . The rules are the same as in the standard Set, but all cards are
+          dealt face down. Players reveal 3 cards at a time. If revealed cards
+          form a Set, it is taken as usual. Otherwise, the cards are turned face
+          down again, and the players make another attempt.
+        </Typography>
         <hr />
 
         <Typography variant="h5" gutterBottom>
