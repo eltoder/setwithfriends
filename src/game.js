@@ -399,7 +399,7 @@ export const modes = {
     description: "Cards are dealt face down and are turned up 3 at a time.",
     setType: "Set",
     traits: 4,
-    minBoardSize: 12,
+    minBoardSize: 21,
     checkFn: checkSet,
     processFn: processEventCommon,
   },
