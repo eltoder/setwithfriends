@@ -63,46 +63,32 @@ export const colors = {
 
 export const standardLayouts = {
   QWERTY: {
-    verticalLayout: "123qweasdzxcrtyfghvbnuiojkl",
-    horizontalLayout: "qazwsxedcrfvtgbyhnujmik,ol.",
-    orientationChangeKey: ";",
-    layoutChangeKey: "'",
+    verticalLayout: "123qweasdzxcrtyfghvbnuiojklm,.",
+    horizontalLayout: "qazwsxedcrfvtgbyhnujmik,ol.p;/",
   },
   AZERTY: {
     verticalLayout: '&é"azeqsdwxcrtyfghvbnuiojkl',
     horizontalLayout: "aqwzsxedcrfvtgbyhnuj,ik;ol:",
-    orientationChangeKey: "m",
-    layoutChangeKey: "ù",
   },
   QWERTZ: {
     verticalLayout: "123qweasdyxcrtzfghvbnuiojkl",
     horizontalLayout: "qaywsxedcrfvtgbzhnujmik,ol.",
-    orientationChangeKey: "p",
-    layoutChangeKey: "-",
   },
   Dvorak: {
     verticalLayout: "123',.aoe;qjpyfuidkxbgcrhtn",
     horizontalLayout: "'a;,oq.ejpukyixfdbghmctwrnv",
-    orientationChangeKey: "s",
-    layoutChangeKey: "-",
   },
   Colemak: {
     verticalLayout: "123qwfarszxcpgjtdhvbkluynei",
     horizontalLayout: "qazwrxfscptvgdbjhklnmue,yi.",
-    orientationChangeKey: "o",
-    layoutChangeKey: "'",
   },
   Workman: {
     verticalLayout: "123qdrashzxmwbjtgycvkfupneo",
     horizontalLayout: "qazdsxrhmwtcbgvjykfnlue,po.",
-    orientationChangeKey: "i",
-    layoutChangeKey: "'",
   },
   Neo: {
     verticalLayout: "123xvluiaüöäcwkeospzbhgfnrt",
     horizontalLayout: "xuüviölaäcepwozksbhnmgr,ft.",
-    orientationChangeKey: "q",
-    layoutChangeKey: "j",
   },
 };
 

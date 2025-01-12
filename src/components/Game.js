@@ -4,16 +4,12 @@ import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 import { animated, useSprings } from "@react-spring/web";
-import useSound from "use-sound";
 
 import { generateCards } from "../game";
-import { standardLayouts } from "../util";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown, { getModifierState } from "../hooks/useKeydown";
-import useStorage from "../hooks/useStorage";
 import { SettingsContext } from "../context";
-import layoutSfx from "../assets/layoutChangeSound.mp3";
 
 const gamePadding = 8;
 
@@ -27,31 +23,23 @@ function Game({
   gameMode,
   answer,
   lastSet,
+  showShortcuts,
+  showRemaining = true,
 }) {
   const cardArray = useMemo(() => generateCards(gameMode), [gameMode]);
-  const [layoutOrientation, setLayoutOrientation] = useStorage(
-    "layout",
-    "portrait"
-  );
-  const [cardOrientation, setCardOrientation] = useStorage(
-    "orientation",
-    "vertical"
-  );
-  const { keyboardLayout, volume } = useContext(SettingsContext);
-  const keyboardLayoutDesc = standardLayouts[keyboardLayout];
+  const { keyboardLayout, layoutOrientation, cardOrientation } =
+    useContext(SettingsContext);
   const isHorizontal = cardOrientation === "horizontal";
   const isLandscape = layoutOrientation === "landscape";
   const [gameDimensions, gameEl] = useDimensions();
-  const [playLayout] = useSound(layoutSfx);
 
   let board = deck.slice(0, boardSize);
   const unplayed = deck.slice(boardSize);
-  if (gameMode === "setchain") {
-    board = [...lastSet, ...board];
+  if (lastSet) {
+    board = lastSet.concat(board);
   }
 
-  const lineSpacing =
-    gameMode === "setchain" && lastSet.length ? 2 * gamePadding : 0;
+  const lineSpacing = lastSet?.length ? 2 * gamePadding : 0;
 
   // Calculate widths and heights in pixels to fit cards in the game container
   // (The default value for `gameWidth` is a hack since we don't know the
@@ -88,6 +76,7 @@ function Game({
       gameHeight = cardWidth * rows + 2 * gamePadding;
     }
   }
+  const margin = Math.round(cardWidth * 0.035);
 
   // Compute coordinate positions of each card, in and out of play
   const cards = new Map();
@@ -157,48 +146,40 @@ function Game({
 
   // Keyboard shortcuts
   const shortcuts = isLandscape
-    ? keyboardLayoutDesc.horizontalLayout
-    : keyboardLayoutDesc.verticalLayout;
+    ? keyboardLayout.horizontalLayout
+    : keyboardLayout.verticalLayout;
   useKeydown((event) => {
-    if (getModifierState(event) === "") {
-      const { key } = event;
-      if (key === "Escape" || key === " ") {
+    const mod = getModifierState(event);
+    if (mod !== "" && mod !== "Shift") {
+      return;
+    }
+    // Ignore CapsLock: make key case depend only on Shift.
+    const key =
+      mod === "Shift" ? event.key.toUpperCase() : event.key.toLowerCase();
+    if (key === "escape" || key === " ") {
+      event.preventDefault();
+      onClear();
+    } else if (key.length === 1) {
+      const index = shortcuts.indexOf(key);
+      if (index >= 0) {
         event.preventDefault();
-        onClear();
-      } else if (key.length === 1 && shortcuts.includes(key.toLowerCase())) {
-        event.preventDefault();
-        const index = shortcuts.indexOf(key.toLowerCase());
-        if (index < board.length) {
-          onClick(board[index]);
-        }
-      } else if (
-        key.toLowerCase() === keyboardLayoutDesc.orientationChangeKey
-      ) {
-        event.preventDefault();
-        if (volume === "on") playLayout();
-        setCardOrientation(isHorizontal ? "vertical" : "horizontal");
-      } else if (key.toLowerCase() === keyboardLayoutDesc.layoutChangeKey) {
-        event.preventDefault();
-        if (volume === "on") playLayout();
-        setLayoutOrientation(isLandscape ? "portrait" : "landscape");
+        if (index < board.length) onClick(board[index]);
       }
     }
   });
 
   const lastSetLineStyle = isLandscape
     ? {
-        left: `${
+        left:
           (isHorizontal ? cardHeight : cardWidth) +
           gamePadding +
-          lineSpacing / 2
-        }px`,
+          lineSpacing / 2,
       }
     : {
-        top: `${
+        top:
           (isHorizontal ? cardWidth : cardHeight) +
           gamePadding +
-          lineSpacing / 2
-        }px`,
+          lineSpacing / 2,
       };
 
   return (
@@ -207,27 +188,29 @@ function Game({
         position: "relative",
         overflow: "hidden",
         width: "100%",
-        height: gameHeight + 19,
+        height: gameHeight + (showRemaining ? 19 : 0),
         transition: "height 0.75s",
       }}
       ref={gameEl}
     >
-      <Typography
-        variant="caption"
-        align="center"
-        style={{
-          position: "absolute",
-          left:
-            isLandscape && lastSet.length
-              ? `${gamePadding + (isHorizontal ? cardHeight : cardWidth) / 2}px`
-              : 0,
-          bottom: gamePadding,
-          width: "100%",
-        }}
-      >
-        <strong>{unplayed.length}</strong> cards remaining in the deck
-      </Typography>
-      {gameMode === "setchain" && lastSet.length ? (
+      {showRemaining && (
+        <Typography
+          variant="caption"
+          align="center"
+          style={{
+            position: "absolute",
+            left:
+              isLandscape && lastSet?.length
+                ? gamePadding + (isHorizontal ? cardHeight : cardWidth) / 2
+                : 0,
+            bottom: gamePadding,
+            width: "100%",
+          }}
+        >
+          <strong>{unplayed.length}</strong> cards remaining in the deck
+        </Typography>
+      )}
+      {lastSet?.length ? (
         <Divider
           orientation={isLandscape ? "vertical" : "horizontal"}
           variant="fullWidth"
@@ -247,16 +230,37 @@ function Game({
             zIndex: springProps[idx].opacity.to((x) => (x === 1 ? "auto" : 1)),
           }}
         >
-          <ResponsiveSetCard
-            value={card}
-            width={cardWidth}
-            hinted={answer && answer.includes(card)}
-            active={selected.includes(card)}
-            faceDown={
-              faceDown && cards.get(card).opacity && !selected.includes(card)
-            }
-            onClick={cards.get(card).inplay ? () => onClick(card) : null}
-          />
+          {showShortcuts ? (
+            <div
+              style={{
+                width: cardWidth - margin * 2,
+                height: cardHeight - margin * 2,
+                margin: margin,
+                borderRadius: margin,
+                boxSizing: "border-box",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                border: "1px solid",
+                fontWeight: "bold",
+              }}
+            >
+              <span style={{ transform: `rotate(-${rotateAmount})` }}>
+                {shortcuts[board.indexOf(card)]}
+              </span>
+            </div>
+          ) : (
+            <ResponsiveSetCard
+              value={card}
+              width={cardWidth}
+              hinted={answer?.includes(card)}
+              active={selected?.includes(card)}
+              faceDown={
+                faceDown && cards.get(card).opacity && !selected?.includes(card)
+              }
+              onClick={cards.get(card).inplay ? () => onClick(card) : null}
+            />
+          )}
         </animated.div>
       ))}
     </Paper>

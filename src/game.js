@@ -4,6 +4,9 @@ export const SCALING_FACTOR = 800;
 // xoshiro128** (Vigna & Blackman, 2018) PRNG implementaion taken from
 // https://stackoverflow.com/a/47593316/5190601
 function makeRandom(seed) {
+  if (seed === "local") {
+    return Math.random;
+  }
   if (!seed.startsWith("v1:")) {
     throw new Error(`Unknown seed version: ${seed}`);
   }

@@ -9,20 +9,15 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
 import MenuItem from "@material-ui/core/MenuItem";
-import TextField from "@material-ui/core/TextField";
 import { makeStyles } from "@material-ui/core/styles";
-import clsx from "clsx";
 
 import Game from "./Game";
 import { generateDeck } from "../game";
-import { standardLayouts } from "../util";
 import { SettingsContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
   gameBoard: {
     marginBottom: theme.spacing(2),
-  },
-  gameBoardLandscape: {
     [theme.breakpoints.up("md")]: {
       minWidth: 400,
     },
@@ -32,41 +27,30 @@ const useStyles = makeStyles((theme) => ({
   },
   controlsRow: {
     display: "flex",
-    flexDirection: "column",
+    justifyContent: "center",
+  },
+  formControl: {
+    margin: theme.spacing(1),
+    minWidth: 120,
   },
 }));
 
-function KeyboardLayoutDialog(props) {
+function BoardLayoutDialog(props) {
   const { open, onClose, title } = props;
   const classes = useStyles();
   const deck = useMemo(() => generateDeck("normal", "local"), []);
 
   const {
-    keyboardLayout,
-    keyboardLayoutName,
-    setKeyboardLayoutName,
-    setCustomKeyboardLayout,
     layoutOrientation,
+    setLayoutOrientation,
+    cardOrientation,
+    setCardOrientation,
   } = useContext(SettingsContext);
 
-  const isLandscape = layoutOrientation === "landscape";
-  const layoutKey = isLandscape ? "horizontalLayout" : "verticalLayout";
-
-  const handleChange = (event) => {
-    setKeyboardLayoutName(event.target.value);
-  };
-
-  const handleChangeCustom = (event) => {
-    setCustomKeyboardLayout(
-      JSON.stringify({ ...keyboardLayout, [layoutKey]: event.target.value })
-    );
-  };
-
-  const menuItems = Object.keys(standardLayouts)
-    .concat(["Custom"])
-    .map((layoutName) => (
-      <MenuItem key={layoutName} value={layoutName}>
-        {layoutName}
+  const menuItems = (...items) =>
+    items.map((item) => (
+      <MenuItem key={item} value={item}>
+        {item}
       </MenuItem>
     ));
 
@@ -74,37 +58,35 @@ function KeyboardLayoutDialog(props) {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <div
-          className={clsx(classes.gameBoard, {
-            [classes.gameBoardLandscape]: isLandscape,
-          })}
-        >
+        <div className={classes.gameBoard}>
           <Game
             gameMode="normal"
             deck={deck}
-            boardSize={Math.max(12, keyboardLayout[layoutKey].length)}
-            showShortcuts={true}
+            boardSize={12}
             showRemaining={false}
             onClick={() => {}}
             onClear={() => {}}
           />
         </div>
         <div className={classes.controlsRow}>
-          <FormControl>
-            <InputLabel>Layout</InputLabel>
-            <Select value={keyboardLayoutName} onChange={handleChange}>
-              {menuItems}
+          <FormControl className={classes.formControl}>
+            <InputLabel>Board Layout</InputLabel>
+            <Select
+              value={layoutOrientation}
+              onChange={(e) => setLayoutOrientation(e.target.value)}
+            >
+              {menuItems("portrait", "landscape")}
             </Select>
           </FormControl>
-          <TextField
-            margin="dense"
-            label="Shortcuts"
-            type="text"
-            fullWidth
-            disabled={keyboardLayoutName !== "Custom"}
-            value={keyboardLayout[layoutKey]}
-            onChange={handleChangeCustom}
-          />
+          <FormControl className={classes.formControl}>
+            <InputLabel>Card Orientation</InputLabel>
+            <Select
+              value={cardOrientation}
+              onChange={(e) => setCardOrientation(e.target.value)}
+            >
+              {menuItems("vertical", "horizontal")}
+            </Select>
+          </FormControl>
         </div>
       </DialogContent>
       <DialogActions>
@@ -116,4 +98,4 @@ function KeyboardLayoutDialog(props) {
   );
 }
 
-export default KeyboardLayoutDialog;
+export default BoardLayoutDialog;
