@@ -10,10 +10,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import IconButton from "@material-ui/core/IconButton";
 import SettingsIcon from "@material-ui/icons/Settings";
-import Brightness4Icon from "@material-ui/icons/Brightness4";
-import Brightness7Icon from "@material-ui/icons/Brightness7";
-import VolumeOffIcon from "@material-ui/icons/VolumeOff";
-import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 
 import firebase from "../firebase";
 import { UserContext, SettingsContext } from "../context";
@@ -23,6 +19,7 @@ import InternalLink from "./InternalLink";
 import PromptDialog from "./PromptDialog";
 import UserColorDialog from "./UserColorDialog";
 import ColorChoiceDialog from "./ColorChoiceDialog";
+import BoardLayoutDialog from "./BoardLayoutDialog";
 import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
 
@@ -38,6 +35,7 @@ function Navbar({
   const [changeName, setChangeName] = useState(false);
   const [changeUserColor, setChangeUserColor] = useState(false);
   const [changeCardColors, setChangeCardColors] = useState(false);
+  const [changeBoardLayout, setChangeBoardLayout] = useState(false);
   const [changeKeyboardLayout, setChangeKeyboardLayout] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
 
@@ -93,28 +91,6 @@ function Navbar({
             />
           </InternalLink>
         </Typography>
-        <IconButton color="inherit" onClick={handleChangeVolume}>
-          {settings.volume === "on" ? (
-            <Tooltip title="Mute">
-              <VolumeUpIcon />
-            </Tooltip>
-          ) : (
-            <Tooltip title="Unmute">
-              <VolumeOffIcon />
-            </Tooltip>
-          )}
-        </IconButton>
-        <IconButton color="inherit" onClick={handleChangeTheme}>
-          {themeType === "light" ? (
-            <Tooltip title="Dark theme">
-              <Brightness4Icon />
-            </Tooltip>
-          ) : (
-            <Tooltip title="Light theme">
-              <Brightness7Icon />
-            </Tooltip>
-          )}
-        </IconButton>
         <IconButton color="inherit" onClick={handleMenu}>
           <Tooltip title="Settings">
             <SettingsIcon />
@@ -152,6 +128,22 @@ function Navbar({
           <Divider style={{ margin: "8px 0" }} />
           <MenuItem
             onClick={() => {
+              handleChangeVolume();
+              handleCloseMenu();
+            }}
+          >
+            {settings.volume === "on" ? "Mute" : "Unmute"} sound
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleChangeTheme();
+              handleCloseMenu();
+            }}
+          >
+            Change theme
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
               setChangeName(true);
               handleCloseMenu();
             }}
@@ -173,6 +165,14 @@ function Navbar({
             }}
           >
             Change card colors
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              setChangeBoardLayout(true);
+              handleCloseMenu();
+            }}
+          >
+            Change board layout
           </MenuItem>
           <MenuItem
             onClick={() => {
@@ -208,6 +208,11 @@ function Navbar({
           open={changeCardColors}
           onClose={handleChangeCardColors}
           title="Change Card Colors"
+        />
+        <BoardLayoutDialog
+          open={changeBoardLayout}
+          onClose={() => setChangeBoardLayout(false)}
+          title="Change Board Layout"
         />
         <KeyboardLayoutDialog
           open={changeKeyboardLayout}

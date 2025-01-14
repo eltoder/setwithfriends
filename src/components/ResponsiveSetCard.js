@@ -10,7 +10,6 @@ const useStyles = makeStyles((theme) => ({
   },
   card: {
     boxSizing: "border-box",
-    background: "#fff",
     border: `1px solid ${theme.palette.text.primary}`,
     display: "inline-flex",
     flexDirection: "row",

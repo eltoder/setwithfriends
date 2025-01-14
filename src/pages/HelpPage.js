@@ -9,10 +9,9 @@ import InternalLink from "../components/InternalLink";
 import SetCard from "../components/SetCard";
 import { SettingsContext } from "../context";
 import { BASE_RATING, SCALING_FACTOR } from "../game";
-import { standardLayouts } from "../util";
 
 function HelpPage() {
-  const { keyboardLayout } = useContext(SettingsContext);
+  const { keyboardLayout, keyboardLayoutName } = useContext(SettingsContext);
 
   return (
     <Container>
@@ -141,36 +140,30 @@ function HelpPage() {
           <ul>
             <li>
               Select the first twelve cards with keys{" "}
-              <code>
-                {standardLayouts[keyboardLayout].verticalLayout.slice(0, 12)}
-              </code>
-              .
+              <code>{keyboardLayout.verticalLayout.slice(0, 12)}</code>.
             </li>
             <li>
               Select any additional cards with keys{" "}
-              <code>
-                {standardLayouts[keyboardLayout].verticalLayout.slice(12)}
-              </code>
-              .
+              <code>{keyboardLayout.verticalLayout.slice(12)}</code>.
             </li>
           </ul>
         </Typography>
         <Typography variant="body1" gutterBottom>
-          On devices with a keyboard, you can also rotate the cards by pressing
-          the{" "}
-          <code>{standardLayouts[keyboardLayout].orientationChangeKey}</code>{" "}
-          key and change the card layout (between portrait and landscape) by
-          pressing the{" "}
-          <code>{standardLayouts[keyboardLayout].layoutChangeKey}</code> key.
-          The latter also changes the keyboard shortcuts, which may be more
-          convenient to use.
+          You can choose the board layout (between portrait and landscape) and
+          the card orientation (between horizontal and vertical) in the
+          settings. The former also changes the keyboard shortcuts, which may be
+          more convenient to use.
         </Typography>
-        <Typography variant="body1" gutterBottom>
-          If you are using a different keyboard layout than{" "}
-          <code>{keyboardLayout}</code>, you can enjoy using the same keyboard
-          shortcuts by selecting your keyboard layout in the settings. The
-          shortcuts specific to your layout will then be reflected here.
-        </Typography>
+        {keyboardLayoutName !== "Custom" && (
+          <Typography variant="body1" gutterBottom>
+            If you are using a different keyboard layout than{" "}
+            <code>{keyboardLayoutName}</code>, you can enjoy using the same
+            keyboard shortcuts by selecting your keyboard layout in the
+            settings. You can also select the <code>Custom</code> layout and
+            enter fully custom keyboard shortcuts. Your choices will be
+            reflected in the list above.
+          </Typography>
+        )}
 
         <hr />
         <Typography variant="h5" gutterBottom>

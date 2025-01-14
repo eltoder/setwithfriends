@@ -6,7 +6,7 @@ import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 
-import { generateColor, generateName } from "./util";
+import { generateColor, generateName, standardLayouts } from "./util";
 import { UserContext, SettingsContext } from "./context";
 import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
@@ -32,9 +32,21 @@ function App() {
   const [customLightTheme, setCustomLightTheme] = useState(lightTheme);
   const [customDarkTheme, setCustomDarkTheme] = useState(darkTheme);
   const [customColors, setCustomColors] = useStorage("customColors", "{}");
-  const [keyboardLayout, setKeyboardLayout] = useStorage(
+  const [keyboardLayoutName, setKeyboardLayoutName] = useStorage(
     "keyboardLayout",
     "QWERTY"
+  );
+  const [customKeyboardLayout, setCustomKeyboardLayout] = useStorage(
+    "customKeyboardLayout",
+    "{}"
+  );
+  const [layoutOrientation, setLayoutOrientation] = useStorage(
+    "layout",
+    "portrait"
+  );
+  const [cardOrientation, setCardOrientation] = useStorage(
+    "orientation",
+    "vertical"
   );
   const [volume, setVolume] = useStorage("volume", "on");
 
@@ -107,6 +119,15 @@ function App() {
     setCustomColors(JSON.stringify(custom));
   };
 
+  const keyboardLayout =
+    keyboardLayoutName !== "Custom"
+      ? standardLayouts[keyboardLayoutName]
+      : {
+          verticalLayout: "",
+          horizontalLayout: "",
+          ...JSON.parse(customKeyboardLayout),
+        };
+
   return (
     <ThemeProvider
       theme={themeType === "light" ? customLightTheme : customDarkTheme}
@@ -120,7 +141,19 @@ function App() {
         ) : (
           <UserContext.Provider value={user}>
             <SettingsContext.Provider
-              value={{ keyboardLayout, setKeyboardLayout, volume, setVolume }}
+              value={{
+                keyboardLayout,
+                keyboardLayoutName,
+                setKeyboardLayoutName,
+                customKeyboardLayout,
+                setCustomKeyboardLayout,
+                volume,
+                setVolume,
+                layoutOrientation,
+                setLayoutOrientation,
+                cardOrientation,
+                setCardOrientation,
+              }}
             >
               <ConnectionsTracker />
               <WelcomeDialog />
