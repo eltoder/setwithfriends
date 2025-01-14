@@ -67,28 +67,29 @@ export const standardLayouts = {
     horizontalLayout: "qazwsxedcrfvtgbyhnujmik,ol.p;/",
   },
   AZERTY: {
-    verticalLayout: '&é"azeqsdwxcrtyfghvbnuiojkl',
-    horizontalLayout: "aqwzsxedcrfvtgbyhnuj,ik;ol:",
+    verticalLayout: '&é"azeqsdwxcrtyfghvbnuiojkl,;:',
+    horizontalLayout: "aqwzsxedcrfvtgbyhnuj,ik;ol:pm!",
   },
   QWERTZ: {
-    verticalLayout: "123qweasdyxcrtzfghvbnuiojkl",
-    horizontalLayout: "qaywsxedcrfvtgbzhnujmik,ol.",
+    verticalLayout: "123qweasdyxcrtzfghvbnuiojklm,.",
+    // ö is from the German layout; other languages have different letters
+    horizontalLayout: "qaywsxedcrfvtgbzhnujmik,ol.pö-",
   },
   Dvorak: {
-    verticalLayout: "123',.aoe;qjpyfuidkxbgcrhtn",
-    horizontalLayout: "'a;,oq.ejpukyixfdbghmctwrnv",
+    verticalLayout: "123',.aoe;qjpyfuidkxbgcrhtnmwv",
+    horizontalLayout: "'a;,oq.ejpukyixfdbghmctwrnvlsz",
   },
   Colemak: {
-    verticalLayout: "123qwfarszxcpgjtdhvbkluynei",
-    horizontalLayout: "qazwrxfscptvgdbjhklnmue,yi.",
+    verticalLayout: "123qwfarszxcpgjtdhvbkluyneim,.",
+    horizontalLayout: "qazwrxfscptvgdbjhklnmue,yi.;o/",
   },
   Workman: {
-    verticalLayout: "123qdrashzxmwbjtgycvkfupneo",
-    horizontalLayout: "qazdsxrhmwtcbgvjykfnlue,po.",
+    verticalLayout: "123qdrashzxmwbjtgycvkfupneol,.",
+    horizontalLayout: "qazdsxrhmwtcbgvjykfnlue,po.;i/",
   },
   Neo: {
-    verticalLayout: "123xvluiaüöäcwkeospzbhgfnrt",
-    horizontalLayout: "xuüviölaäcepwozksbhnmgr,ft.",
+    verticalLayout: "123xvluiaüöäcwkeospzbhgfnrtm,.",
+    horizontalLayout: "xuüviölaäcepwozksbhnmgr,ft.qdj",
   },
 };
 
