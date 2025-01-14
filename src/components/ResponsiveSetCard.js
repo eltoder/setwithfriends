@@ -77,14 +77,7 @@ function ResponsiveSetCard(props) {
   const contentHeight = height - 2 * margin;
   const { color, shape, shade, border, number } = cardTraits(value);
 
-  // Override is used to help visualize new colors in color picker dialog.
-  const COLORS = props.colorOverride
-    ? [
-        props.colorOverride.purple,
-        props.colorOverride.green,
-        props.colorOverride.red,
-      ]
-    : [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
+  const COLORS = [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
 
   const BORDERS = ["3px solid", "4px dotted", "6px double"];
 
@@ -136,7 +129,6 @@ function ResponsiveSetCard(props) {
             shape={shape}
             shade={shade}
             size={Math.round(contentHeight * 0.36)}
-            colorOverride={props.colorOverride}
           />
         ))}
       {hinted && (

@@ -111,3 +111,9 @@ export const lightTheme = createTheme({
   },
   setFoundEntry: "rgba(130, 170, 100, 0.15)",
 });
+
+export function withCardColors(theme, colors) {
+  return colors
+    ? { ...theme, setCard: { ...theme.setCard, ...colors } }
+    : theme;
+}
