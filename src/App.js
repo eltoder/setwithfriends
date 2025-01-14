@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import firebase from "./firebase";
 import "./styles.css";
 
@@ -23,15 +23,47 @@ import AboutPage from "./pages/AboutPage";
 import ConductPage from "./pages/ConductPage";
 import LegalPage from "./pages/LegalPage";
 import ProfilePage from "./pages/ProfilePage";
-import { lightTheme, darkTheme } from "./themes";
+import { lightTheme, darkTheme, withCardColors } from "./themes";
+
+function makeThemes(customColors) {
+  let parsed;
+  try {
+    parsed = JSON.parse(customColors);
+  } catch (error) {
+    console.log("failed to parse custom colors", error);
+    parsed = {};
+  }
+  return {
+    parsedCustomColors: parsed,
+    customLightTheme: withCardColors(lightTheme, parsed.light),
+    customDarkTheme: withCardColors(darkTheme, parsed.dark),
+  };
+}
+
+function makeKeyboardLayout(keyboardLayoutName, customKeyboardLayout) {
+  const emptyLayout = { verticalLayout: "", horizontalLayout: "" };
+  if (keyboardLayoutName !== "Custom") {
+    return standardLayouts[keyboardLayoutName] || emptyLayout;
+  }
+  let parsed;
+  try {
+    parsed = JSON.parse(customKeyboardLayout);
+  } catch (error) {
+    console.log("failed to parse custom keyboard layout", error);
+    parsed = {};
+  }
+  return { ...emptyLayout, ...parsed };
+}
 
 function App() {
   const [authUser, setAuthUser] = useState(null);
   const [user, setUser] = useState(null);
   const [themeType, setThemeType] = useStorage("theme", "light");
-  const [customLightTheme, setCustomLightTheme] = useState(lightTheme);
-  const [customDarkTheme, setCustomDarkTheme] = useState(darkTheme);
   const [customColors, setCustomColors] = useStorage("customColors", "{}");
+  const { parsedCustomColors, customLightTheme, customDarkTheme } = useMemo(
+    () => makeThemes(customColors),
+    [customColors]
+  );
   const [keyboardLayoutName, setKeyboardLayoutName] = useStorage(
     "keyboardLayout",
     "QWERTY"
@@ -39,6 +71,10 @@ function App() {
   const [customKeyboardLayout, setCustomKeyboardLayout] = useStorage(
     "customKeyboardLayout",
     "{}"
+  );
+  const keyboardLayout = useMemo(
+    () => makeKeyboardLayout(keyboardLayoutName, customKeyboardLayout),
+    [keyboardLayoutName, customKeyboardLayout]
   );
   const [layoutOrientation, setLayoutOrientation] = useStorage(
     "layout",
@@ -95,22 +131,6 @@ function App() {
     };
   }, [authUser]);
 
-  useEffect(() => {
-    const parsedCustoms = JSON.parse(customColors);
-    if (parsedCustoms.light) {
-      setCustomLightTheme({
-        ...lightTheme,
-        setCard: { ...lightTheme.setCard, ...parsedCustoms.light },
-      });
-    }
-    if (parsedCustoms.dark) {
-      setCustomDarkTheme({
-        ...darkTheme,
-        setCard: { ...darkTheme.setCard, ...parsedCustoms.dark },
-      });
-    }
-  }, [customColors]);
-
   const handleChangeTheme = () => {
     setThemeType(themeType === "light" ? "dark" : "light");
   };
@@ -118,15 +138,6 @@ function App() {
   const handleCustomColors = (custom) => {
     setCustomColors(JSON.stringify(custom));
   };
-
-  const keyboardLayout =
-    keyboardLayoutName !== "Custom"
-      ? standardLayouts[keyboardLayoutName]
-      : {
-          verticalLayout: "",
-          horizontalLayout: "",
-          ...JSON.parse(customKeyboardLayout),
-        };
 
   return (
     <ThemeProvider
@@ -160,7 +171,7 @@ function App() {
               <Navbar
                 themeType={themeType}
                 handleChangeTheme={handleChangeTheme}
-                customColors={JSON.parse(customColors)}
+                customColors={parsedCustomColors}
                 handleCustomColors={handleCustomColors}
               />
               <Switch>

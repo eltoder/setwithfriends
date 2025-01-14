@@ -58,8 +58,7 @@ function Navbar({
   function handleChangeCardColors(colorMap) {
     setChangeCardColors(false);
     if (colorMap) {
-      customColors[themeType] = colorMap;
-      handleCustomColors(customColors);
+      handleCustomColors({ ...customColors, [themeType]: colorMap });
     }
   }
 

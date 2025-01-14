@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { makeStyles, withTheme } from "@material-ui/core/styles";
+import { ThemeProvider, makeStyles, withTheme } from "@material-ui/core/styles";
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import Grid from "@material-ui/core/Grid";
@@ -10,7 +10,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import { ChromePicker } from "react-color";
 
 import ResponsiveSetCard from "./ResponsiveSetCard";
-import { darkTheme, lightTheme } from "../themes";
+import { darkTheme, lightTheme, withCardColors } from "../themes";
 
 const useStyles = makeStyles({
   colorPickerColumn: {
@@ -33,71 +33,55 @@ function ColorChoiceDialog(props) {
   }
 
   function handleSubmit() {
-    onClose({ red: red, green: green, purple: purple });
+    onClose({ red, green, purple });
   }
 
   function handleReset() {
-    if (theme.palette.type === "light") {
-      setRed(lightTheme.setCard.red);
-      setGreen(lightTheme.setCard.green);
-      setPurple(lightTheme.setCard.purple);
-    }
-    if (theme.palette.type === "dark") {
-      setRed(darkTheme.setCard.red);
-      setGreen(darkTheme.setCard.green);
-      setPurple(darkTheme.setCard.purple);
-    }
+    const resetTo = theme.palette.type === "light" ? lightTheme : darkTheme;
+    setRed(resetTo.setCard.red);
+    setGreen(resetTo.setCard.green);
+    setPurple(resetTo.setCard.purple);
   }
 
   return (
     <Dialog open={open} onClose={handleClose} maxWidth="xl">
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <Grid container spacing={3}>
-          <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
-            <ResponsiveSetCard
-              width={225}
-              value="0000"
-              colorOverride={{ red: red, green: green, purple: purple }}
-            />
-            <ChromePicker
-              color={purple}
-              onChangeComplete={(result) => setPurple(result.hex)}
-            />
+        <ThemeProvider theme={withCardColors(theme, { red, green, purple })}>
+          <Grid container spacing={3}>
+            <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
+              <ResponsiveSetCard width={225} value="0000" />
+              <ChromePicker
+                color={purple}
+                onChangeComplete={(result) => setPurple(result.hex)}
+              />
+            </Grid>
+            <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
+              <ResponsiveSetCard width={225} value="1000" />
+              <ChromePicker
+                color={green}
+                onChangeComplete={(result) => setGreen(result.hex)}
+              />
+            </Grid>
+            <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
+              <ResponsiveSetCard width={225} value="2000" />
+              <ChromePicker
+                color={red}
+                onChangeComplete={(result) => setRed(result.hex)}
+              />
+            </Grid>
           </Grid>
-          <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
-            <ResponsiveSetCard
-              width={225}
-              value="1000"
-              colorOverride={{ red: red, green: green, purple: purple }}
-            />
-            <ChromePicker
-              color={green}
-              onChangeComplete={(result) => setGreen(result.hex)}
-            />
+          <Grid container direction="row" justifyContent="center">
+            <Button
+              onClick={handleReset}
+              variant="outlined"
+              color="secondary"
+              style={{ marginTop: "15px" }}
+            >
+              Set Colors to Default
+            </Button>
           </Grid>
-          <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
-            <ResponsiveSetCard
-              width={225}
-              value="2000"
-              colorOverride={{ red: red, green: green, purple: purple }}
-            />
-            <ChromePicker
-              color={red}
-              onChangeComplete={(result) => setRed(result.hex)}
-            />
-          </Grid>
-        </Grid>
-        <Grid container direction="row" justify="center">
-          <Button
-            onClick={handleReset}
-            variant="outlined"
-            color="secondary"
-            style={{ marginTop: "15px" }}
-          >
-            Set Colors to Default
-          </Button>
-        </Grid>
+        </ThemeProvider>
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="primary">
