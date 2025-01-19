@@ -1,11 +1,10 @@
-import { useContext, useMemo } from "react";
+import { useContext } from "react";
 
 import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import { animated, useSprings } from "@react-spring/web";
+import { animated, useTransition } from "@react-spring/web";
 
-import { generateCards } from "../game";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown, { getModifierState } from "../hooks/useKeydown";
@@ -14,31 +13,25 @@ import { SettingsContext } from "../context";
 const gamePadding = 8;
 
 function Game({
-  deck,
-  boardSize,
-  faceDown,
+  board,
   onClick,
   onClear,
   selected,
-  gameMode,
   answer,
   lastSet,
+  faceDown,
   showShortcuts,
-  showRemaining = true,
+  remaining = -1,
 }) {
-  const cardArray = useMemo(() => generateCards(gameMode), [gameMode]);
   const { keyboardLayout, layoutOrientation, cardOrientation } =
     useContext(SettingsContext);
   const isHorizontal = cardOrientation === "horizontal";
   const isLandscape = layoutOrientation === "landscape";
   const [gameDimensions, gameEl] = useDimensions();
 
-  let board = deck.slice(0, boardSize);
-  const unplayed = deck.slice(boardSize);
   if (lastSet) {
     board = lastSet.concat(board);
   }
-
   const lineSpacing = lastSet?.length ? 2 * gamePadding : 0;
 
   // Calculate widths and heights in pixels to fit cards in the game container
@@ -77,19 +70,11 @@ function Game({
     }
   }
   const margin = Math.round(cardWidth * 0.035);
-
-  // Compute coordinate positions of each card, in and out of play
-  const cards = new Map();
-  for (const c of cardArray) {
-    cards.set(c, {
-      positionX: gameWidth,
-      positionY: gameHeight / 2 - cardHeight / 2,
-      opacity: 0,
-      inplay: false,
-    });
-  }
-
-  for (let i = 0; i < board.length; i++) {
+  const rotateAmount = isHorizontal ? "90deg" : "0deg";
+  // NOTE: put rotate() into useTransition() instead of adding it to style
+  // outside to get a nice animation when the setting changes.
+  const cardProps = (card) => {
+    const i = board.indexOf(card);
     let positionX, positionY;
     let r, c;
     if (!isLandscape) {
@@ -106,43 +91,37 @@ function Game({
       positionY = cardWidth * r + gamePadding + delta;
     }
     if (!isLandscape) {
-      positionY = positionY + (i >= 3 ? lineSpacing : 0);
+      positionY += i >= lastSet?.length ? lineSpacing : 0;
     } else {
-      positionX = positionX + (i >= 3 ? lineSpacing : 0);
+      positionX += i >= lastSet?.length ? lineSpacing : 0;
     }
-    cards.set(board[i], {
-      positionX,
-      positionY,
+    return {
+      left: positionX,
+      top: positionY,
+      transform: `rotate(${rotateAmount})`,
       opacity: 1,
-      inplay: true,
-    });
-  }
-  for (const c of unplayed) {
-    cards.set(c, {
-      positionX: -cardWidth,
-      positionY: gameHeight / 2 - cardHeight / 2,
+    };
+  };
+  const transitions = useTransition(board, {
+    from: {
+      left: -cardWidth,
+      top: gameHeight / 2 - cardHeight / 2,
+      transform: `rotate(${rotateAmount})`,
       opacity: 0,
-      inplay: false,
-    });
-  }
-
-  const rotateAmount = isHorizontal ? "90deg" : "0deg";
-
-  const springProps = useSprings(
-    cardArray.length,
-    cardArray.map((c) => ({
-      to: {
-        transform: `translate(${cards.get(c).positionX}px, ${
-          cards.get(c).positionY
-        }px) rotate(${rotateAmount})`,
-        opacity: cards.get(c).opacity,
-      },
-      config: {
-        tension: 64,
-        friction: 14,
-      },
-    }))
-  );
+    },
+    enter: cardProps,
+    update: cardProps,
+    leave: {
+      left: gameWidth,
+      top: gameHeight / 2 - cardHeight / 2,
+      transform: `rotate(${rotateAmount})`,
+      opacity: 0,
+    },
+    config: {
+      tension: 64,
+      friction: 14,
+    },
+  });
 
   // Keyboard shortcuts
   const shortcuts = isLandscape
@@ -188,12 +167,12 @@ function Game({
         position: "relative",
         overflow: "hidden",
         width: "100%",
-        height: gameHeight + (showRemaining ? 19 : 0),
+        height: gameHeight + (remaining >= 0 ? 19 : 0),
         transition: "height 0.75s",
       }}
       ref={gameEl}
     >
-      {showRemaining && (
+      {remaining >= 0 && (
         <Typography
           variant="caption"
           align="center"
@@ -207,7 +186,7 @@ function Game({
             width: "100%",
           }}
         >
-          <strong>{unplayed.length}</strong> cards remaining in the deck
+          <strong>{remaining}</strong> cards remaining in the deck
         </Typography>
       )}
       {lastSet?.length ? (
@@ -218,16 +197,12 @@ function Game({
           style={lastSetLineStyle}
         />
       ) : null}
-      {cardArray.map((card, idx) => (
+      {transitions((style, card) => (
         <animated.div
-          key={card}
           style={{
             position: "absolute",
-            ...springProps[idx],
-            display: springProps[idx].opacity.to((x) =>
-              x > 0 ? "block" : "none"
-            ),
-            zIndex: springProps[idx].opacity.to((x) => (x === 1 ? "auto" : 1)),
+            zIndex: style.opacity.to((x) => (x === 1 ? "auto" : 1)),
+            ...style,
           }}
         >
           {showShortcuts ? (
@@ -256,9 +231,9 @@ function Game({
               hinted={answer?.includes(card)}
               active={selected?.includes(card)}
               faceDown={
-                faceDown && cards.get(card).opacity && !selected?.includes(card)
+                faceDown && !selected?.includes(card) && board.includes(card)
               }
-              onClick={cards.get(card).inplay ? () => onClick(card) : null}
+              onClick={() => onClick(card)}
             />
           )}
         </animated.div>

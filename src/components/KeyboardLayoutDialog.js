@@ -51,6 +51,7 @@ function KeyboardLayoutDialog(props) {
 
   const isLandscape = layoutOrientation === "landscape";
   const layoutKey = isLandscape ? "horizontalLayout" : "verticalLayout";
+  const shortcuts = keyboardLayout[layoutKey];
 
   const handleChange = (event) => {
     setKeyboardLayoutName(event.target.value);
@@ -80,11 +81,8 @@ function KeyboardLayoutDialog(props) {
           })}
         >
           <Game
-            gameMode="normal"
-            deck={deck}
-            boardSize={Math.max(12, keyboardLayout[layoutKey].length)}
+            board={deck.slice(0, Math.max(12, shortcuts.length))}
             showShortcuts={true}
-            showRemaining={false}
             onClick={() => {}}
             onClear={() => {}}
           />
@@ -102,7 +100,7 @@ function KeyboardLayoutDialog(props) {
             type="text"
             fullWidth
             disabled={keyboardLayoutName !== "Custom"}
-            value={keyboardLayout[layoutKey]}
+            value={shortcuts}
             onChange={handleChangeCustom}
           />
         </div>
