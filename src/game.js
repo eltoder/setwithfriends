@@ -129,14 +129,13 @@ export function cardTraits(card) {
 export function findSet(deck, gameMode = "normal", old) {
   const setType = modes[gameMode].setType;
   if (setType === "Set") {
-    const deckSet = new Set(
-      gameMode === "setchain" && old.length > 0 ? old : deck
-    );
-    for (let i = 0; i < deck.length; i++) {
-      for (let j = i + 1; j < deck.length; j++) {
-        const c = conjugateCard(deck[i], deck[j]);
+    const deckSet = new Set(deck);
+    const first = gameMode === "setchain" && old.length > 0 ? old : deck;
+    for (let i = 0; i < first.length; i++) {
+      for (let j = first === deck ? i + 1 : 0; j < deck.length; j++) {
+        const c = conjugateCard(first[i], deck[j]);
         if (deckSet.has(c)) {
-          return [c, deck[i], deck[j]];
+          return [first[i], deck[j], c];
         }
       }
     }
