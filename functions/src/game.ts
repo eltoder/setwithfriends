@@ -42,15 +42,6 @@ function generateDeck(gameMode: GameMode) {
   return new Set(deck);
 }
 
-/** Check if three cards form a set. */
-export function checkSet(a: string, b: string, c: string) {
-  for (let i = 0; i < a.length; i++) {
-    if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3 !== 0)
-      return null;
-  }
-  return [a, b, c];
-}
-
 /** Returns the unique card c such that {a, b, c} form a set. */
 function conjugateCard(a: string, b: string) {
   const zeroCode = "0".charCodeAt(0);
@@ -62,6 +53,15 @@ function conjugateCard(a: string, b: string) {
     c += String.fromCharCode(zeroCode + lastNum);
   }
   return c;
+}
+
+/** Check if three cards form a set. */
+export function checkSetNormal(a: string, b: string, c: string) {
+  for (let i = 0; i < a.length; i++) {
+    if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3 !== 0)
+      return null;
+  }
+  return [a, b, c];
 }
 
 /** Check if four cards form an ultraset */
@@ -145,6 +145,15 @@ export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
   return null;
 }
 
+/** Get the array of cards from a GameEvent */
+function cardsFromEvent(event: GameEvent) {
+  const cards = [event.c1, event.c2, event.c3];
+  if (event.c4) cards.push(event.c4);
+  if (event.c5) cards.push(event.c5);
+  if (event.c6) cards.push(event.c6);
+  return cards;
+}
+
 /** Check if all cards are distinct */
 function hasDuplicates(cards: string[]) {
   for (let i = 0; i < cards.length; i++) {
@@ -171,10 +180,7 @@ function replayEventCommon(
   event: GameEvent,
   history: GameEvent[]
 ) {
-  const cards = [event.c1, event.c2, event.c3];
-  if (event.c4) cards.push(event.c4);
-  if (event.c5) cards.push(event.c5);
-  if (event.c6) cards.push(event.c6);
+  const cards = cardsFromEvent(event);
   if (hasDuplicates(cards) || !validCards(deck, cards)) return false;
   deleteCards(deck, cards);
   return true;
@@ -186,14 +192,13 @@ function replayEventChain(
   event: GameEvent,
   history: GameEvent[]
 ) {
-  const { c1, c2, c3 } = event;
-  const allCards = [c1, c2, c3];
+  const allCards = cardsFromEvent(event);
   const cards = history.length === 0 ? allCards : allCards.slice(1);
   if (hasDuplicates(allCards) || !validCards(deck, cards)) return false;
   if (history.length) {
-    // One card (c1) should be taken from the previous set
-    const prev = history[history.length - 1];
-    if (![prev.c1, prev.c2, prev.c3].includes(c1)) return false;
+    // The first card should be taken from the previous set
+    const prev = cardsFromEvent(history[history.length - 1]);
+    if (!prev.includes(allCards[0])) return false;
   }
   deleteCards(deck, cards);
   return true;
@@ -273,11 +278,10 @@ export function replayEvents(
     }
   }
 
-  let lastSet: string[] = [];
-  if (gameMode === "setchain" && history.length > 0) {
-    const lastEvent = history[history.length - 1];
-    lastSet = [lastEvent.c1, lastEvent.c2, lastEvent.c3];
-  }
+  const lastSet =
+    gameMode === "setchain" && history.length > 0
+      ? cardsFromEvent(history[history.length - 1])
+      : [];
 
   return { lastSet, deck, finalTime, scores };
 }

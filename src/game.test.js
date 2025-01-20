@@ -1,6 +1,6 @@
 import {
-  checkSet,
   checkSetGhost,
+  checkSetNormal,
   checkSetUltra,
   conjugateCard,
   findSet,
@@ -19,13 +19,13 @@ const verifySet = (cards) => {
 };
 
 it("checks sets", () => {
-  verifySet(checkSet("0001", "0002", "0000"));
-  expect(checkSet("0001", "0002", "0020")).toBe(null);
-  expect(checkSet("0010", "0002", "0000")).toBe(null);
-  verifySet(checkSet("1201", "1002", "1100"));
-  expect(checkSet("1221", "1002", "1100")).toBe(null);
-  verifySet(checkSet("0112", "0112", "0112"));
-  expect(checkSet("0112", "0122", "0112")).toBe(null);
+  verifySet(checkSetNormal("0001", "0002", "0000"));
+  expect(checkSetNormal("0001", "0002", "0020")).toBe(null);
+  expect(checkSetNormal("0010", "0002", "0000")).toBe(null);
+  verifySet(checkSetNormal("1201", "1002", "1100"));
+  expect(checkSetNormal("1221", "1002", "1100")).toBe(null);
+  verifySet(checkSetNormal("0112", "0112", "0112"));
+  expect(checkSetNormal("0112", "0122", "0112")).toBe(null);
 });
 
 const verifyUltra = (cards) => {

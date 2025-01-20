@@ -45,8 +45,8 @@ function HelpPage() {
           <SetCard value="0202" />
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Set is played with a special deck of 3×3×3×3 = 81 cards. You can see
-          some examples of Set cards above. Each card has four features that
+          Set is played with a special deck of 3<sup>4</sup> = 81 cards. You can
+          see some examples of Set cards above. Each card has four features that
           distinguish it from the others: color, shape, shading, and number. For
           each feature, there are three variants, as shown in the example.
         </Typography>
@@ -291,7 +291,7 @@ function HelpPage() {
           are dealt instead of 12.
         </Typography>
         <Typography variant="body1" gutterBottom>
-          With 5 features, there are 3×3×3×3×3 = 243 cards in the deck. Be
+          With 5 features, there are 3<sup>5</sup> = 243 cards in the deck. Be
           prepared for a long game.
         </Typography>
         <Typography variant="h6" gutterBottom>

@@ -26,7 +26,9 @@ import Chat from "../components/Chat";
 import { SettingsContext, UserContext } from "../context";
 import {
   addCard,
+  cardsFromEvent,
   computeState,
+  eventFromCards,
   findSet,
   generateDeck,
   hasHint,
@@ -143,9 +145,20 @@ function GamePage({ match }) {
       (gameData?.seed ? generateDeck(gameMode, gameData.seed) : null)
     );
   }, [gameMode, gameData?.deck, gameData?.seed]);
-  const { current, scores, lastEvents, history, boardSize } = useMemo(() => {
-    return gameData ? computeState({ ...gameData, deck }, gameMode) : {};
-  }, [gameMode, gameData, deck]);
+
+  const { current, scores, lastEvents, history, board, answer, lastSet } =
+    useMemo(() => {
+      if (!gameData) return {};
+      const state = computeState({ ...gameData, deck }, gameMode);
+      const { history, current, boardSize } = state;
+      const lastSet =
+        gameMode === "setchain" && history.length > 0
+          ? cardsFromEvent(history[history.length - 1])
+          : [];
+      const board = current.slice(0, boardSize);
+      const answer = findSet(board, gameMode, lastSet);
+      return { ...state, board, answer, lastSet };
+    }, [gameMode, gameData, deck]);
 
   if (redirect) return <Redirect push to={redirect} />;
 
@@ -177,8 +190,7 @@ function GamePage({ match }) {
   );
 
   function handleSet(cards) {
-    const fields = ["c1", "c2", "c3", "c4", "c5", "c6"];
-    const event = Object.fromEntries(cards.map((c, i) => [fields[i], c]));
+    const event = eventFromCards(cards);
     firebase.analytics().logEvent("find_set", event);
     firebase
       .database()
@@ -190,13 +202,6 @@ function GamePage({ match }) {
       });
   }
 
-  let lastSet = [];
-  if (gameMode === "setchain" && history.length > 0) {
-    const { c1, c2, c3 } = history[history.length - 1];
-    lastSet = [c1, c2, c3];
-  }
-  const board = current.slice(0, boardSize);
-  const answer = findSet(board, gameMode, lastSet);
   const hint = hasHint(game) && answer ? answer.slice(0, numHints) : null;
   const gameEnded = !answer || game.status === "done";
   if (
