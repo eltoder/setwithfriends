@@ -38,7 +38,7 @@ const useStyles = makeStyles((theme) => ({
 function BoardLayoutDialog(props) {
   const { open, onClose, title } = props;
   const classes = useStyles();
-  const deck = useMemo(() => generateDeck("normal", "local"), []);
+  const board = useMemo(() => generateDeck("normal", "local").slice(0, 12), []);
 
   const {
     layoutOrientation,
@@ -59,14 +59,7 @@ function BoardLayoutDialog(props) {
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <div className={classes.gameBoard}>
-          <Game
-            gameMode="normal"
-            deck={deck}
-            boardSize={12}
-            showRemaining={false}
-            onClick={() => {}}
-            onClear={() => {}}
-          />
+          <Game board={board} onClick={() => {}} onClear={() => {}} />
         </div>
         <div className={classes.controlsRow}>
           <FormControl className={classes.formControl}>

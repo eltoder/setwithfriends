@@ -195,7 +195,8 @@ function GamePage({ match }) {
     const { c1, c2, c3 } = history[history.length - 1];
     lastSet = [c1, c2, c3];
   }
-  const answer = findSet(current.slice(0, boardSize), gameMode, lastSet);
+  const board = current.slice(0, boardSize);
+  const answer = findSet(board, gameMode, lastSet);
   const hint = hasHint(game) && answer ? answer.slice(0, numHints) : null;
   const gameEnded = !answer || game.status === "done";
   if (
@@ -395,15 +396,14 @@ function GamePage({ match }) {
 
             {/* Game area itself */}
             <Game
-              deck={current}
-              boardSize={boardSize}
-              faceDown={gameMode === "memory"}
+              board={board}
               selected={selected}
               onClick={handleClick}
               onClear={handleClear}
-              gameMode={gameMode}
               lastSet={lastSet}
               answer={hint}
+              remaining={current.length - board.length}
+              faceDown={gameMode === "memory"}
             />
           </Grid>
         </Box>
