@@ -70,9 +70,9 @@ function Game({
     }
   }
   const margin = Math.round(cardWidth * 0.035);
-  const rotateAmount = isHorizontal ? "90deg" : "0deg";
-  // NOTE: put rotate() into useTransition() instead of adding it to style
-  // outside to get a nice animation when the setting changes.
+  const rotateAmount = isHorizontal ? 90 : 0;
+  // NOTE: put rotate into useTransition() instead of adding it to the style
+  // outside to get a nice animation when cardOrientation changes.
   const cardProps = (card) => {
     const i = board.indexOf(card);
     let positionX, positionY;
@@ -98,7 +98,7 @@ function Game({
     return {
       left: positionX,
       top: positionY,
-      transform: `rotate(${rotateAmount})`,
+      rotate: rotateAmount,
       opacity: 1,
     };
   };
@@ -106,7 +106,7 @@ function Game({
     from: {
       left: -cardWidth,
       top: gameHeight / 2 - cardHeight / 2,
-      transform: `rotate(${rotateAmount})`,
+      rotate: rotateAmount,
       opacity: 0,
     },
     enter: cardProps,
@@ -114,7 +114,7 @@ function Game({
     leave: {
       left: gameWidth,
       top: gameHeight / 2 - cardHeight / 2,
-      transform: `rotate(${rotateAmount})`,
+      rotate: rotateAmount,
       opacity: 0,
     },
     config: {
@@ -199,6 +199,7 @@ function Game({
       ) : null}
       {transitions((style, card) => (
         <animated.div
+          key={card}
           style={{
             position: "absolute",
             zIndex: style.opacity.to((x) => (x === 1 ? "auto" : 1)),
@@ -220,7 +221,7 @@ function Game({
                 fontWeight: "bold",
               }}
             >
-              <span style={{ transform: `rotate(-${rotateAmount})` }}>
+              <span style={{ transform: `rotate(${-rotateAmount}deg)` }}>
                 {shortcuts[board.indexOf(card)]}
               </span>
             </div>

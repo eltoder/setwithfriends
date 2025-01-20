@@ -52,14 +52,6 @@ export function generateDeck(gameMode, seed) {
   return deck;
 }
 
-export function checkSet(a, b, c) {
-  for (let i = 0; i < a.length; i++) {
-    if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3 !== 0)
-      return null;
-  }
-  return [a, b, c];
-}
-
 /** Returns the unique card c such that {a, b, c} form a set. */
 export function conjugateCard(a, b) {
   const zeroCode = "0".charCodeAt(0);
@@ -71,6 +63,14 @@ export function conjugateCard(a, b) {
     c += String.fromCharCode(zeroCode + lastNum);
   }
   return c;
+}
+
+export function checkSetNormal(a, b, c) {
+  for (let i = 0; i < a.length; i++) {
+    if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3 !== 0)
+      return null;
+  }
+  return [a, b, c];
 }
 
 export function checkSetUltra(a, b, c, d) {
@@ -126,7 +126,7 @@ export function cardTraits(card) {
   };
 }
 
-export function findSet(deck, gameMode = "normal", old) {
+export function findSet(deck, gameMode, old) {
   const setType = modes[gameMode].setType;
   if (setType === "Set") {
     const deckSet = new Set(deck);
@@ -176,7 +176,20 @@ export function findSet(deck, gameMode = "normal", old) {
   return null;
 }
 
-function findBoardSize(deck, gameMode = "normal", minBoardSize = 12, old) {
+export function eventFromCards(cards) {
+  const fields = ["c1", "c2", "c3", "c4", "c5", "c6"];
+  return Object.fromEntries(cards.map((c, i) => [fields[i], c]));
+}
+
+export function cardsFromEvent(event) {
+  const cards = [event.c1, event.c2, event.c3];
+  if (event.c4) cards.push(event.c4);
+  if (event.c5) cards.push(event.c5);
+  if (event.c6) cards.push(event.c6);
+  return cards;
+}
+
+function findBoardSize(deck, gameMode, minBoardSize, old) {
   let len = Math.min(deck.length, minBoardSize);
   while (len < deck.length && !findSet(deck.slice(0, len), gameMode, old))
     len += 3 - (len % 3);
@@ -236,10 +249,7 @@ function updateBoard(internalGameState, cards, old) {
 
 function processEventCommon(internalGameState, event) {
   const { used } = internalGameState;
-  const cards = [event.c1, event.c2, event.c3];
-  if (event.c4) cards.push(event.c4);
-  if (event.c5) cards.push(event.c5);
-  if (event.c6) cards.push(event.c6);
+  const cards = cardsFromEvent(event);
   if (hasDuplicates(cards) || hasUsedCards(used, cards)) return;
   processValidEvent(internalGameState, event, cards);
   updateBoard(internalGameState, cards);
@@ -247,20 +257,19 @@ function processEventCommon(internalGameState, event) {
 
 function processEventChain(internalGameState, event) {
   const { used, history } = internalGameState;
-  const { c1, c2, c3 } = event;
-  const allCards = [c1, c2, c3];
+  const allCards = cardsFromEvent(event);
   const cards = history.length === 0 ? allCards : allCards.slice(1);
   if (hasDuplicates(allCards) || hasUsedCards(used, cards)) return;
   if (history.length) {
-    // One card (c1) should be taken from the previous set
-    const prev = history[history.length - 1];
-    if (![prev.c1, prev.c2, prev.c3].includes(c1)) return;
+    // The first card should be taken from the previous set
+    const prev = cardsFromEvent(history[history.length - 1]);
+    if (!prev.includes(allCards[0])) return;
   }
   processValidEvent(internalGameState, event, cards);
   updateBoard(internalGameState, cards, allCards);
 }
 
-export function computeState(gameData, gameMode = "normal") {
+export function computeState(gameData, gameMode) {
   if (!modes.hasOwnProperty(gameMode)) {
     throw new Error(`invalid gameMode: ${gameMode}`);
   }
@@ -281,7 +290,6 @@ export function computeState(gameData, gameMode = "normal") {
     lastEvents,
     gameMode,
     minBoardSize,
-    // Initial deck split
     boardSize: findBoardSize(current, gameMode, minBoardSize, []),
   };
 
@@ -328,7 +336,7 @@ export const modes = {
     setType: "Set",
     traits: 4,
     minBoardSize: 12,
-    checkFn: checkSet,
+    checkFn: checkSetNormal,
     processFn: processEventCommon,
   },
   junior: {
@@ -339,7 +347,7 @@ export const modes = {
     setType: "Set",
     traits: 3,
     minBoardSize: 9,
-    checkFn: checkSet,
+    checkFn: checkSetNormal,
     processFn: processEventCommon,
   },
   setchain: {
@@ -349,7 +357,7 @@ export const modes = {
     setType: "Set",
     traits: 4,
     minBoardSize: 12,
-    checkFn: checkSet,
+    checkFn: checkSetNormal,
     processFn: processEventChain,
   },
   ultraset: {
@@ -381,7 +389,7 @@ export const modes = {
     setType: "Set",
     traits: 5,
     minBoardSize: 16,
-    checkFn: checkSet,
+    checkFn: checkSetNormal,
     processFn: processEventCommon,
   },
   ghostset: {
@@ -402,7 +410,7 @@ export const modes = {
     setType: "Set",
     traits: 4,
     minBoardSize: 21,
-    checkFn: checkSet,
+    checkFn: checkSetNormal,
     processFn: processEventCommon,
   },
 };
