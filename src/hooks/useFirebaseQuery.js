@@ -11,7 +11,7 @@ function useFirebaseQuery(query) {
     if (!query) return;
 
     function update() {
-      clearInterval(timer.current);
+      clearTimeout(timer.current);
       timer.current = setTimeout(() => {
         setValue({ ...state.current });
       });
@@ -34,7 +34,7 @@ function useFirebaseQuery(query) {
       query.off("child_added", childAddedOrChanged);
       query.off("child_removed", childRemoved);
       query.off("child_changed", childAddedOrChanged);
-      clearInterval(timer.current);
+      clearTimeout(timer.current);
       state.current = {};
       setValue({});
     };

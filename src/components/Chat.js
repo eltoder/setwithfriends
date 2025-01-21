@@ -49,6 +49,7 @@ const useStyles = makeStyles((theme) => ({
     flexGrow: 1,
     overflowWrap: "anywhere",
     padding: "0 4px 4px 4px",
+    scrollBehavior: "smooth",
   },
   vertIcon: {
     marginLeft: "auto",
