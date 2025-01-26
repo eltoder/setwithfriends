@@ -98,14 +98,15 @@ export function checkSetGhost(a, b, c, d, e, f) {
 export function addCard(deck, card, gameMode, lastSet) {
   const setType = modes[gameMode].setType;
   const chain = modes[gameMode].chain;
+  const doChain = chain && lastSet.length > 0;
   const setSize = setTypes[setType].size;
   // Put cards taken from the lastSet at the start
   const cards =
-    chain && lastSet.includes(card) ? [card, ...deck] : [...deck, card];
+    doChain && lastSet.includes(card) ? [card, ...deck] : [...deck, card];
   if (cards.length < setSize) {
     return { kind: "pending", cards };
   }
-  if (chain && lastSet.length > 0) {
+  if (doChain) {
     const fromLast = cards.reduce((s, c) => s + lastSet.includes(c), 0);
     if (fromLast !== chain) {
       const noun = chain > 1 ? "cards" : "card";
@@ -116,7 +117,7 @@ export function addCard(deck, card, gameMode, lastSet) {
       };
     }
   }
-  const set = setTypes[setType].checkFn(...cards, chain > 0);
+  const set = setTypes[setType].checkFn(...cards, doChain);
   if (!set) {
     return { kind: "error", cards, error: `Not a ${setType}` };
   }
