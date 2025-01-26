@@ -22,6 +22,7 @@ import ColorChoiceDialog from "./ColorChoiceDialog";
 import BoardLayoutDialog from "./BoardLayoutDialog";
 import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
+import snakeImage from "../assets/snake.png";
 
 function Navbar({
   themeType,
@@ -73,6 +74,15 @@ function Navbar({
           <InternalLink underline="none" color="inherit" to="/">
             Set with Friends
           </InternalLink>
+          <img
+            style={{
+              height: "1.1em",
+              verticalAlign: "text-top",
+              marginLeft: "0.1em",
+            }}
+            alt="It's a snake"
+            src={snakeImage}
+          />
         </Typography>
         <Typography
           variant="subtitle1"
