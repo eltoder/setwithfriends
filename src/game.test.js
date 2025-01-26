@@ -38,6 +38,8 @@ it("checks ultrasets", () => {
   verifyUltra(checkSetUltra("0001", "0002", "1202", "2101"));
   verifyUltra(checkSetUltra("1202", "0001", "0002", "2101"));
   verifyUltra(checkSetUltra("1202", "0001", "2101", "0002"));
+  expect(checkSetUltra("1202", "0001", "0002", "2101", true)).toBe(null);
+  expect(checkSetUltra("1202", "0001", "2101", "0002", true)).toBe(null);
 
   expect(checkSetUltra("0000", "1111", "2222", "1212")).toBe(null);
   expect(checkSetUltra("0000", "1111", "1010", "1212")).toBe(null);
@@ -88,18 +90,34 @@ describe("findSet()", () => {
   });
 
   it("can find set-chains", () => {
-    expect(
-      findSet(["0112", "0111", "0110"], "setchain", ["1200", "0012", "2121"])
-    ).toBe(null);
-    expect(
-      findSet(["0112", "0211", "0110"], "setchain", ["1200", "0012", "2121"])
-    ).toStrictEqual(["0012", "0211", "0110"]);
+    const old = ["1200", "0012", "2121"];
+    expect(findSet(["0112", "0111", "0110"], "setchain", old)).toBe(null);
+    verifySet(findSet(["0112", "0211", "0110"], "setchain", old));
   });
 
   it("can find ultrasets", () => {
-    verifyUltra(findSet(["1202", "0001", "0002", "2101"], "ultraset"));
-    verifyUltra(findSet(["1202", "0000", "0001", "0002", "2101"], "ultraset"));
-    expect(findSet(["1202", "0000", "0001", "0002"], "ultraset")).toBe(null);
+    for (const deck of [
+      ["1202", "0001", "0002", "2101"],
+      ["1202", "0000", "0001", "0002", "2101"],
+    ]) {
+      verifyUltra(findSet(deck, "ultraset"));
+      verifyUltra(findSet(deck, "ultrachain", []));
+    }
+    for (const deck of [
+      ["1202", "0000", "0001", "0002"],
+      ["1202", "0000", "0001", "0002", "2202"],
+    ]) {
+      expect(findSet(deck, "ultraset")).toBe(null);
+      expect(findSet(deck, "ultrachain", [])).toBe(null);
+    }
+  });
+
+  it("can find ultraset-chains", () => {
+    const old = ["1202", "0001", "0002", "2101"];
+    expect(findSet(["1001", "1221", "1010", "1212"], "ultrachain", old)).toBe(
+      null
+    );
+    verifyUltra(findSet(["1001", "1221", "1010", "2112"], "ultrachain", old));
   });
 
   it("can find ghostsets", () => {

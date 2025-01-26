@@ -73,8 +73,9 @@ export function checkSetNormal(a, b, c) {
   return [a, b, c];
 }
 
-export function checkSetUltra(a, b, c, d) {
+export function checkSetUltra(a, b, c, d, chain = false) {
   if (conjugateCard(a, b) === conjugateCard(c, d)) return [a, b, c, d];
+  if (chain) return null;
   if (conjugateCard(a, c) === conjugateCard(b, d)) return [a, c, b, d];
   if (conjugateCard(a, d) === conjugateCard(b, c)) return [a, d, b, c];
   return null;
@@ -95,18 +96,31 @@ export function checkSetGhost(a, b, c, d, e, f) {
 }
 
 export function addCard(deck, card, gameMode, lastSet) {
-  const setSize = setTypes[modes[gameMode].setType].size;
-  let res;
-  if (gameMode === "setchain" && lastSet.includes(card)) {
-    // Move the card from lastSet to the front and remove one if it was already there
-    res = [
-      card,
-      ...(deck.length > 0 && lastSet.includes(deck[0]) ? deck.slice(1) : deck),
-    ];
-  } else {
-    res = [...deck, card];
+  const setType = modes[gameMode].setType;
+  const chain = modes[gameMode].chain;
+  const setSize = setTypes[setType].size;
+  // Put cards taken from the lastSet at the start
+  const cards =
+    chain && lastSet.includes(card) ? [card, ...deck] : [...deck, card];
+  if (cards.length < setSize) {
+    return { kind: "pending", cards };
   }
-  return [res, res.length === setSize];
+  if (chain && lastSet.length > 0) {
+    const fromLast = cards.reduce((s, c) => s + lastSet.includes(c), 0);
+    if (fromLast !== chain) {
+      const noun = chain > 1 ? "cards" : "card";
+      return {
+        kind: "error",
+        cards,
+        error: `${chain} ${noun} must be from the previous set`,
+      };
+    }
+  }
+  const set = setTypes[setType].checkFn(...cards, chain > 0);
+  if (!set) {
+    return { kind: "error", cards, error: `Not a ${setType}` };
+  }
+  return { kind: "set", cards: set, setType };
 }
 
 export function removeCard(deck, card) {
@@ -126,47 +140,61 @@ export function cardTraits(card) {
   };
 }
 
-export function findSet(deck, gameMode, old) {
-  const setType = modes[gameMode].setType;
-  if (setType === "Set") {
-    const deckSet = new Set(deck);
-    const first = gameMode === "setchain" && old.length > 0 ? old : deck;
-    for (let i = 0; i < first.length; i++) {
-      for (let j = first === deck ? i + 1 : 0; j < deck.length; j++) {
-        const c = conjugateCard(first[i], deck[j]);
-        if (deckSet.has(c)) {
-          return [first[i], deck[j], c];
-        }
+function findSetNormal(deck, gameMode, old) {
+  const deckSet = new Set(deck);
+  const first = modes[gameMode].chain && old.length > 0 ? old : deck;
+  for (let i = 0; i < first.length; i++) {
+    for (let j = first === deck ? i + 1 : 0; j < deck.length; j++) {
+      const c = conjugateCard(first[i], deck[j]);
+      if (deckSet.has(c)) {
+        return [first[i], deck[j], c];
       }
     }
-  } else if (setType === "UltraSet") {
-    const conjugates = new Map();
-    for (let i = 0; i < deck.length; i++) {
-      for (let j = i + 1; j < deck.length; j++) {
-        const c = conjugateCard(deck[i], deck[j]);
-        if (conjugates.has(c)) {
-          return [...conjugates.get(c), deck[i], deck[j]];
-        }
+  }
+  return null;
+}
+
+function findSetUltra(deck, gameMode, old) {
+  const conjugates = new Map();
+  const prev = modes[gameMode].chain && old.length > 0 ? old : null;
+  if (prev) {
+    // Skip the last pair because it should have the same conjugate as the first
+    for (let i = 0; i < prev.length - 2; i++) {
+      for (let j = i + 1; j < prev.length; j++) {
+        conjugates.set(conjugateCard(prev[i], prev[j]), [prev[i], prev[j]]);
+      }
+    }
+  }
+  for (let i = 0; i < deck.length - 1; i++) {
+    for (let j = i + 1; j < deck.length; j++) {
+      const c = conjugateCard(deck[i], deck[j]);
+      if (conjugates.has(c)) {
+        return [...conjugates.get(c), deck[i], deck[j]];
+      }
+      if (!prev) {
         conjugates.set(c, [deck[i], deck[j]]);
       }
     }
-  } else if (setType === "GhostSet") {
-    for (let i = 0; i < deck.length; i++) {
-      for (let j = i + 1; j < deck.length; j++) {
-        for (let k = j + 1; k < deck.length; k++) {
-          for (let l = k + 1; l < deck.length; l++) {
-            for (let m = l + 1; m < deck.length; m++) {
-              for (let n = m + 1; n < deck.length; n++) {
-                const cand = checkSetGhost(
-                  deck[i],
-                  deck[j],
-                  deck[k],
-                  deck[l],
-                  deck[m],
-                  deck[n]
-                );
-                if (cand) return cand;
-              }
+  }
+  return null;
+}
+
+function findSetGhost(deck, gameMode, old) {
+  for (let i = 0; i < deck.length; i++) {
+    for (let j = i + 1; j < deck.length; j++) {
+      for (let k = j + 1; k < deck.length; k++) {
+        for (let l = k + 1; l < deck.length; l++) {
+          for (let m = l + 1; m < deck.length; m++) {
+            for (let n = m + 1; n < deck.length; n++) {
+              const cand = checkSetGhost(
+                deck[i],
+                deck[j],
+                deck[k],
+                deck[l],
+                deck[m],
+                deck[n]
+              );
+              if (cand) return cand;
             }
           }
         }
@@ -174,6 +202,10 @@ export function findSet(deck, gameMode, old) {
     }
   }
   return null;
+}
+
+export function findSet(deck, gameMode, old) {
+  return setTypes[modes[gameMode].setType].findFn(deck, gameMode, old);
 }
 
 export function eventFromCards(cards) {
@@ -247,23 +279,17 @@ function updateBoard(internalGameState, cards, old) {
   internalGameState.boardSize = findBoardSize(current, gameMode, minSize, old);
 }
 
-function processEventCommon(internalGameState, event) {
-  const { used } = internalGameState;
-  const cards = cardsFromEvent(event);
-  if (hasDuplicates(cards) || hasUsedCards(used, cards)) return;
-  processValidEvent(internalGameState, event, cards);
-  updateBoard(internalGameState, cards);
-}
-
-function processEventChain(internalGameState, event) {
-  const { used, history } = internalGameState;
+function processEvent(internalGameState, event) {
+  const { used, chain, history } = internalGameState;
   const allCards = cardsFromEvent(event);
-  const cards = history.length === 0 ? allCards : allCards.slice(1);
+  const cards = chain && history.length > 0 ? allCards.slice(chain) : allCards;
   if (hasDuplicates(allCards) || hasUsedCards(used, cards)) return;
-  if (history.length) {
-    // The first card should be taken from the previous set
+  if (chain && history.length > 0) {
+    // The first `chain` cards should be taken from the previous set
     const prev = cardsFromEvent(history[history.length - 1]);
-    if (!prev.includes(allCards[0])) return;
+    for (let i = 0; i < chain; i++) {
+      if (!prev.includes(allCards[i])) return;
+    }
   }
   processValidEvent(internalGameState, event, cards);
   updateBoard(internalGameState, cards, allCards);
@@ -290,6 +316,7 @@ export function computeState(gameData, gameMode) {
     lastEvents,
     gameMode,
     minBoardSize,
+    chain: modes[gameMode].chain,
     boardSize: findBoardSize(current, gameMode, minBoardSize, []),
   };
 
@@ -298,9 +325,8 @@ export function computeState(gameData, gameMode) {
     const events = Object.values(gameData.events).sort(
       (e1, e2) => e1.time - e2.time
     );
-    const processFn = modes[gameMode].processFn;
     for (const event of events) {
-      processFn(internalGameState, event);
+      processEvent(internalGameState, event);
     }
   }
 
@@ -323,9 +349,21 @@ export function hasHint(game) {
 }
 
 const setTypes = {
-  Set: { size: 3 },
-  UltraSet: { size: 4 },
-  GhostSet: { size: 6 },
+  Set: {
+    size: 3,
+    checkFn: checkSetNormal,
+    findFn: findSetNormal,
+  },
+  UltraSet: {
+    size: 4,
+    checkFn: checkSetUltra,
+    findFn: findSetUltra,
+  },
+  GhostSet: {
+    size: 6,
+    checkFn: checkSetGhost,
+    findFn: findSetGhost,
+  },
 };
 
 export const modes = {
@@ -335,9 +373,8 @@ export const modes = {
     description: "Find 3 cards that form a Set.",
     setType: "Set",
     traits: 4,
+    chain: 0,
     minBoardSize: 12,
-    checkFn: checkSetNormal,
-    processFn: processEventCommon,
   },
   junior: {
     name: "Junior",
@@ -346,9 +383,8 @@ export const modes = {
       "A simplified version that only uses cards with solid shading.",
     setType: "Set",
     traits: 3,
+    chain: 0,
     minBoardSize: 9,
-    checkFn: checkSetNormal,
-    processFn: processEventCommon,
   },
   setchain: {
     name: "Set-Chain",
@@ -356,9 +392,8 @@ export const modes = {
     description: "In every Set, you have to use 1 card from the previous Set.",
     setType: "Set",
     traits: 4,
+    chain: 1,
     minBoardSize: 12,
-    checkFn: checkSetNormal,
-    processFn: processEventChain,
   },
   ultraset: {
     name: "UltraSet",
@@ -367,9 +402,18 @@ export const modes = {
       "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
     setType: "UltraSet",
     traits: 4,
+    chain: 0,
     minBoardSize: 12,
-    checkFn: checkSetUltra,
-    processFn: processEventCommon,
+  },
+  ultrachain: {
+    name: "UltraSet-Chain",
+    color: "orange",
+    description:
+      "In every UltraSet, you have to use one pair from the previous Set.",
+    setType: "UltraSet",
+    traits: 4,
+    chain: 2,
+    minBoardSize: 12,
   },
   ultra9: {
     name: "Ultra9",
@@ -378,9 +422,8 @@ export const modes = {
       "Same as UltraSet, but only 9 cards are dealt at a time, unless they don't contain any sets.",
     setType: "UltraSet",
     traits: 4,
+    chain: 0,
     minBoardSize: 9,
-    checkFn: checkSetUltra,
-    processFn: processEventCommon,
   },
   megaset: {
     name: "MegaSet",
@@ -388,9 +431,8 @@ export const modes = {
     description: "Each card has 5 traits instead of 4.",
     setType: "Set",
     traits: 5,
+    chain: 0,
     minBoardSize: 16,
-    checkFn: checkSetNormal,
-    processFn: processEventCommon,
   },
   ghostset: {
     name: "GhostSet",
@@ -399,9 +441,8 @@ export const modes = {
       "Find 3 disjoint pairs of cards such that the cards that complete them to Sets themselves form a Set.",
     setType: "GhostSet",
     traits: 4,
+    chain: 0,
     minBoardSize: 10,
-    checkFn: checkSetGhost,
-    processFn: processEventCommon,
   },
   memory: {
     name: "Memory",
@@ -409,8 +450,7 @@ export const modes = {
     description: "Cards are dealt face down and are turned up 3 at a time.",
     setType: "Set",
     traits: 4,
+    chain: 0,
     minBoardSize: 21,
-    checkFn: checkSetNormal,
-    processFn: processEventCommon,
   },
 };
