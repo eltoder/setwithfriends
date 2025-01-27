@@ -69,6 +69,8 @@ export const darkTheme = createTheme({
       "@global": {
         body: {
           backgroundImage: `url("${snakesDarkImage}")`,
+          backgroundAttachment: "fixed",
+          backgroundPosition: "130px -30px",
         },
       },
     },
@@ -126,6 +128,8 @@ export const lightTheme = createTheme({
       "@global": {
         body: {
           backgroundImage: `url("${snakesLightImage}")`,
+          backgroundAttachment: "fixed",
+          backgroundPosition: "130px -30px",
         },
       },
     },
