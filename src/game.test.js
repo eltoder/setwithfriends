@@ -38,8 +38,6 @@ it("checks ultrasets", () => {
   verifyUltra(checkSetUltra("0001", "0002", "1202", "2101"));
   verifyUltra(checkSetUltra("1202", "0001", "0002", "2101"));
   verifyUltra(checkSetUltra("1202", "0001", "2101", "0002"));
-  expect(checkSetUltra("1202", "0001", "0002", "2101", true)).toBe(null);
-  expect(checkSetUltra("1202", "0001", "2101", "0002", true)).toBe(null);
 
   expect(checkSetUltra("0000", "1111", "2222", "1212")).toBe(null);
   expect(checkSetUltra("0000", "1111", "1010", "1212")).toBe(null);
@@ -114,10 +112,11 @@ describe("findSet()", () => {
 
   it("can find ultraset-chains", () => {
     const old = ["1202", "0001", "0002", "2101"];
-    expect(findSet(["1001", "1221", "1010", "1212"], "ultrachain", old)).toBe(
+    expect(findSet(["1001", "1221", "1010", "1210"], "ultrachain", old)).toBe(
       null
     );
     verifyUltra(findSet(["1001", "1221", "1010", "2112"], "ultrachain", old));
+    verifyUltra(findSet(["1001", "1221", "1010", "1220"], "ultrachain", old));
   });
 
   it("can find ghostsets", () => {

@@ -73,9 +73,8 @@ export function checkSetNormal(a, b, c) {
   return [a, b, c];
 }
 
-export function checkSetUltra(a, b, c, d, chain = false) {
+export function checkSetUltra(a, b, c, d) {
   if (conjugateCard(a, b) === conjugateCard(c, d)) return [a, b, c, d];
-  if (chain) return null;
   if (conjugateCard(a, c) === conjugateCard(b, d)) return [a, c, b, d];
   if (conjugateCard(a, d) === conjugateCard(b, c)) return [a, d, b, c];
   return null;
@@ -98,15 +97,12 @@ export function checkSetGhost(a, b, c, d, e, f) {
 export function addCard(deck, card, gameMode, lastSet) {
   const setType = modes[gameMode].setType;
   const chain = modes[gameMode].chain;
-  const doChain = chain && lastSet.length > 0;
   const setSize = setTypes[setType].size;
-  // Put cards taken from the lastSet at the start
-  const cards =
-    doChain && lastSet.includes(card) ? [card, ...deck] : [...deck, card];
+  const cards = [...deck, card];
   if (cards.length < setSize) {
     return { kind: "pending", cards };
   }
-  if (doChain) {
+  if (chain && lastSet.length > 0) {
     const fromLast = cards.reduce((s, c) => s + lastSet.includes(c), 0);
     if (fromLast !== chain) {
       const noun = chain > 1 ? "cards" : "card";
@@ -117,7 +113,7 @@ export function addCard(deck, card, gameMode, lastSet) {
       };
     }
   }
-  const set = setTypes[setType].checkFn(...cards, doChain);
+  const set = setTypes[setType].checkFn(...cards);
   if (!set) {
     return { kind: "error", cards, error: `Not a ${setType}` };
   }
@@ -156,24 +152,25 @@ function findSetNormal(deck, gameMode, old) {
 }
 
 function findSetUltra(deck, gameMode, old) {
-  const conjugates = new Map();
-  const prev = modes[gameMode].chain && old.length > 0 ? old : null;
-  if (prev) {
-    // Skip the last pair because it should have the same conjugate as the first
-    for (let i = 0; i < prev.length - 2; i++) {
-      for (let j = i + 1; j < prev.length; j++) {
-        conjugates.set(conjugateCard(prev[i], prev[j]), [prev[i], prev[j]]);
-      }
-    }
+  const cutoff = modes[gameMode].chain ? old.length : 0;
+  let cards, conjugates;
+  if (cutoff > 0) {
+    cards = old.concat(deck);
+    conjugates = [new Map(), null, null, null].fill(new Map(), 1, 3);
+  } else {
+    cards = deck;
+    conjugates = Array(4).fill(new Map());
   }
-  for (let i = 0; i < deck.length - 1; i++) {
-    for (let j = i + 1; j < deck.length; j++) {
-      const c = conjugateCard(deck[i], deck[j]);
-      if (conjugates.has(c)) {
-        return [...conjugates.get(c), deck[i], deck[j]];
+  for (let i = 0; i < cards.length - 1; i++) {
+    for (let j = i + 1; j < cards.length; j++) {
+      const c = conjugateCard(cards[i], cards[j]);
+      const idx = (+(i < cutoff) << 1) | +(j < cutoff);
+      const res = conjugates[idx] && conjugates[idx].get(c);
+      if (res) {
+        return [...res, cards[i], cards[j]];
       }
-      if (!prev) {
-        conjugates.set(c, [deck[i], deck[j]]);
+      if (conjugates[3 - idx]) {
+        conjugates[3 - idx].set(c, [cards[i], cards[j]]);
       }
     }
   }
@@ -283,15 +280,15 @@ function updateBoard(internalGameState, cards, old) {
 function processEvent(internalGameState, event) {
   const { used, chain, history } = internalGameState;
   const allCards = cardsFromEvent(event);
-  const cards = chain && history.length > 0 ? allCards.slice(chain) : allCards;
-  if (hasDuplicates(allCards) || hasUsedCards(used, cards)) return;
+  let cards;
   if (chain && history.length > 0) {
-    // The first `chain` cards should be taken from the previous set
     const prev = cardsFromEvent(history[history.length - 1]);
-    for (let i = 0; i < chain; i++) {
-      if (!prev.includes(allCards[i])) return;
-    }
+    cards = allCards.filter((c) => !prev.includes(c));
+    if (allCards.length - cards.length !== chain) return;
+  } else {
+    cards = allCards;
   }
+  if (hasDuplicates(allCards) || hasUsedCards(used, cards)) return;
   processValidEvent(internalGameState, event, cards);
   updateBoard(internalGameState, cards, allCards);
 }
