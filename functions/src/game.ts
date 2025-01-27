@@ -74,15 +74,8 @@ export function checkSetNormal(a: string, b: string, c: string) {
 }
 
 /** Check if four cards form an ultraset */
-export function checkSetUltra(
-  a: string,
-  b: string,
-  c: string,
-  d: string,
-  chain: boolean = false
-) {
+export function checkSetUltra(a: string, b: string, c: string, d: string) {
   if (conjugateCard(a, b) === conjugateCard(c, d)) return [a, b, c, d];
-  if (chain) return null;
   if (conjugateCard(a, c) === conjugateCard(b, d)) return [a, c, b, d];
   if (conjugateCard(a, d) === conjugateCard(b, c)) return [a, d, b, c];
   return null;
@@ -125,24 +118,25 @@ function findSetNormal(deck: string[], gameMode: GameMode, old?: string[]) {
 }
 
 function findSetUltra(deck: string[], gameMode: GameMode, old?: string[]) {
-  const conjugates: Map<string, [string, string]> = new Map();
-  const prev = modes[gameMode].chain && old!.length > 0 ? old! : null;
-  if (prev) {
-    // Skip the last pair because it should have the same conjugate as the first
-    for (let i = 0; i < prev.length - 2; i++) {
-      for (let j = i + 1; j < prev.length; j++) {
-        conjugates.set(conjugateCard(prev[i], prev[j]), [prev[i], prev[j]]);
-      }
-    }
+  const cutoff = modes[gameMode].chain ? old!.length : 0;
+  let cards, conjugates: Array<Map<string, [string, string]> | null>;
+  if (cutoff > 0) {
+    cards = old!.concat(deck);
+    conjugates = [new Map(), null, null, null].fill(new Map(), 1, 3);
+  } else {
+    cards = deck;
+    conjugates = Array(4).fill(new Map());
   }
-  for (let i = 0; i < deck.length - 1; i++) {
-    for (let j = i + 1; j < deck.length; j++) {
-      const c = conjugateCard(deck[i], deck[j]);
-      if (conjugates.has(c)) {
-        return [...conjugates.get(c)!, deck[i], deck[j]];
+  for (let i = 0; i < cards.length - 1; i++) {
+    for (let j = i + 1; j < cards.length; j++) {
+      const c = conjugateCard(cards[i], cards[j]);
+      const idx = (+(i < cutoff) << 1) | +(j < cutoff);
+      const res = conjugates[idx] && conjugates[idx].get(c);
+      if (res) {
+        return [...res, cards[i], cards[j]];
       }
-      if (!prev) {
-        conjugates.set(c, [deck[i], deck[j]]);
+      if (conjugates[3 - idx]) {
+        conjugates[3 - idx]!.set(c, [cards[i], cards[j]]);
       }
     }
   }
@@ -216,15 +210,15 @@ function replayEvent(
   history: GameEvent[]
 ) {
   const allCards = cardsFromEvent(event);
-  const cards = chain && history.length > 0 ? allCards.slice(chain) : allCards;
-  if (hasDuplicates(allCards) || !validCards(deck, cards)) return false;
+  let cards;
   if (chain && history.length > 0) {
-    // The first `chain` cards should be taken from the previous set
     const prev = cardsFromEvent(history[history.length - 1]);
-    for (let i = 0; i < chain; i++) {
-      if (!prev.includes(allCards[i])) return false;
-    }
+    cards = allCards.filter((c) => !prev.includes(c));
+    if (allCards.length - cards.length !== chain) return false;
+  } else {
+    cards = allCards;
   }
+  if (hasDuplicates(allCards) || !validCards(deck, cards)) return false;
   deleteCards(deck, cards);
   return true;
 }
