@@ -6,7 +6,7 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import SetCard from "./SetCard";
 import User from "./User";
-import { conjugateCard, modes } from "../game";
+import { cardsFromEvent, checkSetUltra, conjugateCard, modes } from "../game";
 import { formatTime } from "../util";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,6 +35,12 @@ const useStyles = makeStyles((theme) => ({
 function ChatCards({ item, gameMode, startedAt }) {
   const classes = useStyles();
   const setType = modes[gameMode].setType;
+  let cards = cardsFromEvent(item);
+  if (setType === "UltraSet") {
+    // Arrange cards in pairs and add the 5th card
+    cards = checkSetUltra(...cards) || cards.slice();
+    cards.splice(2, 0, conjugateCard(cards[0], cards[1]), null);
+  }
 
   return (
     <Tooltip arrow placement="left" title={formatTime(item.time - startedAt)}>
@@ -50,42 +56,19 @@ function ChatCards({ item, gameMode, startedAt }) {
             id={item.user}
           />
         </div>
-        {setType === "Set" && (
-          <div>
-            <SetCard size="sm" value={item.c1} />
-            <SetCard size="sm" value={item.c2} />
-            <SetCard size="sm" value={item.c3} />
-          </div>
-        )}
-        {setType === "UltraSet" && (
-          <div className={classes.setCards}>
-            <div className={classes.cardsColumn}>
-              <SetCard size="sm" value={item.c1} />
-              <SetCard size="sm" value={item.c2} />
-            </div>
-            <SetCard size="sm" value={conjugateCard(item.c1, item.c2)} />
-            <div className={classes.cardsColumn}>
-              <SetCard size="sm" value={item.c3} />
-              <SetCard size="sm" value={item.c4} />
-            </div>
-          </div>
-        )}
-        {setType === "GhostSet" && (
-          <div className={classes.setCards}>
-            <div className={classes.cardsColumn}>
-              <SetCard size="sm" value={item.c1} />
-              <SetCard size="sm" value={item.c4} />
-            </div>
-            <div className={classes.cardsColumn}>
-              <SetCard size="sm" value={item.c2} />
-              <SetCard size="sm" value={item.c5} />
-            </div>
-            <div className={classes.cardsColumn}>
-              <SetCard size="sm" value={item.c3} />
-              <SetCard size="sm" value={item.c6} />
-            </div>
-          </div>
-        )}
+        <div className={classes.setCards}>
+          {setType === "Set" &&
+            cards.map((card) => <SetCard size="sm" value={card} />)}
+          {(setType === "UltraSet" || setType === "GhostSet") &&
+            Array.from(Array(3), (_, i) => (
+              <div className={classes.cardsColumn}>
+                <SetCard size="sm" value={cards[i * 2]} />
+                {cards[i * 2 + 1] && (
+                  <SetCard size="sm" value={cards[i * 2 + 1]} />
+                )}
+              </div>
+            ))}
+        </div>
       </div>
     </Tooltip>
   );
