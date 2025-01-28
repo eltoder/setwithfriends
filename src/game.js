@@ -102,7 +102,8 @@ export function addCard(deck, card, gameMode, lastSet) {
   if (cards.length < setSize) {
     return { kind: "pending", cards };
   }
-  if (chain && lastSet.length > 0) {
+  const doChain = chain && lastSet.length > 0;
+  if (doChain) {
     const fromLast = cards.reduce((s, c) => s + lastSet.includes(c), 0);
     if (fromLast !== chain) {
       const noun = chain > 1 ? "cards" : "card";
@@ -116,6 +117,16 @@ export function addCard(deck, card, gameMode, lastSet) {
   const set = setTypes[setType].checkFn(...cards);
   if (!set) {
     return { kind: "error", cards, error: `Not a ${setType}` };
+  }
+  if (doChain) {
+    // Align with lastSet to reduce movement of cards
+    for (const [i, card] of lastSet.entries()) {
+      const idx = set.indexOf(card);
+      if (idx >= 0 && idx !== i) {
+        set[idx] = set[i];
+        set[i] = card;
+      }
+    }
   }
   return { kind: "set", cards: set, setType };
 }
