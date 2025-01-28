@@ -58,10 +58,10 @@ function ChatCards({ item, gameMode, startedAt }) {
         </div>
         <div className={classes.setCards}>
           {setType === "Set" &&
-            cards.map((card) => <SetCard size="sm" value={card} />)}
+            cards.map((card) => <SetCard key={card} size="sm" value={card} />)}
           {(setType === "UltraSet" || setType === "GhostSet") &&
             Array.from(Array(3), (_, i) => (
-              <div className={classes.cardsColumn}>
+              <div key={i} className={classes.cardsColumn}>
                 <SetCard size="sm" value={cards[i * 2]} />
                 {cards[i * 2 + 1] && (
                   <SetCard size="sm" value={cards[i * 2 + 1]} />
