@@ -2,8 +2,9 @@ import { createTheme } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
 import { indigo } from "@material-ui/core/colors";
 import { red } from "@material-ui/core/colors";
-import snakesLightImage from "./assets/snakes-light.jpg";
-import snakesDarkImage from "./assets/snakes-dark.jpg";
+import lanternsImage from "./assets/cny_lanterns.png";
+import lionImage from "./assets/cny_lion.png";
+import snakeImage from "./assets/cny_big_snake.png";
 
 export const darkTheme = createTheme({
   palette: {
@@ -68,9 +69,16 @@ export const darkTheme = createTheme({
     MuiCssBaseline: {
       "@global": {
         body: {
-          backgroundImage: `url("${snakesDarkImage}")`,
+          backgroundImage: `
+            url("${lanternsImage}"),
+            url("${lionImage}"),
+            url("${snakeImage}"),
+            radial-gradient(circle at top right, rgba(112,22,22,1) 0%, rgba(22,22,22,1) 80%)
+          `,
+          backgroundPosition: "top right, bottom right, bottom left, 0 0",
+          backgroundSize: "min(50%, 25em), 30%, 80%, auto",
+          backgroundRepeat: "no-repeat",
           backgroundAttachment: "fixed",
-          backgroundPosition: "130px -30px",
         },
       },
     },
@@ -127,9 +135,16 @@ export const lightTheme = createTheme({
     MuiCssBaseline: {
       "@global": {
         body: {
-          backgroundImage: `url("${snakesLightImage}")`,
+          backgroundImage: `
+            url("${lanternsImage}"),
+            url("${lionImage}"),
+            url("${snakeImage}"),
+            radial-gradient(circle at top right, rgba(250, 250, 250, 1) 0%, rgba(250, 210, 210, 1) 80%)
+          `,
+          backgroundPosition: "top right, bottom right, bottom left, 0 0",
+          backgroundSize: "min(50%, 25em), 30%, 80%, auto",
+          backgroundRepeat: "no-repeat",
           backgroundAttachment: "fixed",
-          backgroundPosition: "130px -30px",
         },
       },
     },

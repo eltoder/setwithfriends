@@ -22,7 +22,7 @@ import ColorChoiceDialog from "./ColorChoiceDialog";
 import BoardLayoutDialog from "./BoardLayoutDialog";
 import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
 import AccountOptionsDialog from "./AccountOptionsDialog";
-import snakeImage from "../assets/snake.png";
+import snakeImage from "../assets/cny_snake.png";
 
 function Navbar({
   themeType,
