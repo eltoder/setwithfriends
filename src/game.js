@@ -98,7 +98,12 @@ export function addCard(deck, card, gameMode, lastSet) {
   const setType = modes[gameMode].setType;
   const chain = modes[gameMode].chain;
   const setSize = setTypes[setType].size;
-  const cards = [...deck, card];
+  // Special case for the regular set-chain modes: if you select a second card
+  // from lastSet, we unselect the first one
+  const cards =
+    chain === 1 && lastSet.includes(card)
+      ? [...deck.filter((c) => !lastSet.includes(c)), card]
+      : [...deck, card];
   if (cards.length < setSize) {
     return { kind: "pending", cards };
   }
