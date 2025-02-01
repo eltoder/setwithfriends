@@ -7,6 +7,7 @@ import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
 import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
+import FitnessCenterIcon from "@material-ui/icons/FitnessCenter";
 import StarIcon from "@material-ui/icons/Star";
 import amber from "@material-ui/core/colors/amber";
 import grey from "@material-ui/core/colors/grey";
@@ -75,11 +76,12 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
             <TableCell>Host</TableCell>
             <TableCell>Players</TableCell>
             <TableCell>Mode</TableCell>
-            <TableCell>Num. Sets</TableCell>
+            <TableCell>Sets</TableCell>
             <TableCell>Length</TableCell>
             <TableCell className={classes.vanishingTableCell}>
               Created
             </TableCell>
+            <TableCell>Practice</TableCell>
             <TableCell>Won</TableCell>
           </TableRow>
         </TableHead>
@@ -106,10 +108,15 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                   </TableCell>
                   <TableCell>{game.scores[userId] || 0}</TableCell>
                   <TableCell>
-                    {formatTime(game.endedAt - game.startedAt)}
+                    {formatTime(
+                      game.endedAt - game.startedAt - (game.pauseTime ?? 0)
+                    )}
                   </TableCell>
                   <TableCell className={classes.vanishingTableCell}>
                     <ElapsedTime value={game.createdAt} />
+                  </TableCell>
+                  <TableCell>
+                    {game.enableHint && <FitnessCenterIcon fontSize="small" />}
                   </TableCell>
                   <TableCell>
                     {game.scores[userId] === game.topScore && (

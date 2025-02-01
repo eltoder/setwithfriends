@@ -8,6 +8,7 @@ import Paper from "@material-ui/core/Paper";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
+import FitnessCenterIcon from "@material-ui/icons/FitnessCenter";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 import SnoozeIcon from "@material-ui/icons/Snooze";
 import { useLocation, Link as RouterLink } from "react-router-dom";
@@ -42,18 +43,27 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function GameSidebar({ game, scores, leaderboard, endedAt }) {
+function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
   const classes = useStyles();
   const { pathname } = useLocation();
   const time = useMoment(500);
 
   const gameTime = endedAt || time;
+  const pauseTime =
+    (pause?.previous ?? 0) +
+    (pause?.start ? (pause.end ?? gameTime) - pause.start : 0);
 
   return (
     <Paper className={classes.sidebar}>
       <Subheading>
         {modes[game.mode].name}{" "}
         <span style={{ opacity: 0.4 }}>[{capitalizeFirst(game.access)}]</span>
+        {game.enableHint && (
+          <FitnessCenterIcon
+            fontSize="small"
+            style={{ verticalAlign: "text-bottom", marginLeft: "0.1em" }}
+          />
+        )}
       </Subheading>
       <Divider style={{ margin: "4px 0" }} />
       {/* Timer */}
@@ -62,7 +72,7 @@ function GameSidebar({ game, scores, leaderboard, endedAt }) {
         <Typography variant="h4" align="center">
           {/* Hide the sub-second time resolution while game is active to
           avoid stressing beginners. */}
-          {formatTime(gameTime - game.startedAt, !endedAt)}
+          {formatTime(gameTime - game.startedAt - pauseTime, !endedAt)}
         </Typography>
       </div>
       <Divider style={{ margin: "8px 0" }} />

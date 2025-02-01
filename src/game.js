@@ -353,15 +353,6 @@ export function computeState(gameData, gameMode) {
   };
 }
 
-/** Returns true if a game actually has hints enabled. */
-export function hasHint(game) {
-  return (
-    game.enableHint &&
-    game.access === "private" &&
-    Object.keys(game.users || {}).length === 1
-  );
-}
-
 const setTypes = {
   Set: {
     size: 3,

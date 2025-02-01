@@ -76,6 +76,10 @@ export const finishGame = functions.https.onCall(async (data, context) => {
       "The requested game has not yet ended."
     );
   }
+  const pause = gameData.child("pause").val();
+  const pauseTime =
+    (pause?.previous ?? 0) +
+    (pause?.start ? (pause.end ?? finalTime) - pause.start : 0);
 
   // The game has ended, so we attempt to do an atomic update.
   // Safety: Events can only be appended to the game, so the final time must remain the same.
@@ -94,6 +98,7 @@ export const finishGame = functions.https.onCall(async (data, context) => {
       }
       game.status = "done";
       game.endedAt = finalTime;
+      game.pauseTime = pauseTime || null;
       return game;
     });
 
@@ -230,6 +235,12 @@ export const createGame = functions.https.onCall(async (data, context) => {
       "invalid-argument",
       "The function must be called with " +
         'argument `access` given value "public" or "private".'
+    );
+  }
+  if (enableHint && access !== "private") {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      "Cannot enable practice mode in public games."
     );
   }
   if (!context.auth) {

@@ -8,28 +8,31 @@ import Typography from "@material-ui/core/Typography";
 
 import firebase from "../firebase";
 import useStorage from "../hooks/useStorage";
-import { hasHint, modes } from "../game";
+import { modes } from "../game";
 
 const useStyles = makeStyles(() => ({
   settings: { display: "flex", justifyContent: "space-evenly" },
 }));
 
-const hintTip =
-  "Practice mode where you can get hints to help you find Sets. " +
-  "Only available in private games with a single player, and not counted in total stats.";
+const practiceModeTip =
+  "Practice mode is only available in private games. " +
+  "Games in practice mode are not counted in stats. " +
+  "You are allowed to use hints and pause the game.";
 
 function GameSettings({ game, gameId, userId }) {
   const classes = useStyles();
   const gameMode = game.mode || "normal";
   const [, setGameMode] = useStorage("gameMode", "normal");
+  const [, setPracticeMode] = useStorage("practiceMode", "off");
 
   function handleChangeMode(event) {
     firebase.database().ref(`games/${gameId}/mode`).set(event.target.value);
     setGameMode(event.target.value);
   }
 
-  function toggleHint() {
+  function togglePracticeMode() {
     firebase.database().ref(`games/${gameId}/enableHint`).set(!game.enableHint);
+    setPracticeMode(!game.enableHint ? "on" : "off");
   }
 
   return (
@@ -50,15 +53,13 @@ function GameSettings({ game, gameId, userId }) {
           ))}
         </Select>
       </div>
-      <Tooltip arrow placement="left" title={hintTip}>
+      <Tooltip arrow placement="left" title={practiceModeTip}>
         <FormControlLabel
-          control={<Switch checked={hasHint(game)} onChange={toggleHint} />}
-          label="Enable Hints"
-          disabled={
-            userId !== game.host ||
-            game.access !== "private" ||
-            Object.keys(game.users || {}).length !== 1
+          control={
+            <Switch checked={game.enableHint} onChange={togglePracticeMode} />
           }
+          label="Practice Mode"
+          disabled={userId !== game.host || game.access !== "private"}
         />
       </Tooltip>
     </div>

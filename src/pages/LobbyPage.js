@@ -123,6 +123,7 @@ function LobbyPage() {
   const [waiting, setWaiting] = useState(false);
   const [tabValue, setTabValue] = useState(0);
   const [gameMode] = useStorage("gameMode", "normal");
+  const [practiceMode] = useStorage("practiceMode", "off");
 
   const gamesQuery = useMemo(() => {
     return firebase
@@ -174,7 +175,12 @@ function LobbyPage() {
     while (attempts < 5) {
       const gameId = generate({ words: 3 }).dashed;
       try {
-        await createGame({ gameId, access, mode: gameMode });
+        await createGame({
+          gameId,
+          access,
+          mode: gameMode,
+          enableHint: access === "private" && practiceMode === "on",
+        });
       } catch (error) {
         if (error.code === "functions/already-exists") {
           // We generated an already-used game ID
@@ -203,7 +209,7 @@ function LobbyPage() {
         <Box clone order={{ xs: 2, md: 1 }} className={classes.chatColumn}>
           <Grid item xs={12} sm={12} md={6}>
             <Paper className={classes.chatColumnPaper}>
-              <Chat title="Lobby Chat" messageLimit={50} showMessageTimes />
+              <Chat title="Lobby Chat" messageLimit={64} showMessageTimes />
             </Paper>
             <div className={classes.gameCounters}>
               <Typography variant="body2">
