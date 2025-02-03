@@ -30,6 +30,25 @@
     "gameData": {
       "$gameId": {
         ".read": "auth != null",
+        "hints": {
+          ".write": "auth != null && root.hasChild('games/' + $gameId + '/users/' + auth.uid) && root.child('games/' + $gameId + '/enableHint').val() == true && root.child('games/' + $gameId + '/status').val() == 'ingame'",
+          ".validate": "newData.isNumber() && auth.uid == root.child('games/' + $gameId + '/host').val()"
+        },
+        "pause": {
+          ".write": "auth != null && auth.uid == root.child('games/' + $gameId + '/host').val() && root.child('games/' + $gameId + '/enableHint').val() == true && root.child('games/' + $gameId + '/status').val() == 'ingame'",
+          "start": {
+            ".validate": "newData.isNumber() && (newData.val() == data.val() || newData.val() == now)"
+          },
+          "end": {
+            ".validate": "newData.isNumber() && newData.val() == now"
+          },
+          "previous": {
+            ".validate": "newData.isNumber() && (newData.val() == data.val() || newData.val() == (data.exists() ? data.val() : 0) + (data.parent().child('end').val() - data.parent().child('start').val()))"
+          },
+          "$other": {
+            ".validate": false
+          }
+        },
         "events": {
           "$eventId": {
             ".write": "!data.exists() && newData.exists() && auth != null && root.hasChild('games/' + $gameId + '/users/' + auth.uid) && root.child('games/' + $gameId + '/status').val() == 'ingame'",

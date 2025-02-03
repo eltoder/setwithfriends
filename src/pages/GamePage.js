@@ -31,7 +31,6 @@ import {
   eventFromCards,
   findSet,
   generateDeck,
-  hasHint,
   modes,
   removeCard,
 } from "../game";
@@ -62,10 +61,8 @@ const useStyles = makeStyles((theme) => ({
     width: "calc(100% - 16px)",
     height: "calc(100% - 16px)",
     borderRadius: 4,
-    background: "rgba(0, 0, 0, 0.5)",
     transition: "opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     zIndex: 2,
-    display: "flex",
     justifyContent: "center",
     alignItems: "center",
   },
@@ -86,19 +83,18 @@ function GamePage({ match }) {
   const [selected, setSelected] = useState([]);
   const clearSelected = useRef(false);
   const [snack, setSnack] = useState({ open: false });
-  const [numHints, setNumHints] = useState(0);
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
   const [playSuccess] = useSound(foundSfx);
   const [playFail] = useSound(failSfx);
 
-  // Reset card selection and number of hints on update to game data
+  // Reset card selection on update to game events
+  const numEvents = Object.keys(gameData?.events || {}).length;
   useEffect(() => {
     setSelected([]);
     clearSelected.current = false;
-    setNumHints(0);
-  }, [gameData]);
+  }, [numEvents]);
 
   // Terminate the game if no sets are remaining
   const [finished, setFinished] = useState({ gameId: "", error: "" });
@@ -135,6 +131,10 @@ function GamePage({ match }) {
     if (event.key === "q" && mod === "Control") {
       event.preventDefault();
       setRedirect("/");
+    }
+    if (event.key === "p" && mod === "Control") {
+      event.preventDefault();
+      togglePause();
     }
   });
 
@@ -182,6 +182,8 @@ function GamePage({ match }) {
     );
   }
 
+  const numHints = gameData.hints ?? 0;
+  const paused = gameData.pause?.start && !gameData.pause.end;
   const spectating = !game.users || !(user.id in game.users);
   const leaderboard = Object.keys(game.users).sort(
     (u1, u2) =>
@@ -192,6 +194,9 @@ function GamePage({ match }) {
   function handleSet(cards) {
     const event = eventFromCards(cards);
     firebase.analytics().logEvent("find_set", event);
+    if (numHints) {
+      firebase.database().ref(`gameData/${gameId}/hints`).remove();
+    }
     firebase
       .database()
       .ref(`gameData/${gameId}/events`)
@@ -202,7 +207,7 @@ function GamePage({ match }) {
       });
   }
 
-  const hint = hasHint(game) && answer ? answer.slice(0, numHints) : null;
+  const hint = game.enableHint && answer ? answer.slice(0, numHints) : null;
   const gameEnded = !answer || game.status === "done";
   if (
     !answer &&
@@ -215,7 +220,7 @@ function GamePage({ match }) {
   }
 
   function handleClick(card) {
-    if (game.status !== "ingame") {
+    if (gameEnded || paused) {
       return;
     }
     if (spectating) {
@@ -274,7 +279,26 @@ function GamePage({ match }) {
   }
 
   function handleAddHint() {
-    setNumHints((numHints) => numHints + 1);
+    firebase
+      .database()
+      .ref(`gameData/${gameId}/hints`)
+      .set(numHints + 1);
+  }
+
+  function togglePause() {
+    firebase
+      .database()
+      .ref(`gameData/${gameId}/pause`)
+      .transaction((pause) => {
+        pause ??= {};
+        if (pause.end) {
+          pause.previous = (pause.previous ?? 0) + (pause.end - pause.start);
+          pause.start = pause.end = null;
+        }
+        pause[pause.start ? "end" : "start"] =
+          firebase.database.ServerValue.TIMESTAMP;
+        return pause;
+      });
   }
 
   async function handlePlayAgain() {
@@ -340,19 +364,21 @@ function GamePage({ match }) {
         </Box>
         <Box clone order={{ xs: 1, sm: 2 }} position="relative">
           <Grid item xs={12} sm={8} md={6} className={classes.mainColumn}>
-            {/* Backdrop, to be active when the game ends */}
+            {/* Backdrop; active when the game ends or is paused */}
             <div
               className={classes.doneOverlay}
               style={{
-                opacity: gameEnded ? 1 : 0,
-                visibility: gameEnded ? "visible" : "hidden",
+                display: gameEnded || paused ? "flex" : "none",
+                background: gameEnded
+                  ? "rgba(0, 0, 0, 0.5)"
+                  : "rgba(0, 0, 0, 0.85)",
               }}
             >
               <Paper elevation={3} className={classes.doneModal}>
                 <Typography variant="h5" gutterBottom>
-                  The game has ended.
+                  The game {gameEnded ? "has ended" : "is paused"}.
                 </Typography>
-                {game.status !== "done" ? (
+                {!gameEnded ? null : game.status !== "done" ? (
                   finished.error || <Loading />
                 ) : (
                   <div>
@@ -400,31 +426,52 @@ function GamePage({ match }) {
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>
           <Grid item xs={12} md={3} className={classes.sideColumn}>
-            <GameSidebar
-              game={game}
-              scores={scores}
-              leaderboard={leaderboard}
-              endedAt={
-                game.status === "done"
-                  ? game.endedAt
-                  : !answer && history.length > 0
-                  ? history[history.length - 1].time
-                  : 0
-              }
-            />
-            <Box mt={1}>
-              {hasHint(game) && (
-                <Button
-                  size="large"
-                  variant="contained"
-                  fullWidth
-                  disabled={!hint || gameEnded || numHints === answer.length}
-                  onClick={handleAddHint}
-                >
-                  Add hint: {numHints}
-                </Button>
-              )}
+            <Box order={{ xs: 2, md: 1 }}>
+              <GameSidebar
+                game={game}
+                scores={scores}
+                leaderboard={leaderboard}
+                pause={gameData.pause}
+                endedAt={
+                  game.status === "done"
+                    ? game.endedAt
+                    : !answer && history.length > 0
+                    ? history[history.length - 1].time
+                    : 0
+                }
+              />
             </Box>
+            {game.enableHint && (
+              <Box order={{ xs: 1, md: 2 }}>
+                <Box mt={{ xs: 0, md: 2 }} mb={1}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    fullWidth
+                    disabled={user.id !== game.host || gameEnded}
+                    onClick={togglePause}
+                  >
+                    {paused ? "Resume" : "Pause"} Game
+                  </Button>
+                </Box>
+                <Box mb={2}>
+                  <Button
+                    size="large"
+                    variant="contained"
+                    fullWidth
+                    disabled={
+                      user.id !== game.host ||
+                      paused ||
+                      gameEnded ||
+                      numHints >= answer.length
+                    }
+                    onClick={handleAddHint}
+                  >
+                    Add hint: {numHints}
+                  </Button>
+                </Box>
+              </Box>
+            )}
           </Grid>
         </Box>
       </Grid>

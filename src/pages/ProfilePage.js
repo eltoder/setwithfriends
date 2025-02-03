@@ -19,7 +19,7 @@ import Loading from "../components/Loading";
 import firebase from "../firebase";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
-import { computeState, hasHint, modes } from "../game";
+import { computeState, modes } from "../game";
 import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {
@@ -81,7 +81,7 @@ function ProfilePage({ match }) {
       .database()
       .ref(`/userGames/${userId}`)
       .orderByValue()
-      .limitToLast(50);
+      .limitToLast(64);
     const update = (snapshot) => {
       query.off("value", update);
       setGames(snapshot.val() ?? {});
@@ -129,8 +129,7 @@ function ProfilePage({ match }) {
       if (
         game.status === "done" &&
         (modeVariant === "all" || (game.mode || "normal") === modeVariant) &&
-        datasetVariants[variant].filterFn(game) &&
-        !hasHint(game)
+        datasetVariants[variant].filterFn(game)
       ) {
         gamesData[gameIds[i]] = mergeGameData(game, gameDataVals[i]);
       }
