@@ -61,6 +61,7 @@ const useStyles = makeStyles((theme) => ({
     width: "calc(100% - 16px)",
     height: "calc(100% - 16px)",
     borderRadius: 4,
+    background: "rgba(0, 0, 0, 0.5)",
     transition: "opacity 225ms cubic-bezier(0.4, 0, 0.2, 1) 0ms",
     zIndex: 2,
     justifyContent: "center",
@@ -367,12 +368,7 @@ function GamePage({ match }) {
             {/* Backdrop; active when the game ends or is paused */}
             <div
               className={classes.doneOverlay}
-              style={{
-                display: gameEnded || paused ? "flex" : "none",
-                background: gameEnded
-                  ? "rgba(0, 0, 0, 0.5)"
-                  : "rgba(0, 0, 0, 0.85)",
-              }}
+              style={{ display: gameEnded || paused ? "flex" : "none" }}
             >
               <Paper elevation={3} className={classes.doneModal}>
                 <Typography variant="h5" gutterBottom>
@@ -420,7 +416,7 @@ function GamePage({ match }) {
               lastSet={lastSet}
               answer={hint}
               remaining={current.length - board.length}
-              faceDown={gameMode === "memory"}
+              faceDown={paused || gameMode === "memory"}
             />
           </Grid>
         </Box>

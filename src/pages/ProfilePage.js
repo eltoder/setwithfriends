@@ -95,7 +95,7 @@ function ProfilePage({ match }) {
   const [stats, loadingStats] = useStats(userId);
   const [redirect, setRedirect] = useState(null);
   const [variant, setVariant] = useState("all");
-  const [modeVariant, setModeVariant] = useState("normal");
+  const [modeVariant, setModeVariant] = useState("all");
 
   const handleClickGame = (gameId) => {
     setRedirect(`/room/${gameId}`);

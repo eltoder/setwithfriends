@@ -8,13 +8,13 @@
           ".validate": "newData.isNumber() && newData.val() == now"
         },
         "status": {
-          ".write": "auth != null && auth.uid == data.parent().child('host').val() && data.exists() && newData.exists()",
+          ".write": "auth != null && auth.uid == data.parent().child('host').val() && newData.exists()",
           ".validate": "newData.isString() && (data.val() == 'waiting' && newData.val() == 'ingame')"
         },
         "users": {
           "$userId": {
             ".write": "auth != null && auth.uid == $userId && data.parent().parent().child('status').val() == 'waiting' && !(root.hasChild('users/' + auth.uid + '/banned') && now < root.child('users/' + auth.uid + '/banned').val())",
-            ".validate": "!newData.exists() || (newData.isNumber() && newData.val() == now)"
+            ".validate": "newData.isNumber() && newData.val() == now"
           }
         },
         "mode": {
@@ -101,7 +101,7 @@
         },
         "connections": {
           "$connectionId": {
-            ".validate": "newData.isString() || !newData.exists()"
+            ".validate": "newData.isString()"
           }
         },
         "banned": {
@@ -118,7 +118,7 @@
         ".indexOn": ".value",
         "$gameId": {
           ".write": "auth != null && auth.uid == $userId",
-          ".validate": "!newData.exists() || (newData.isNumber() && newData.val() == root.child('games/' + $gameId + '/createdAt').val())"
+          ".validate": "newData.isNumber() && newData.val() == root.child('games/' + $gameId + '/createdAt').val()"
         }
       }
     },
