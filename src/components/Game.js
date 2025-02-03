@@ -250,9 +250,10 @@ function Game({
                   hinted={answer?.includes(card)}
                   active={selected?.includes(card)}
                   faceDown={
-                    faceDown &&
-                    !selected?.includes(card) &&
-                    board.includes(card)
+                    faceDown === "all" ||
+                    (faceDown &&
+                      !selected?.includes(card) &&
+                      board.includes(card))
                   }
                   onClick={() => onClick(card)}
                 />

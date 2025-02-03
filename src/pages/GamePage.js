@@ -416,7 +416,7 @@ function GamePage({ match }) {
               lastSet={lastSet}
               answer={hint}
               remaining={current.length - board.length}
-              faceDown={paused || gameMode === "memory"}
+              faceDown={paused ? "all" : gameMode === "memory" ? "deal" : ""}
             />
           </Grid>
         </Box>
