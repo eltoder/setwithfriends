@@ -11,18 +11,9 @@ interface GameEvent {
   c6?: string;
 }
 
-export type GameMode =
-  | "normal"
-  | "junior"
-  | "setchain"
-  | "ultraset"
-  | "ultrachain"
-  | "ultra9"
-  | "megaset"
-  | "ghostset"
-  | "memory";
+export type GameMode = keyof typeof modes;
 
-type SetType = "Set" | "UltraSet" | "GhostSet";
+type SetType = keyof typeof setTypes;
 
 interface GameModeInfo {
   setType: SetType;
@@ -241,7 +232,7 @@ const setTypes = {
   },
 };
 
-const modes: Record<string, GameModeInfo> = {
+export const modes = {
   normal: {
     setType: "Set",
     traits: 4,
@@ -287,7 +278,7 @@ const modes: Record<string, GameModeInfo> = {
     traits: 4,
     chain: 0,
   },
-};
+} satisfies Record<string, GameModeInfo>;
 
 /**
  * Compute remaining cards (arbitrary order) left in the deck after some
@@ -298,7 +289,7 @@ export function replayEvents(
   gameMode: GameMode
 ) {
   if (!modes.hasOwnProperty(gameMode)) {
-    throw new Error(`invalid gameMode: ${gameMode}`);
+    throw new Error(`Invalid gameMode: ${gameMode}`);
   }
   const events: GameEvent[] = [];
   gameData.child("events").forEach((e) => {

@@ -394,7 +394,7 @@ export const modes = {
   setchain: {
     name: "Set-Chain",
     color: "teal",
-    description: "In every Set, you have to use 1 card from the previous Set.",
+    description: "In every Set you have to use 1 card from the previous Set.",
     setType: "Set",
     traits: 4,
     chain: 1,
@@ -414,7 +414,7 @@ export const modes = {
     name: "UltraSet-Chain",
     color: "orange",
     description:
-      "In every UltraSet, you have to use one pair from the previous Set.",
+      "In every UltraSet you have to use 2 cards from the previous Set.",
     setType: "UltraSet",
     traits: 4,
     chain: 2,

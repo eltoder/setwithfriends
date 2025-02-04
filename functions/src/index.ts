@@ -21,7 +21,7 @@ const stripe = !functions.config().stripe
       apiVersion: "2020-08-27",
     });
 
-import { generateSeed, replayEvents, findSet, GameMode } from "./game";
+import { generateSeed, replayEvents, findSet, GameMode, modes } from "./game";
 
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;
@@ -235,6 +235,12 @@ export const createGame = functions.https.onCall(async (data, context) => {
       "invalid-argument",
       "The function must be called with " +
         'argument `access` given value "public" or "private".'
+    );
+  }
+  if (!modes.hasOwnProperty(mode)) {
+    throw new functions.https.HttpsError(
+      "invalid-argument",
+      `Invalid gameMode: ${mode}`
     );
   }
   if (enableHint && access !== "private") {
