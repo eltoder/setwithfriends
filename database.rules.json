@@ -52,7 +52,7 @@
         "events": {
           "$eventId": {
             ".write": "!data.exists() && newData.exists() && auth != null && root.hasChild('games/' + $gameId + '/users/' + auth.uid) && root.child('games/' + $gameId + '/status').val() == 'ingame'",
-            ".validate": "newData.hasChildren(['user', 'time', 'c1', 'c2', 'c3']) && (newData.hasChild('c4') == (root.child('games/' + $gameId + '/mode').val().matches(/^ultraset|ultrachain|ultra9|ghostset$/))) && (newData.hasChildren(['c5', 'c6']) == (root.child('games/' + $gameId + '/mode').val() == 'ghostset'))",
+            ".validate": "newData.hasChildren(['user', 'time', 'c1', 'c2', 'c3']) && (newData.hasChild('c4') == root.child('games/' + $gameId + '/mode').val().matches(/^ultraset|ultrachain|ultra9|ghostset$/)) && (newData.hasChildren(['c5', 'c6']) == (root.child('games/' + $gameId + '/mode').val() == 'ghostset'))",
             "user": {
               ".validate": "newData.isString() && newData.val() == auth.uid"
             },

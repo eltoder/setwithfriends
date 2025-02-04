@@ -432,8 +432,8 @@ function GamePage({ match }) {
                   game.status === "done"
                     ? game.endedAt
                     : !answer && history.length > 0
-                    ? history[history.length - 1].time
-                    : 0
+                      ? history[history.length - 1].time
+                      : 0
                 }
               />
             </Box>

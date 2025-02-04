@@ -38,8 +38,8 @@ const datasetVariants = {
 };
 
 const gameModes = {
-  ...modes,
   all: { name: "All Modes" },
+  ...modes,
 };
 
 const useStyles = makeStyles((theme) => ({
