@@ -1,4 +1,3 @@
-import cloneDeep from "clone-deep";
 import { useMemo } from "react";
 
 import { BASE_RATING, modes } from "../game";
@@ -16,7 +15,7 @@ function useStats(userId) {
       return value;
     }
 
-    const stats = cloneDeep(value) ?? {};
+    const stats = structuredClone(value) ?? {};
     for (const mode of Object.keys(modes)) {
       stats[mode] ??= {};
       stats[mode].rating ??= BASE_RATING;
