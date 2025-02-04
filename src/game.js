@@ -220,15 +220,17 @@ function findSetUltra(deck, gameMode, state) {
 }
 
 function findSetGhost(deck, gameMode, state) {
-  for (let i = 0; i < deck.length; i++) {
-    for (let j = i + 1; j < deck.length; j++) {
-      for (let k = j + 1; k < deck.length; k++) {
+  const first =
+    modes[gameMode].chain && state.lastSet.length > 0 ? state.lastSet : deck;
+  for (let i = 0; i < first.length; i++) {
+    for (let j = i + 1; j < first.length; j++) {
+      for (let k = first === deck ? j + 1 : 0; k < deck.length; k++) {
         for (let l = k + 1; l < deck.length; l++) {
           for (let m = l + 1; m < deck.length; m++) {
             for (let n = m + 1; n < deck.length; n++) {
               const cand = checkSetGhost(
-                deck[i],
-                deck[j],
+                first[i],
+                first[j],
                 deck[k],
                 deck[l],
                 deck[m],
@@ -550,6 +552,16 @@ export const modes = {
     traits: 4,
     chain: 0,
     minBoardSize: 10,
+  },
+  ghostchain: {
+    name: "GhostSet-Chain",
+    color: "blue",
+    description:
+      "In every GhostSet you have to use 2 cards from the previous GhostSet.",
+    setType: "GhostSet",
+    traits: 4,
+    chain: 2,
+    minBoardSize: 9,
   },
   "4set": {
     name: "4Set",
