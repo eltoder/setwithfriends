@@ -1,18 +1,18 @@
-import ExitToAppIcon from "@material-ui/icons/ExitToApp";
-import SnoozeIcon from "@material-ui/icons/Snooze";
-import VisibilityIcon from "@material-ui/icons/Visibility";
-import DoneIcon from "@material-ui/icons/Done";
 import TableCell from "@material-ui/core/TableCell";
 import TableRow from "@material-ui/core/TableRow";
 import Tooltip from "@material-ui/core/Tooltip";
 import { useTheme } from "@material-ui/core/styles";
+import { makeStyles } from "@material-ui/core/styles";
+import DoneIcon from "@material-ui/icons/Done";
+import ExitToAppIcon from "@material-ui/icons/ExitToApp";
+import SnoozeIcon from "@material-ui/icons/Snooze";
+import VisibilityIcon from "@material-ui/icons/Visibility";
 
+import { modes } from "../game";
+import useFirebaseRef from "../hooks/useFirebaseRef";
+import { colors } from "../util";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
-import useFirebaseRef from "../hooks/useFirebaseRef";
-import { makeStyles } from "@material-ui/core/styles";
-import { modes } from "../game";
-import { colors } from "../util";
 
 const useStyles = makeStyles({
   host: {

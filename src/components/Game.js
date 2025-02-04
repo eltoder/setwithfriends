@@ -6,9 +6,9 @@ import Typography from "@material-ui/core/Typography";
 import { animated, useTransition } from "@react-spring/web";
 
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
+import { SettingsContext } from "../context";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown, { getModifierState } from "../hooks/useKeydown";
-import { SettingsContext } from "../context";
 
 const gamePadding = 8;
 

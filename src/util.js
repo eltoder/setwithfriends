@@ -1,28 +1,30 @@
-import animals from "./utils/animals.json";
 import moment from "moment";
 import {
-  pattern,
   RegExpMatcher,
   TextCensor,
   englishDataset,
   englishRecommendedTransformers,
   fixedPhraseCensorStrategy,
+  pattern,
 } from "obscenity";
-import red from "@material-ui/core/colors/red";
-import pink from "@material-ui/core/colors/pink";
-import purple from "@material-ui/core/colors/purple";
-import deepPurple from "@material-ui/core/colors/deepPurple";
-import indigo from "@material-ui/core/colors/indigo";
+
+import amber from "@material-ui/core/colors/amber";
 import blue from "@material-ui/core/colors/blue";
-import lightBlue from "@material-ui/core/colors/lightBlue";
 import cyan from "@material-ui/core/colors/cyan";
-import teal from "@material-ui/core/colors/teal";
+import deepOrange from "@material-ui/core/colors/deepOrange";
+import deepPurple from "@material-ui/core/colors/deepPurple";
 import green from "@material-ui/core/colors/green";
+import indigo from "@material-ui/core/colors/indigo";
+import lightBlue from "@material-ui/core/colors/lightBlue";
 import lightGreen from "@material-ui/core/colors/lightGreen";
 import lime from "@material-ui/core/colors/lime";
-import amber from "@material-ui/core/colors/amber";
 import orange from "@material-ui/core/colors/orange";
-import deepOrange from "@material-ui/core/colors/deepOrange";
+import pink from "@material-ui/core/colors/pink";
+import purple from "@material-ui/core/colors/purple";
+import red from "@material-ui/core/colors/red";
+import teal from "@material-ui/core/colors/teal";
+
+import animals from "./utils/animals.json";
 
 const fixedDataset = englishDataset
   .removePhrasesIf((phrase) => phrase.metadata.originalWord === "dick")

@@ -1,5 +1,8 @@
-import * as functions from "firebase-functions";
 import * as admin from "firebase-admin";
+import * as functions from "firebase-functions";
+import Stripe from "stripe";
+
+import { GameMode, findSet, generateSeed, modes, replayEvents } from "./game";
 
 if (process.env.FUNCTIONS_EMULATOR) {
   // We don't pass any configs, so admin SDK queries firebase API to get them.
@@ -14,14 +17,11 @@ if (process.env.FUNCTIONS_EMULATOR) {
   admin.initializeApp();
 }
 
-import Stripe from "stripe";
 const stripe = !functions.config().stripe
   ? null
   : new Stripe(functions.config().stripe.secret, {
       apiVersion: "2020-08-27",
     });
-
-import { generateSeed, replayEvents, findSet, GameMode, modes } from "./game";
 
 const MAX_GAME_ID_LENGTH = 64;
 const MAX_UNFINISHED_GAMES_PER_HOUR = 4;

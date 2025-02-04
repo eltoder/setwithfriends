@@ -1,7 +1,8 @@
-import Typography from "@material-ui/core/Typography";
 import Container from "@material-ui/core/Container";
-import InternalLink from "../components/InternalLink";
+import Typography from "@material-ui/core/Typography";
+
 import cowImage from "../assets/cow_404.png";
+import InternalLink from "../components/InternalLink";
 
 function NotFoundPage() {
   return (

@@ -1,28 +1,28 @@
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
+import Divider from "@material-ui/core/Divider";
+import IconButton from "@material-ui/core/IconButton";
+import Link from "@material-ui/core/Link";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
-import Divider from "@material-ui/core/Divider";
-import Link from "@material-ui/core/Link";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
-import IconButton from "@material-ui/core/IconButton";
 import SettingsIcon from "@material-ui/icons/Settings";
 
-import firebase from "../firebase";
-import { UserContext, SettingsContext } from "../context";
-import { version } from "../config";
-import User from "./User";
-import InternalLink from "./InternalLink";
-import PromptDialog from "./PromptDialog";
-import UserColorDialog from "./UserColorDialog";
-import ColorChoiceDialog from "./ColorChoiceDialog";
-import BoardLayoutDialog from "./BoardLayoutDialog";
-import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
-import AccountOptionsDialog from "./AccountOptionsDialog";
 import snakeImage from "../assets/cny_snake.png";
+import { version } from "../config";
+import { SettingsContext, UserContext } from "../context";
+import firebase from "../firebase";
+import AccountOptionsDialog from "./AccountOptionsDialog";
+import BoardLayoutDialog from "./BoardLayoutDialog";
+import ColorChoiceDialog from "./ColorChoiceDialog";
+import InternalLink from "./InternalLink";
+import KeyboardLayoutDialog from "./KeyboardLayoutDialog";
+import PromptDialog from "./PromptDialog";
+import User from "./User";
+import UserColorDialog from "./UserColorDialog";
 
 function Navbar({
   themeType,

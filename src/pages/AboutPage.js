@@ -1,7 +1,7 @@
-import Typography from "@material-ui/core/Typography";
-import Link from "@material-ui/core/Link";
 import Container from "@material-ui/core/Container";
+import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
+import Typography from "@material-ui/core/Typography";
 
 import InternalLink from "../components/InternalLink";
 

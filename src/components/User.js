@@ -1,4 +1,4 @@
-import { useTheme, makeStyles } from "@material-ui/core/styles";
+import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Security from "@material-ui/icons/Security";
 import WhatshotIcon from "@material-ui/icons/Whatshot";
 

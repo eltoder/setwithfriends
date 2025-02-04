@@ -5,19 +5,19 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
-import { makeStyles } from "@material-ui/core/styles";
 import Typography from "@material-ui/core/Typography";
-import FitnessCenterIcon from "@material-ui/icons/FitnessCenter";
-import StarIcon from "@material-ui/icons/Star";
 import amber from "@material-ui/core/colors/amber";
 import grey from "@material-ui/core/colors/grey";
+import { makeStyles } from "@material-ui/core/styles";
 import { useTheme } from "@material-ui/core/styles";
+import FitnessCenterIcon from "@material-ui/icons/FitnessCenter";
+import StarIcon from "@material-ui/icons/Star";
 
-import ElapsedTime from "./ElapsedTime";
-import User from "./User";
-import Loading from "./Loading";
 import { modes } from "../game";
-import { formatTime, colors } from "../util";
+import { colors, formatTime } from "../util";
+import ElapsedTime from "./ElapsedTime";
+import Loading from "./Loading";
+import User from "./User";
 
 const useStyles = makeStyles((theme) => ({
   gamesTable: {

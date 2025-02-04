@@ -1,29 +1,29 @@
-import { useState, useEffect, useMemo } from "react";
-import firebase from "./firebase";
-import "./styles.css";
+import { useEffect, useMemo, useState } from "react";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 
-import { BrowserRouter, Switch, Route } from "react-router-dom";
 import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 
-import { generateColor, generateName, standardLayouts } from "./util";
-import { UserContext, SettingsContext } from "./context";
-import useStorage from "./hooks/useStorage";
 import ConnectionsTracker from "./components/ConnectionsTracker";
-import WelcomeDialog from "./components/WelcomeDialog";
 import Navbar from "./components/Navbar";
-import RoomPage from "./pages/RoomPage";
-import GamePage from "./pages/GamePage";
-import LobbyPage from "./pages/LobbyPage";
-import LoadingPage from "./pages/LoadingPage";
-import NotFoundPage from "./pages/NotFoundPage";
-import BannedPage from "./pages/BannedPage";
-import HelpPage from "./pages/HelpPage";
+import WelcomeDialog from "./components/WelcomeDialog";
+import { SettingsContext, UserContext } from "./context";
+import firebase from "./firebase";
+import useStorage from "./hooks/useStorage";
 import AboutPage from "./pages/AboutPage";
+import BannedPage from "./pages/BannedPage";
 import ConductPage from "./pages/ConductPage";
+import GamePage from "./pages/GamePage";
+import HelpPage from "./pages/HelpPage";
 import LegalPage from "./pages/LegalPage";
+import LoadingPage from "./pages/LoadingPage";
+import LobbyPage from "./pages/LobbyPage";
+import NotFoundPage from "./pages/NotFoundPage";
 import ProfilePage from "./pages/ProfilePage";
-import { lightTheme, darkTheme, withCardColors } from "./themes";
+import RoomPage from "./pages/RoomPage";
+import "./styles.css";
+import { darkTheme, lightTheme, withCardColors } from "./themes";
+import { generateColor, generateName, standardLayouts } from "./util";
 
 function makeThemes(customColors) {
   let parsed;

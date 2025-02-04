@@ -1,3 +1,5 @@
+import { useHistory } from "react-router-dom";
+
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
@@ -6,11 +8,10 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 import WhatshotIcon from "@material-ui/icons/Whatshot";
-import { useHistory } from "react-router-dom";
 
-import useStorage from "../hooks/useStorage";
-import useMoment from "../hooks/useMoment";
 import firebase from "../firebase";
+import useMoment from "../hooks/useMoment";
+import useStorage from "../hooks/useStorage";
 
 function DonateDialog({ active }) {
   const history = useHistory();

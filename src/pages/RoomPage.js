@@ -1,30 +1,30 @@
-import { useState, useEffect, useContext } from "react";
-
-import { makeStyles } from "@material-ui/core/styles";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import Button from "@material-ui/core/Button";
-import IconButton from "@material-ui/core/IconButton";
-import Tooltip from "@material-ui/core/Tooltip";
-import Paper from "@material-ui/core/Paper";
-import Grid from "@material-ui/core/Grid";
-import Box from "@material-ui/core/Box";
-import LinkIcon from "@material-ui/icons/Link";
-import DoneIcon from "@material-ui/icons/Done";
+import { useContext, useEffect, useState } from "react";
 import { Redirect, useHistory } from "react-router-dom";
 
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import IconButton from "@material-ui/core/IconButton";
+import Paper from "@material-ui/core/Paper";
+import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import DoneIcon from "@material-ui/icons/Done";
+import LinkIcon from "@material-ui/icons/Link";
+
+import Chat from "../components/Chat";
+import GameSettings from "../components/GameSettings";
+import RoomUserList from "../components/RoomUserList";
+import SimpleInput from "../components/SimpleInput";
+import Subheading from "../components/Subheading";
+import { UserContext } from "../context";
+import firebase from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useKeydown, { getModifierState } from "../hooks/useKeydown";
+import { capitalizeFirst } from "../util";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
-import SimpleInput from "../components/SimpleInput";
-import RoomUserList from "../components/RoomUserList";
-import Subheading from "../components/Subheading";
-import Chat from "../components/Chat";
-import firebase from "../firebase";
-import { UserContext } from "../context";
-import GameSettings from "../components/GameSettings";
-import { capitalizeFirst } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   subpanel: {

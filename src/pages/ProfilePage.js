@@ -1,25 +1,25 @@
-import { useState, useMemo, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Redirect } from "react-router-dom";
 
 import Container from "@material-ui/core/Container";
 import Divider from "@material-ui/core/Divider";
 import Grid from "@material-ui/core/Grid";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Typography from "@material-ui/core/Typography";
-import Select from "@material-ui/core/Select";
 import MenuItem from "@material-ui/core/MenuItem";
+import Paper from "@material-ui/core/Paper";
+import Select from "@material-ui/core/Select";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 import EqualizerIcon from "@material-ui/icons/Equalizer";
 
-import ProfileName from "../components/ProfileName";
-import UserStatistics from "../components/UserStatistics";
-import ProfileGamesTable from "../components/ProfileGamesTable";
-import Subheading from "../components/Subheading";
 import Loading from "../components/Loading";
+import ProfileGamesTable from "../components/ProfileGamesTable";
+import ProfileName from "../components/ProfileName";
+import Subheading from "../components/Subheading";
+import UserStatistics from "../components/UserStatistics";
 import firebase from "../firebase";
+import { computeState, modes } from "../game";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
-import { computeState, modes } from "../game";
 import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {

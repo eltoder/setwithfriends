@@ -1,29 +1,27 @@
-import { useState, useEffect, useMemo, useContext, useRef } from "react";
-
-import { makeStyles } from "@material-ui/core/styles";
-import Grid from "@material-ui/core/Grid";
-import Typography from "@material-ui/core/Typography";
-import Container from "@material-ui/core/Container";
-import Paper from "@material-ui/core/Paper";
-import Button from "@material-ui/core/Button";
-import Box from "@material-ui/core/Box";
-import Snackbar from "@material-ui/core/Snackbar";
-import Tooltip from "@material-ui/core/Tooltip";
+import { useContext, useEffect, useMemo, useRef, useState } from "react";
 import { Redirect } from "react-router-dom";
 import useSound from "use-sound";
 
-import SnackContent from "../components/SnackContent";
-import firebase, { createGame, finishGame } from "../firebase";
-import useFirebaseRef from "../hooks/useFirebaseRef";
-import useKeydown, { getModifierState } from "../hooks/useKeydown";
-import Game from "../components/Game";
-import User from "../components/User";
-import Loading from "../components/Loading";
-import NotFoundPage from "./NotFoundPage";
-import LoadingPage from "./LoadingPage";
-import GameSidebar from "../components/GameSidebar";
+import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
+import Paper from "@material-ui/core/Paper";
+import Snackbar from "@material-ui/core/Snackbar";
+import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+
+import failSfx from "../assets/failedSetSound.mp3";
+import foundSfx from "../assets/successfulSetSound.mp3";
 import Chat from "../components/Chat";
+import Game from "../components/Game";
+import GameSidebar from "../components/GameSidebar";
+import Loading from "../components/Loading";
+import SnackContent from "../components/SnackContent";
+import User from "../components/User";
 import { SettingsContext, UserContext } from "../context";
+import firebase, { createGame, finishGame } from "../firebase";
 import {
   addCard,
   cardsFromEvent,
@@ -34,8 +32,10 @@ import {
   modes,
   removeCard,
 } from "../game";
-import foundSfx from "../assets/successfulSetSound.mp3";
-import failSfx from "../assets/failedSetSound.mp3";
+import useFirebaseRef from "../hooks/useFirebaseRef";
+import useKeydown, { getModifierState } from "../hooks/useKeydown";
+import LoadingPage from "./LoadingPage";
+import NotFoundPage from "./NotFoundPage";
 
 const useStyles = makeStyles((theme) => ({
   sideColumn: {

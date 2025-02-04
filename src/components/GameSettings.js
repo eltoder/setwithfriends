@@ -1,14 +1,14 @@
-import { makeStyles } from "@material-ui/core/styles";
 import FormControlLabel from "@material-ui/core/FormControlLabel";
 import MenuItem from "@material-ui/core/MenuItem";
 import Select from "@material-ui/core/Select";
 import Switch from "@material-ui/core/Switch";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 
 import firebase from "../firebase";
-import useStorage from "../hooks/useStorage";
 import { modes } from "../game";
+import useStorage from "../hooks/useStorage";
 
 const useStyles = makeStyles(() => ({
   settings: { display: "flex", justifyContent: "space-evenly" },

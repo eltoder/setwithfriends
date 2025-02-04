@@ -2,18 +2,18 @@ import { useContext, useMemo } from "react";
 
 import Button from "@material-ui/core/Button";
 import Dialog from "@material-ui/core/Dialog";
-import Select from "@material-ui/core/Select";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import InputLabel from "@material-ui/core/InputLabel";
 import FormControl from "@material-ui/core/FormControl";
+import InputLabel from "@material-ui/core/InputLabel";
 import MenuItem from "@material-ui/core/MenuItem";
+import Select from "@material-ui/core/Select";
 import { makeStyles } from "@material-ui/core/styles";
 
-import Game from "./Game";
-import { generateDeck } from "../game";
 import { SettingsContext } from "../context";
+import { generateDeck } from "../game";
+import Game from "./Game";
 
 const useStyles = makeStyles((theme) => ({
   gameBoard: {
