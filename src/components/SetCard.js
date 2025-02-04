@@ -1,7 +1,8 @@
+import clsx from "clsx";
 import { memo } from "react";
 
 import { makeStyles, useTheme } from "@material-ui/core/styles";
-import clsx from "clsx";
+
 import { cardTraits } from "../game";
 
 const useStyles = makeStyles((theme) => ({

@@ -1,28 +1,28 @@
-import { useEffect, useRef, useState, useMemo, useContext, memo } from "react";
-
-import Typography from "@material-ui/core/Typography";
-import Tooltip from "@material-ui/core/Tooltip";
-import MoreVertIcon from "@material-ui/icons/MoreVert";
-import MenuItem from "@material-ui/core/MenuItem";
-import Menu from "@material-ui/core/Menu";
-import { makeStyles } from "@material-ui/core/styles";
 import clsx from "clsx";
+import { memo, useContext, useEffect, useMemo, useRef, useState } from "react";
 
-import User from "./User";
-import InternalLink from "./InternalLink";
-import SimpleInput from "./SimpleInput";
-import Subheading from "./Subheading";
-import Scrollbox from "./Scrollbox";
-import ChatCards from "./ChatCards";
-import ElapsedTime from "./ElapsedTime";
+import Menu from "@material-ui/core/Menu";
+import MenuItem from "@material-ui/core/MenuItem";
+import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import MoreVertIcon from "@material-ui/icons/MoreVert";
+
+import { UserContext } from "../context";
 import firebase from "../firebase";
-import { censorText } from "../util";
-import autoscroll from "../utils/autoscroll";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useStats from "../hooks/useStats";
 import useStorage from "../hooks/useStorage";
-import { UserContext } from "../context";
+import { censorText } from "../util";
+import autoscroll from "../utils/autoscroll";
 import emoji from "../utils/emoji";
+import ChatCards from "./ChatCards";
+import ElapsedTime from "./ElapsedTime";
+import InternalLink from "./InternalLink";
+import Scrollbox from "./Scrollbox";
+import SimpleInput from "./SimpleInput";
+import Subheading from "./Subheading";
+import User from "./User";
 
 const useStyles = makeStyles((theme) => ({
   chatPanel: {

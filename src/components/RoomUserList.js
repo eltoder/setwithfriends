@@ -1,16 +1,16 @@
 import { useContext } from "react";
+import { Link as RouterLink } from "react-router-dom";
 
 import List from "@material-ui/core/List";
 import ListItem from "@material-ui/core/ListItem";
 import ListItemIcon from "@material-ui/core/ListItemIcon";
 import ListItemText from "@material-ui/core/ListItemText";
+import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
 import PersonIcon from "@material-ui/icons/Person";
 import SnoozeIcon from "@material-ui/icons/Snooze";
 import StarsIcon from "@material-ui/icons/Stars";
-import Tooltip from "@material-ui/core/Tooltip";
-import Typography from "@material-ui/core/Typography";
-import { useTransition, animated } from "@react-spring/web";
-import { Link as RouterLink } from "react-router-dom";
+import { animated, useTransition } from "@react-spring/web";
 
 import User from "../components/User";
 import { UserContext } from "../context";

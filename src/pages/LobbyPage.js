@@ -1,16 +1,13 @@
-import { useState, useMemo, useContext } from "react";
-
 import generate from "project-name-generator";
+import { useContext, useMemo, useState } from "react";
 import { Redirect } from "react-router-dom";
-import { makeStyles } from "@material-ui/core/styles";
-import Paper from "@material-ui/core/Paper";
-import Container from "@material-ui/core/Container";
-import Typography from "@material-ui/core/Typography";
-import Grid from "@material-ui/core/Grid";
-import Button from "@material-ui/core/Button";
+
 import Box from "@material-ui/core/Box";
+import Button from "@material-ui/core/Button";
+import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
 import Link from "@material-ui/core/Link";
-import Tabs from "@material-ui/core/Tabs";
+import Paper from "@material-ui/core/Paper";
 import Tab from "@material-ui/core/Tab";
 import Table from "@material-ui/core/Table";
 import TableBody from "@material-ui/core/TableBody";
@@ -18,17 +15,20 @@ import TableCell from "@material-ui/core/TableCell";
 import TableContainer from "@material-ui/core/TableContainer";
 import TableHead from "@material-ui/core/TableHead";
 import TableRow from "@material-ui/core/TableRow";
+import Tabs from "@material-ui/core/Tabs";
 import Tooltip from "@material-ui/core/Tooltip";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
 
+import Chat from "../components/Chat";
+import GameInfoRow from "../components/GameInfoRow";
+import InternalLink from "../components/InternalLink";
+import { UserContext } from "../context";
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useKeydown, { getModifierState } from "../hooks/useKeydown";
 import useStorage from "../hooks/useStorage";
-import InternalLink from "../components/InternalLink";
-import GameInfoRow from "../components/GameInfoRow";
-import Chat from "../components/Chat";
-import { UserContext } from "../context";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {

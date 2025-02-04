@@ -4,10 +4,10 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 
-import SetCard from "./SetCard";
-import User from "./User";
 import { cardsFromEvent, checkSetUltra, conjugateCard, modes } from "../game";
 import { formatTime } from "../util";
+import SetCard from "./SetCard";
+import User from "./User";
 
 const useStyles = makeStyles((theme) => ({
   logEntry: {

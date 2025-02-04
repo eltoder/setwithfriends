@@ -1,15 +1,15 @@
-import { useState, useContext } from "react";
+import { useContext, useState } from "react";
 
 import Button from "@material-ui/core/Button";
-import TextField from "@material-ui/core/TextField";
 import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogContentText from "@material-ui/core/DialogContentText";
 import DialogTitle from "@material-ui/core/DialogTitle";
+import TextField from "@material-ui/core/TextField";
 
-import { censorText } from "../util";
 import { UserContext } from "../context";
+import { censorText } from "../util";
 
 function PromptDialog(props) {
   const { open, onClose, title, message, label, maxLength } = props;

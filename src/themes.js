@@ -1,10 +1,11 @@
-import { createTheme } from "@material-ui/core/styles";
 import { grey } from "@material-ui/core/colors";
 import { indigo } from "@material-ui/core/colors";
 import { red } from "@material-ui/core/colors";
+import { createTheme } from "@material-ui/core/styles";
+
+import snakeImage from "./assets/cny_big_snake.png";
 import lanternsImage from "./assets/cny_lanterns.png";
 import lionImage from "./assets/cny_lion.png";
-import snakeImage from "./assets/cny_big_snake.png";
 
 export const darkTheme = createTheme({
   palette: {
