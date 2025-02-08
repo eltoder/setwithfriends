@@ -94,7 +94,7 @@ export function addCard(deck, card, gameMode, findState) {
   const setType = modes[gameMode].setType;
   const chain = modes[gameMode].chain;
   const setSize = setTypes[setType].size;
-  const { lastSet } = findState;
+  const { lastSet, foundSets } = findState;
   // Special case for the regular set-chain modes: if you select a second card
   // from lastSet, we unselect the first one
   const cards =
@@ -112,13 +112,16 @@ export function addCard(deck, card, gameMode, findState) {
       return {
         kind: "error",
         cards,
-        error: `${chain} ${noun} must be from the previous set`,
+        error: `${chain} ${noun} must be from the previous ${setType}`,
       };
     }
   }
   const set = setTypes[setType].checkFn(...cards);
   if (!set) {
     return { kind: "error", cards, error: `Not a ${setType}` };
+  }
+  if (modes[gameMode].puzzle && foundSets.has(set.slice().sort().join("|"))) {
+    return { kind: "error", cards, error: `This ${setType} was already found` };
   }
   if (doChain) {
     // Align with lastSet to reduce movement of cards
@@ -154,11 +157,15 @@ function findSetNormal(deck, gameMode, state) {
   const deckSet = new Set(deck);
   const first =
     modes[gameMode].chain && state.lastSet.length > 0 ? state.lastSet : deck;
+  const foundSets = modes[gameMode].puzzle && state.foundSets;
   for (let i = 0; i < first.length; i++) {
     for (let j = first === deck ? i + 1 : 0; j < deck.length; j++) {
       const c = conjugateCard(first[i], deck[j]);
       if (deckSet.has(c)) {
-        return [first[i], deck[j], c];
+        const set = [first[i], deck[j], c];
+        if (!(foundSets && foundSets.has(set.sort().join("|")))) {
+          return set;
+        }
       }
     }
   }
@@ -235,8 +242,9 @@ export function cardsFromEvent(event) {
 
 function findBoardSize(deck, gameMode, minBoardSize, state) {
   let len = Math.min(deck.length, minBoardSize);
-  while (len < deck.length && !findSet(deck.slice(0, len), gameMode, state))
+  while (len < deck.length && !findSet(deck.slice(0, len), gameMode, state)) {
     len += 3 - (len % 3);
+  }
   return len;
 }
 
@@ -254,20 +262,25 @@ function hasUsedCards(used, cards) {
 }
 
 function removeCards(internalGameState, cards) {
-  const { current, used, minBoardSize } = internalGameState;
-  const cutoff = Math.min(current.length - cards.length, minBoardSize);
-  const cardIndexes = cards
-    .map((c) => current.indexOf(c))
-    .sort((a, b) => b - a);
-  for (const [i, ci] of cardIndexes.entries()) {
-    if (ci >= cutoff) {
-      current.splice(ci, 1);
-    } else {
-      const len = cardIndexes.length - i;
-      for (const [j, c] of current.splice(cutoff, len).entries()) {
-        current[cardIndexes[cardIndexes.length - 1 - j]] = c;
+  const { current, used, boardSize, minBoardSize } = internalGameState;
+  // optimize removing all cards on the board
+  if (cards.length === boardSize) {
+    current.splice(0, boardSize);
+  } else {
+    const cutoff = Math.min(current.length - cards.length, minBoardSize);
+    const cardIndexes = cards
+      .map((c) => current.indexOf(c))
+      .sort((a, b) => b - a);
+    for (const [i, ci] of cardIndexes.entries()) {
+      if (ci >= cutoff) {
+        current.splice(ci, 1);
+      } else {
+        const len = cardIndexes.length - i;
+        for (const [j, c] of current.splice(cutoff, len).entries()) {
+          current[cardIndexes[cardIndexes.length - 1 - j]] = c;
+        }
+        break;
       }
-      break;
     }
   }
   for (const c of cards) {
@@ -283,8 +296,15 @@ function processValidEvent(internalGameState, event, cards) {
 }
 
 function updateBoard(internalGameState, cards) {
-  const { current, gameMode, boardSize, minBoardSize, findState } =
+  const { current, gameMode, puzzle, boardSize, minBoardSize, findState } =
     internalGameState;
+  // in puzzle modes only advance after all sets were found
+  if (puzzle) {
+    const board = current.slice(0, boardSize);
+    if (findSet(board, gameMode, findState)) return;
+    findState.foundSets.clear();
+    cards = board;
+  }
   // remove cards, preserving positions when possible
   removeCards(internalGameState, cards);
   // find the new board size
@@ -294,7 +314,7 @@ function updateBoard(internalGameState, cards) {
 }
 
 function processEvent(internalGameState, event) {
-  const { used, chain, findState } = internalGameState;
+  const { used, chain, puzzle, findState } = internalGameState;
   const allCards = cardsFromEvent(event);
   let cards;
   if (chain && findState.lastSet.length > 0) {
@@ -304,6 +324,11 @@ function processEvent(internalGameState, event) {
     cards = allCards;
   }
   if (hasDuplicates(allCards) || hasUsedCards(used, cards)) return;
+  if (puzzle) {
+    const prevFound = findState.foundSets.size;
+    findState.foundSets.add(allCards.slice().sort().join("|"));
+    if (prevFound === findState.foundSets.size) return;
+  }
   if (chain) {
     findState.lastSet = allCards;
   }
@@ -325,7 +350,11 @@ export function computeState(gameData, gameMode) {
   const lastEvents = {}; // time of the last event for each user
   const minBoardSize = modes[gameMode].minBoardSize;
   const chain = modes[gameMode].chain;
-  const findState = { lastSet: chain ? [] : undefined };
+  const puzzle = modes[gameMode].puzzle;
+  const findState = {
+    lastSet: chain ? [] : undefined,
+    foundSets: puzzle ? new Set() : undefined,
+  };
   const internalGameState = {
     used,
     current,
@@ -335,6 +364,7 @@ export function computeState(gameData, gameMode) {
     gameMode,
     minBoardSize,
     chain,
+    puzzle,
     findState,
     boardSize: findBoardSize(current, gameMode, minBoardSize, findState),
   };
@@ -454,6 +484,16 @@ export const modes = {
     traits: 4,
     chain: 0,
     minBoardSize: 10,
+  },
+  puzzle: {
+    name: "Puzzle",
+    color: "cyan",
+    description: "Find all Sets on the board before moving to the next board.",
+    setType: "Set",
+    traits: 4,
+    chain: 0,
+    puzzle: true,
+    minBoardSize: 12,
   },
   memory: {
     name: "Memory",
