@@ -35,12 +35,8 @@ function makeCards(symbols, traits) {
   );
 }
 
-export function generateCards(gameMode) {
-  return makeCards(["0", "1", "2"], modes[gameMode].traits);
-}
-
 export function generateDeck(gameMode, seed) {
-  const deck = generateCards(gameMode);
+  const deck = makeCards(["0", "1", "2"], modes[gameMode].traits);
   // Fisher-Yates
   const random = makeRandom(seed);
   for (let i = deck.length - 1; i > 0; i--) {
@@ -94,10 +90,11 @@ export function checkSetGhost(a, b, c, d, e, f) {
   return [a, b, c, d, e, f];
 }
 
-export function addCard(deck, card, gameMode, lastSet) {
+export function addCard(deck, card, gameMode, findState) {
   const setType = modes[gameMode].setType;
   const chain = modes[gameMode].chain;
   const setSize = setTypes[setType].size;
+  const { lastSet } = findState;
   // Special case for the regular set-chain modes: if you select a second card
   // from lastSet, we unselect the first one
   const cards =
@@ -153,9 +150,10 @@ export function cardTraits(card) {
   };
 }
 
-function findSetNormal(deck, gameMode, old) {
+function findSetNormal(deck, gameMode, state) {
   const deckSet = new Set(deck);
-  const first = modes[gameMode].chain && old.length > 0 ? old : deck;
+  const first =
+    modes[gameMode].chain && state.lastSet.length > 0 ? state.lastSet : deck;
   for (let i = 0; i < first.length; i++) {
     for (let j = first === deck ? i + 1 : 0; j < deck.length; j++) {
       const c = conjugateCard(first[i], deck[j]);
@@ -167,11 +165,11 @@ function findSetNormal(deck, gameMode, old) {
   return null;
 }
 
-function findSetUltra(deck, gameMode, old) {
-  const cutoff = modes[gameMode].chain ? old.length : 0;
+function findSetUltra(deck, gameMode, state) {
+  const cutoff = modes[gameMode].chain ? state.lastSet.length : 0;
   let cards, conjugates;
   if (cutoff > 0) {
-    cards = old.concat(deck);
+    cards = state.lastSet.concat(deck);
     conjugates = [new Map(), null, null, null].fill(new Map(), 1, 3);
   } else {
     cards = deck;
@@ -193,7 +191,7 @@ function findSetUltra(deck, gameMode, old) {
   return null;
 }
 
-function findSetGhost(deck, gameMode, old) {
+function findSetGhost(deck, gameMode, state) {
   for (let i = 0; i < deck.length; i++) {
     for (let j = i + 1; j < deck.length; j++) {
       for (let k = j + 1; k < deck.length; k++) {
@@ -218,8 +216,8 @@ function findSetGhost(deck, gameMode, old) {
   return null;
 }
 
-export function findSet(deck, gameMode, old) {
-  return setTypes[modes[gameMode].setType].findFn(deck, gameMode, old);
+export function findSet(deck, gameMode, state) {
+  return setTypes[modes[gameMode].setType].findFn(deck, gameMode, state);
 }
 
 export function eventFromCards(cards) {
@@ -235,9 +233,9 @@ export function cardsFromEvent(event) {
   return cards;
 }
 
-function findBoardSize(deck, gameMode, minBoardSize, old) {
+function findBoardSize(deck, gameMode, minBoardSize, state) {
   let len = Math.min(deck.length, minBoardSize);
-  while (len < deck.length && !findSet(deck.slice(0, len), gameMode, old))
+  while (len < deck.length && !findSet(deck.slice(0, len), gameMode, state))
     len += 3 - (len % 3);
   return len;
 }
@@ -256,7 +254,7 @@ function hasUsedCards(used, cards) {
 }
 
 function removeCards(internalGameState, cards) {
-  const { current, minBoardSize } = internalGameState;
+  const { current, used, minBoardSize } = internalGameState;
   const cutoff = Math.min(current.length - cards.length, minBoardSize);
   const cardIndexes = cards
     .map((c) => current.indexOf(c))
@@ -272,41 +270,45 @@ function removeCards(internalGameState, cards) {
       break;
     }
   }
-}
-
-function processValidEvent(internalGameState, event, cards) {
-  const { scores, lastEvents, history, used } = internalGameState;
-  scores[event.user] = (scores[event.user] || 0) + 1;
-  lastEvents[event.user] = event.time;
-  history.push(event);
   for (const c of cards) {
     used[c] = true;
   }
 }
 
-function updateBoard(internalGameState, cards, old) {
-  const { current, gameMode, boardSize, minBoardSize } = internalGameState;
+function processValidEvent(internalGameState, event, cards) {
+  const { scores, lastEvents, history } = internalGameState;
+  scores[event.user] = (scores[event.user] || 0) + 1;
+  lastEvents[event.user] = event.time;
+  history.push(event);
+}
+
+function updateBoard(internalGameState, cards) {
+  const { current, gameMode, boardSize, minBoardSize, findState } =
+    internalGameState;
   // remove cards, preserving positions when possible
   removeCards(internalGameState, cards);
   // find the new board size
   const minSize = Math.max(boardSize - cards.length, minBoardSize);
-  internalGameState.boardSize = findBoardSize(current, gameMode, minSize, old);
+  const newSize = findBoardSize(current, gameMode, minSize, findState);
+  internalGameState.boardSize = newSize;
 }
 
 function processEvent(internalGameState, event) {
-  const { used, chain, history } = internalGameState;
+  const { used, chain, findState } = internalGameState;
   const allCards = cardsFromEvent(event);
   let cards;
-  if (chain && history.length > 0) {
-    const prev = cardsFromEvent(history[history.length - 1]);
-    cards = allCards.filter((c) => !prev.includes(c));
+  if (chain && findState.lastSet.length > 0) {
+    cards = allCards.filter((c) => !findState.lastSet.includes(c));
     if (allCards.length - cards.length !== chain) return;
   } else {
     cards = allCards;
   }
   if (hasDuplicates(allCards) || hasUsedCards(used, cards)) return;
+  if (chain) {
+    findState.lastSet = allCards;
+  }
   processValidEvent(internalGameState, event, cards);
-  updateBoard(internalGameState, cards, allCards);
+  updateBoard(internalGameState, cards);
 }
 
 export function computeState(gameData, gameMode) {
@@ -322,6 +324,8 @@ export function computeState(gameData, gameMode) {
     : generateDeck(gameMode, gameData.seed);
   const lastEvents = {}; // time of the last event for each user
   const minBoardSize = modes[gameMode].minBoardSize;
+  const chain = modes[gameMode].chain;
+  const findState = { lastSet: chain ? [] : undefined };
   const internalGameState = {
     used,
     current,
@@ -330,8 +334,9 @@ export function computeState(gameData, gameMode) {
     lastEvents,
     gameMode,
     minBoardSize,
-    chain: modes[gameMode].chain,
-    boardSize: findBoardSize(current, gameMode, minBoardSize, []),
+    chain,
+    findState,
+    boardSize: findBoardSize(current, gameMode, minBoardSize, findState),
   };
 
   if (gameData.events) {
@@ -350,6 +355,7 @@ export function computeState(gameData, gameMode) {
     history,
     lastEvents,
     boardSize: internalGameState.boardSize,
+    findState,
   };
 }
 
