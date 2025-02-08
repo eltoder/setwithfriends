@@ -24,12 +24,10 @@ import { SettingsContext, UserContext } from "../context";
 import firebase, { createGame, finishGame } from "../firebase";
 import {
   addCard,
-  cardsFromEvent,
   computeState,
   eventFromCards,
   findSet,
   generateDeck,
-  modes,
   removeCard,
 } from "../game";
 import useFirebaseRef from "../hooks/useFirebaseRef";
@@ -147,18 +145,14 @@ function GamePage({ match }) {
     );
   }, [gameMode, gameData?.deck, gameData?.seed]);
 
-  const { current, scores, lastEvents, history, board, answer, lastSet } =
+  const { current, scores, lastEvents, history, board, answer, findState } =
     useMemo(() => {
       if (!gameData) return {};
       const state = computeState({ ...gameData, deck }, gameMode);
-      const { history, current, boardSize } = state;
-      const lastSet =
-        modes[gameMode].chain && history.length > 0
-          ? cardsFromEvent(history[history.length - 1])
-          : [];
+      const { current, boardSize, findState } = state;
       const board = current.slice(0, boardSize);
-      const answer = findSet(board, gameMode, lastSet);
-      return { ...state, board, answer, lastSet };
+      const answer = findSet(board, gameMode, findState);
+      return { ...state, board, answer };
     }, [gameMode, gameData, deck]);
 
   if (redirect) return <Redirect push to={redirect} />;
@@ -240,7 +234,7 @@ function GamePage({ match }) {
       if (selected.includes(card)) {
         return gameMode === "memory" ? selected : removeCard(selected, card);
       }
-      const state = addCard(selected, card, gameMode, lastSet);
+      const state = addCard(selected, card, gameMode, findState);
       switch (state.kind) {
         case "pending":
           return state.cards;
@@ -413,7 +407,7 @@ function GamePage({ match }) {
               selected={selected}
               onClick={handleClick}
               onClear={handleClear}
-              lastSet={lastSet}
+              lastSet={findState.lastSet}
               answer={hint}
               remaining={current.length - board.length}
               faceDown={paused ? "all" : gameMode === "memory" ? "deal" : ""}

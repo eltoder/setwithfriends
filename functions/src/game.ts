@@ -21,6 +21,10 @@ interface GameModeInfo {
   chain: number;
 }
 
+export interface FindState {
+  lastSet?: string[];
+}
+
 /** Generates a random seed. */
 export function generateSeed() {
   let s = "v1:";
@@ -94,9 +98,10 @@ export function checkSetGhost(
   return [a, b, c, d, e, f];
 }
 
-function findSetNormal(deck: string[], gameMode: GameMode, old?: string[]) {
+function findSetNormal(deck: string[], gameMode: GameMode, state: FindState) {
   const deckSet = new Set(deck);
-  const first = modes[gameMode].chain && old!.length > 0 ? old! : deck;
+  const first =
+    modes[gameMode].chain && state.lastSet!.length > 0 ? state.lastSet! : deck;
   for (let i = 0; i < first.length; i++) {
     for (let j = first === deck ? i + 1 : 0; j < deck.length; j++) {
       const c = conjugateCard(first[i], deck[j]);
@@ -108,11 +113,11 @@ function findSetNormal(deck: string[], gameMode: GameMode, old?: string[]) {
   return null;
 }
 
-function findSetUltra(deck: string[], gameMode: GameMode, old?: string[]) {
-  const cutoff = modes[gameMode].chain ? old!.length : 0;
+function findSetUltra(deck: string[], gameMode: GameMode, state: FindState) {
+  const cutoff = modes[gameMode].chain ? state.lastSet!.length : 0;
   let cards, conjugates: Array<Map<string, [string, string]> | null>;
   if (cutoff > 0) {
-    cards = old!.concat(deck);
+    cards = state.lastSet!.concat(deck);
     conjugates = [new Map(), null, null, null].fill(new Map(), 1, 3);
   } else {
     cards = deck;
@@ -134,7 +139,7 @@ function findSetUltra(deck: string[], gameMode: GameMode, old?: string[]) {
   return null;
 }
 
-function findSetGhost(deck: string[], gameMode: GameMode, old?: string[]) {
+function findSetGhost(deck: string[], gameMode: GameMode, state: FindState) {
   for (let i = 0; i < deck.length; i++) {
     for (let j = i + 1; j < deck.length; j++) {
       for (let k = j + 1; k < deck.length; k++) {
@@ -160,8 +165,8 @@ function findSetGhost(deck: string[], gameMode: GameMode, old?: string[]) {
 }
 
 /** Find a set in an unordered collection of cards, if any, depending on mode. */
-export function findSet(deck: string[], gameMode: GameMode, old?: string[]) {
-  return setTypes[modes[gameMode].setType].findFn(deck, gameMode, old);
+export function findSet(deck: string[], gameMode: GameMode, state: FindState) {
+  return setTypes[modes[gameMode].setType].findFn(deck, gameMode, state);
 }
 
 /** Get the array of cards from a GameEvent */
@@ -198,18 +203,20 @@ function replayEvent(
   deck: Set<string>,
   event: GameEvent,
   chain: number,
-  history: GameEvent[]
+  findState: FindState
 ) {
   const allCards = cardsFromEvent(event);
   let cards;
-  if (chain && history.length > 0) {
-    const prev = cardsFromEvent(history[history.length - 1]);
-    cards = allCards.filter((c) => !prev.includes(c));
+  if (chain && findState.lastSet!.length > 0) {
+    cards = allCards.filter((c) => !findState.lastSet!.includes(c));
     if (allCards.length - cards.length !== chain) return false;
   } else {
     cards = allCards;
   }
   if (hasDuplicates(allCards) || !validCards(deck, cards)) return false;
+  if (chain) {
+    findState.lastSet = allCards;
+  }
   deleteCards(deck, cards);
   return true;
 }
@@ -300,21 +307,15 @@ export function replayEvents(
 
   const deck = generateDeck(gameMode);
   const chain = modes[gameMode].chain;
-  const history: GameEvent[] = [];
+  const findState: FindState = { lastSet: chain ? [] : undefined };
   const scores: Record<string, number> = {};
   let finalTime = 0;
   for (const event of events) {
-    if (replayEvent(deck, event, chain, history)) {
-      history.push(event);
+    if (replayEvent(deck, event, chain, findState)) {
       scores[event.user] = (scores[event.user] ?? 0) + 1;
       finalTime = event.time;
     }
   }
 
-  const lastSet =
-    chain && history.length > 0
-      ? cardsFromEvent(history[history.length - 1])
-      : [];
-
-  return { lastSet, deck, finalTime, scores };
+  return { findState, deck, finalTime, scores };
 }
