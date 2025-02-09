@@ -68,12 +68,12 @@ export const finishGame = functions.https.onCall(async (data, context) => {
   }
 
   const gameMode = (gameSnap.child("mode").val() as GameMode) || "normal";
-  const { findState, deck, finalTime, scores } = replayEvents(
+  const { findState, current, finalTime, scores } = replayEvents(
     gameData,
     gameMode
   );
 
-  if (findSet(Array.from(deck), gameMode, findState)) {
+  if (findSet(Array.from(current), gameMode, findState)) {
     throw new functions.https.HttpsError(
       "failed-precondition",
       "The requested game has not yet ended."

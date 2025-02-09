@@ -93,6 +93,18 @@ describe("findSet()", () => {
     verifySet(findSet(["0112", "0211", "0110"], "setchain", state));
   });
 
+  it("can find puzzle sets", () => {
+    const board = ["0000", "0001", "0002", "0010", "0020", "0011"];
+    const state = { foundSets: new Set() };
+    for (let i = 0; i < 3; i++) {
+      const set = findSet(board, "puzzle", state);
+      verifySet(set);
+      expect(state.foundSets.has(set.slice().sort().join("|"))).toBe(false);
+      state.foundSets.add(set.slice().sort().join("|"));
+    }
+    expect(findSet(board, "puzzle", state)).toBe(null);
+  });
+
   it("can find ultrasets", () => {
     for (const deck of [
       ["1202", "0001", "0002", "2101"],
