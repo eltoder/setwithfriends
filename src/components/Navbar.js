@@ -11,7 +11,6 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import SettingsIcon from "@material-ui/icons/Settings";
 
-import snakeImage from "../assets/cny_snake.png";
 import { version } from "../config";
 import { SettingsContext, UserContext } from "../context";
 import firebase from "../firebase";
@@ -74,15 +73,6 @@ function Navbar({
           <InternalLink underline="none" color="inherit" to="/">
             Set with Friends
           </InternalLink>
-          <img
-            style={{
-              height: "1.1em",
-              verticalAlign: "text-top",
-              marginLeft: "0.1em",
-            }}
-            alt="It's a snake"
-            src={snakeImage}
-          />
         </Typography>
         <Typography
           variant="subtitle1"
