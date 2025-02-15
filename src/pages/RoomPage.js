@@ -85,9 +85,7 @@ function RoomPage({ match, location }) {
     const mod = getModifierState(event);
     if (event.key === "Enter" && mod === "Control") {
       event.preventDefault();
-      if (!leaving && user.id === game?.host) {
-        startGame();
-      }
+      startGame();
     }
   });
 
@@ -111,6 +109,9 @@ function RoomPage({ match, location }) {
   }
 
   function startGame() {
+    if (leaving || user.id !== game?.host) {
+      return;
+    }
     firebase.database().ref(`games/${gameId}`).update({
       status: "ingame",
       startedAt: firebase.database.ServerValue.TIMESTAMP,

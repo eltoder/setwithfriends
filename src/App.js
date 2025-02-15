@@ -25,16 +25,16 @@ import "./styles.css";
 import { darkTheme, lightTheme, withCardColors } from "./themes";
 import { generateColor, generateName, standardLayouts } from "./util";
 
-function makeThemes(customColors) {
+function makeThemes(rawCustomCardColors) {
   let parsed;
   try {
-    parsed = JSON.parse(customColors);
+    parsed = JSON.parse(rawCustomCardColors) || {};
   } catch (error) {
     console.log("failed to parse custom colors", error);
     parsed = {};
   }
   return {
-    parsedCustomColors: parsed,
+    customCardColors: parsed,
     customLightTheme: withCardColors(lightTheme, parsed.light),
     customDarkTheme: withCardColors(darkTheme, parsed.dark),
   };
@@ -59,10 +59,13 @@ function App() {
   const [authUser, setAuthUser] = useState(null);
   const [user, setUser] = useState(null);
   const [themeType, setThemeType] = useStorage("theme", "light");
-  const [customColors, setCustomColors] = useStorage("customColors", "{}");
-  const { parsedCustomColors, customLightTheme, customDarkTheme } = useMemo(
-    () => makeThemes(customColors),
-    [customColors]
+  const [rawCustomCardColors, setCustomCardColors] = useStorage(
+    "customColors",
+    "{}"
+  );
+  const { customCardColors, customLightTheme, customDarkTheme } = useMemo(
+    () => makeThemes(rawCustomCardColors),
+    [rawCustomCardColors]
   );
   const [keyboardLayoutName, setKeyboardLayoutName] = useStorage(
     "keyboardLayout",
@@ -131,14 +134,6 @@ function App() {
     };
   }, [authUser]);
 
-  const handleChangeTheme = () => {
-    setThemeType(themeType === "light" ? "dark" : "light");
-  };
-
-  const handleCustomColors = (custom) => {
-    setCustomColors(JSON.stringify(custom));
-  };
-
   return (
     <ThemeProvider
       theme={themeType === "light" ? customLightTheme : customDarkTheme}
@@ -158,6 +153,10 @@ function App() {
                 setKeyboardLayoutName,
                 customKeyboardLayout,
                 setCustomKeyboardLayout,
+                themeType,
+                setThemeType,
+                customCardColors,
+                setCustomCardColors,
                 volume,
                 setVolume,
                 layoutOrientation,
@@ -168,12 +167,7 @@ function App() {
             >
               <ConnectionsTracker />
               <WelcomeDialog />
-              <Navbar
-                themeType={themeType}
-                handleChangeTheme={handleChangeTheme}
-                customColors={parsedCustomColors}
-                handleCustomColors={handleCustomColors}
-              />
+              <Navbar />
               <Switch>
                 <Route exact path="/help" component={HelpPage} />
                 <Route exact path="/about" component={AboutPage} />

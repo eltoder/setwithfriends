@@ -14,6 +14,7 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import { version } from "../config";
 import { SettingsContext, UserContext } from "../context";
 import firebase from "../firebase";
+import useKeydown, { getModifierState } from "../hooks/useKeydown";
 import AccountOptionsDialog from "./AccountOptionsDialog";
 import BoardLayoutDialog from "./BoardLayoutDialog";
 import ColorChoiceDialog from "./ColorChoiceDialog";
@@ -23,12 +24,7 @@ import PromptDialog from "./PromptDialog";
 import User from "./User";
 import UserColorDialog from "./UserColorDialog";
 
-function Navbar({
-  themeType,
-  handleChangeTheme,
-  customColors,
-  handleCustomColors,
-}) {
+function Navbar() {
   const user = useContext(UserContext);
   const settings = useContext(SettingsContext);
   const [anchorEl, setAnchorEl] = useState(null);
@@ -58,13 +54,46 @@ function Navbar({
   function handleChangeCardColors(colorMap) {
     setChangeCardColors(false);
     if (colorMap) {
-      handleCustomColors({ ...customColors, [themeType]: colorMap });
+      settings.setCustomCardColors(
+        JSON.stringify({
+          ...settings.customCardColors,
+          [settings.themeType]: colorMap,
+        })
+      );
     }
   }
 
   function handleChangeVolume() {
     settings.setVolume((volume) => (volume === "on" ? "off" : "on"));
   }
+
+  function handleChangeTheme() {
+    settings.setThemeType((themeType) =>
+      themeType === "light" ? "dark" : "light"
+    );
+  }
+
+  useKeydown((event) => {
+    if (getModifierState(event) === "Control") {
+      if (event.key === "s") {
+        event.preventDefault();
+        handleChangeVolume();
+      } else if (event.key === "e") {
+        event.preventDefault();
+        handleChangeTheme();
+      } else if (event.key === "o") {
+        event.preventDefault();
+        settings.setLayoutOrientation((layoutOrientation) =>
+          layoutOrientation === "portrait" ? "landscape" : "portrait"
+        );
+      } else if (event.key === "i") {
+        event.preventDefault();
+        settings.setCardOrientation((cardOrientation) =>
+          cardOrientation === "vertical" ? "horizontal" : "vertical"
+        );
+      }
+    }
+  });
 
   return (
     <AppBar position="relative" color="transparent" elevation={0}>
