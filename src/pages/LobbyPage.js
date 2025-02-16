@@ -154,14 +154,10 @@ function LobbyPage() {
       const mod = getModifierState(event);
       if (mod === "Control") {
         event.preventDefault();
-        if (!waiting) {
-          newRoom("public");
-        }
+        newRoom("public");
       } else if (mod === "Shift") {
         event.preventDefault();
-        if (!waiting) {
-          newRoom("private");
-        }
+        newRoom("private");
       }
     }
   });
@@ -170,6 +166,9 @@ function LobbyPage() {
 
   async function newRoom(access) {
     // Make several attempts to create a game with an unused ID
+    if (waiting) {
+      return;
+    }
     setWaiting(true);
     let attempts = 0;
     while (attempts < 5) {

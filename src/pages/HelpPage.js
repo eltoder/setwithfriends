@@ -1,6 +1,7 @@
 import { useContext } from "react";
 
 import Container from "@material-ui/core/Container";
+import Grid from "@material-ui/core/Grid";
 import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
@@ -12,6 +13,21 @@ import { BASE_RATING, SCALING_FACTOR } from "../game";
 
 function HelpPage() {
   const { keyboardLayout, keyboardLayoutName } = useContext(SettingsContext);
+
+  const shortcutsTable = (shortcuts) => (
+    <Grid container style={{ maxWidth: 500, margin: "8px 0 16px 0" }}>
+      {shortcuts.flatMap(([command, key]) => [
+        <Grid item key={command} xs={8}>
+          <Typography variant="body1">{command}</Typography>
+        </Grid>,
+        <Grid item key={`${command}-key`} xs={4}>
+          <Typography variant="body1">
+            <strong>{key}</strong>
+          </Typography>
+        </Grid>,
+      ])}
+    </Grid>
+  );
 
   return (
     <Container>
@@ -150,7 +166,7 @@ function HelpPage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           You can choose the board layout (between portrait and landscape) and
-          the card orientation (between horizontal and vertical) in the
+          the cards orientation (between horizontal and vertical) in the
           settings. The former also changes the keyboard shortcuts, which may be
           more convenient to use.
         </Typography>
@@ -164,6 +180,25 @@ function HelpPage() {
             reflected in the list above.
           </Typography>
         )}
+        <Typography variant="h6" gutterBottom>
+          Keyboard shortcuts
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Additionally, the following keyboard shortcuts are available:
+        </Typography>
+        {shortcutsTable([
+          ["New game", "Ctrl+Enter"],
+          ["New private game", "Shift+Enter"],
+          ["Start game", "Ctrl+Enter"],
+          ["Play again", "Ctrl+Enter"],
+          ["Mute or unmute sound", "Ctrl+S"],
+          ["Change theme", "Ctrl+E"],
+          ["Change board orientation", "Ctrl+O"],
+          ["Change cards orientation", "Ctrl+I"],
+          ["Pause or resume game", "Ctrl+P"],
+          ["Quit game", "Ctrl+Q"],
+          ["Unselect cards", "Space or Escape"],
+        ])}
 
         <hr />
         <Typography variant="h5" gutterBottom>
@@ -261,6 +296,33 @@ function HelpPage() {
           order while playing.
         </Typography>
         <Typography variant="h6" gutterBottom>
+          UltraSet-Chain
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Set-Chain meets UltraSet. After you pick the first UltraSet, every new
+          UltraSet should have{" "}
+          <strong>exactly two cards from the previous UltraSet</strong>. For
+          example, the first three UltraSets of a game might look as follows:
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1202" />
+          <SetCard value="1122" />
+          <SetCard value="0212" />
+          <SetCard value="2112" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1122" />
+          <SetCard value="0212" />
+          <SetCard value="0112" />
+          <SetCard value="1222" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="1122" />
+          <SetCard value="0112" />
+          <SetCard value="2220" />
+          <SetCard value="2011" />
+        </Typography>
+        <Typography variant="h6" gutterBottom>
           Ultra9
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -331,6 +393,15 @@ function HelpPage() {
           easy special cases &mdash; 2 disjoint regular sets and a 3-pair
           UltraSet (that is, 3 pairs of cards that form sets with the same
           additional card).
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          Puzzle
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          This mode is inspired by The Daily SET Puzzle website. The rules are
+          the same as in the standard Set, except that you have to find{" "}
+          <strong>all sets</strong> on each board before you move to the next
+          board.
         </Typography>
         <Typography variant="h6" gutterBottom>
           Memory

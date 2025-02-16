@@ -120,20 +120,17 @@ function GamePage({ match }) {
   }, [finished.gameId, gameId]);
 
   useKeydown((event) => {
-    const mod = getModifierState(event);
-    if (event.key === "Enter" && mod === "Control") {
-      event.preventDefault();
-      if (game?.status === "done" && !(spectating || waiting)) {
+    if (getModifierState(event) === "Control") {
+      if (event.key === "Enter") {
+        event.preventDefault();
         handlePlayAgain();
+      } else if (event.key === "q") {
+        event.preventDefault();
+        setRedirect("/");
+      } else if (event.key === "p") {
+        event.preventDefault();
+        togglePause();
       }
-    }
-    if (event.key === "q" && mod === "Control") {
-      event.preventDefault();
-      setRedirect("/");
-    }
-    if (event.key === "p" && mod === "Control") {
-      event.preventDefault();
-      togglePause();
     }
   });
 
@@ -274,6 +271,9 @@ function GamePage({ match }) {
   }
 
   function handleAddHint() {
+    if (!game.enableHint || gameEnded || paused) {
+      return;
+    }
     firebase
       .database()
       .ref(`gameData/${gameId}/hints`)
@@ -281,6 +281,9 @@ function GamePage({ match }) {
   }
 
   function togglePause() {
+    if (!game.enableHint || gameEnded) {
+      return;
+    }
     firebase
       .database()
       .ref(`gameData/${gameId}/pause`)
@@ -297,6 +300,9 @@ function GamePage({ match }) {
   }
 
   async function handlePlayAgain() {
+    if (game?.status !== "done" || spectating || waiting) {
+      return;
+    }
     const idx = gameId.lastIndexOf("-");
     let id = gameId,
       num = 0;
