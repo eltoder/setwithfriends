@@ -24,10 +24,12 @@ import { SettingsContext, UserContext } from "../context";
 import firebase, { createGame, finishGame } from "../firebase";
 import {
   addCard,
+  cardsFromEvent,
   computeState,
   eventFromCards,
   findSet,
   generateDeck,
+  modes,
   removeCard,
 } from "../game";
 import useFirebaseRef from "../hooks/useFirebaseRef";
@@ -142,15 +144,29 @@ function GamePage({ match }) {
     );
   }, [gameMode, gameData?.deck, gameData?.seed]);
 
-  const { current, scores, lastEvents, history, board, answer, findState } =
-    useMemo(() => {
-      if (!gameData) return {};
-      const state = computeState({ ...gameData, deck }, gameMode);
-      const { current, boardSize, findState } = state;
-      const board = current.slice(0, boardSize);
-      const answer = findSet(board, gameMode, findState);
-      return { ...state, board, answer };
-    }, [gameMode, gameData, deck]);
+  const {
+    current,
+    scores,
+    lastEvents,
+    history,
+    board,
+    answer,
+    findState,
+    lastKeptSet,
+  } = useMemo(() => {
+    if (!gameData) return {};
+    const state = computeState({ ...gameData, deck }, gameMode);
+    const { current, boardSize, findState, history } = state;
+    const board = current.slice(0, boardSize);
+    const answer = findSet(board, gameMode, findState);
+    const lastKeptSet =
+      modes[gameMode].puzzle &&
+      history.length &&
+      !history[history.length - 1].kind
+        ? cardsFromEvent(history[history.length - 1])
+        : null;
+    return { ...state, board, answer, lastKeptSet };
+  }, [gameMode, gameData, deck]);
 
   if (redirect) return <Redirect push to={redirect} />;
 
@@ -414,6 +430,7 @@ function GamePage({ match }) {
               onClick={handleClick}
               onClear={handleClear}
               lastSet={findState.lastSet}
+              lastKeptSet={lastKeptSet}
               answer={hint}
               remaining={current.length - board.length}
               faceDown={paused ? "all" : gameMode === "memory" ? "deal" : ""}

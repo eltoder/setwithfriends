@@ -1,4 +1,4 @@
-import { useContext, useMemo } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 
 import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
@@ -31,6 +31,7 @@ function Game({
   selected,
   answer,
   lastSet,
+  lastKeptSet,
   faceDown,
   showShortcuts,
   remaining = -1,
@@ -40,6 +41,16 @@ function Game({
   const isHorizontal = cardOrientation === "horizontal";
   const isLandscape = layoutOrientation === "landscape";
   const [gameDimensions, gameEl] = useDimensions();
+  const [highlightCards, setHighlightCards] = useState(null);
+
+  const lastKeptCards = lastKeptSet?.join("|");
+  useEffect(() => {
+    setHighlightCards(lastKeptCards?.split("|"));
+    if (lastKeptCards) {
+      const timer = setTimeout(() => setHighlightCards(null), 500);
+      return () => clearTimeout(timer);
+    }
+  }, [lastKeptCards]);
 
   [board, lastSet] = useMemo(
     () => addLastSet(board, lastSet),
@@ -249,6 +260,7 @@ function Game({
                   width={cardWidth}
                   hinted={answer?.includes(card)}
                   active={selected?.includes(card)}
+                  highlight={highlightCards?.includes(card)}
                   faceDown={
                     faceDown === "all" ||
                     (faceDown &&

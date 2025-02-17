@@ -1,3 +1,5 @@
+import { formatCount } from "./util";
+
 export const BASE_RATING = 1200;
 export const SCALING_FACTOR = 800;
 
@@ -108,11 +110,10 @@ export function addCard(deck, card, gameMode, findState) {
   if (doChain) {
     const fromLast = cards.reduce((s, c) => s + lastSet.includes(c), 0);
     if (fromLast !== chain) {
-      const noun = chain > 1 ? "cards" : "card";
       return {
         kind: "error",
         cards,
-        error: `${chain} ${noun} must be from the previous ${setType}`,
+        error: `${formatCount(chain, "card")} must be from the previous ${setType}`,
       };
     }
   }
@@ -295,7 +296,7 @@ function processValidEvent(internalGameState, event, cards) {
   history.push(event);
 }
 
-function updateBoard(internalGameState, cards) {
+function updateBoard(internalGameState, event, cards) {
   const { current, gameMode, puzzle, boardSize, minBoardSize, findState } =
     internalGameState;
   // in puzzle modes only advance after all sets were found
@@ -304,6 +305,17 @@ function updateBoard(internalGameState, cards) {
     if (findSet(board, gameMode, findState)) return;
     findState.foundSets.clear();
     cards = board;
+    // add a synthetic event to show in chat that the board changed
+    const { history } = internalGameState;
+    let i;
+    for (i = history.length - 2; i >= 0; i--) {
+      if (history[i].kind === "board_done") break;
+    }
+    history.push({
+      time: event.time,
+      kind: "board_done",
+      count: history.length - 1 - i,
+    });
   }
   // remove cards, preserving positions when possible
   removeCards(internalGameState, cards);
@@ -333,7 +345,7 @@ function processEvent(internalGameState, event) {
     findState.lastSet = allCards;
   }
   processValidEvent(internalGameState, event, cards);
-  updateBoard(internalGameState, cards);
+  updateBoard(internalGameState, event, cards);
 }
 
 export function computeState(gameData, gameMode) {
