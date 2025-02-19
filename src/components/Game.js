@@ -232,6 +232,9 @@ function Game({
               style={{
                 position: "absolute",
                 zIndex: style.opacity.to((x) => (x === 1 ? "auto" : 1)),
+                pointerEvents: style.opacity.to((x) =>
+                  x === 1 ? "auto" : "none"
+                ),
                 ...style,
               }}
             >
