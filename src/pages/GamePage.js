@@ -54,7 +54,12 @@ const useStyles = makeStyles((theme) => ({
   },
   mainColumn: {
     display: "flex",
-    alignItems: "center",
+    alignItems: "top",
+  },
+  snackbar: {
+    [theme.breakpoints.down("sm")]: {
+      bottom: 6,
+    },
   },
   doneOverlay: {
     position: "absolute",
@@ -354,6 +359,7 @@ function GamePage({ match }) {
           vertical: "bottom",
           horizontal: "center",
         }}
+        classes={{ root: classes.snackbar }}
         open={snack.open}
         autoHideDuration={2000}
         onClose={handleClose}
