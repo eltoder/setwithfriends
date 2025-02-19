@@ -112,6 +112,11 @@ export function formatTime(t, hideSubsecond) {
   return (hours ? `${hours}:` : "") + moment.utc(rest).format(format);
 }
 
+export function formatCount(count, singular, plural = null) {
+  const noun = count === 1 ? singular : (plural ?? singular + "s");
+  return `${count} ${noun}`;
+}
+
 export function censorText(text) {
   return censor.applyTo(text, badWords.getAllMatches(text));
 }
