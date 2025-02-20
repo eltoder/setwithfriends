@@ -58,7 +58,7 @@ const useStyles = makeStyles((theme) => ({
   },
   snackbar: {
     [theme.breakpoints.down("sm")]: {
-      bottom: 6,
+      bottom: 4,
     },
   },
   doneOverlay: {

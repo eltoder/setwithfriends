@@ -47,7 +47,7 @@ function Game({
   useEffect(() => {
     setHighlightCards(lastKeptCards?.split("|"));
     if (lastKeptCards) {
-      const timer = setTimeout(() => setHighlightCards(null), 500);
+      const timer = setTimeout(() => setHighlightCards(null), 300);
       return () => clearTimeout(timer);
     }
   }, [lastKeptCards]);
