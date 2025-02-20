@@ -46,7 +46,7 @@ export const darkTheme = createTheme({
     red: "#ffb047",
     background: "#262626",
     hinted: "rgba(41, 182, 246, 0.25)",
-    highlight: "rgba(75, 158, 158, 0.3)",
+    highlight: "#404040",
     backColors: [
       grey[900],
       grey[800],
@@ -95,7 +95,7 @@ export const lightTheme = createTheme({
     red: "#ff0101",
     background: "#fff",
     hinted: "rgba(3, 169, 244, 0.2)",
-    highlight: "rgba(255, 234, 0, 0.3)",
+    highlight: "#fffedc",
     backColors: [
       indigo[600],
       indigo[300],
