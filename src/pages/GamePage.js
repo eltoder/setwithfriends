@@ -173,7 +173,7 @@ function GamePage({ match }) {
         ? cardsFromEvent(history[history.length - 1])
         : null;
     return { ...state, board, answer, lastKeptSet };
-  }, [gameMode, gameData, deck]);
+  }, [gameMode, gameData, random, deck]);
 
   if (redirect) return <Redirect push to={redirect} />;
 
