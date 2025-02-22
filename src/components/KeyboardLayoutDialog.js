@@ -39,7 +39,7 @@ const useStyles = makeStyles((theme) => ({
 function KeyboardLayoutDialog(props) {
   const { open, onClose, title } = props;
   const classes = useStyles();
-  const deck = useMemo(() => generateDeck("normal", "local"), []);
+  const deck = useMemo(() => generateDeck("normal", Math.random), []);
 
   const {
     keyboardLayout,

@@ -29,6 +29,7 @@ import {
   eventFromCards,
   findSet,
   generateDeck,
+  makeRandom,
   modes,
   removeCard,
 } from "../game";
@@ -142,11 +143,12 @@ function GamePage({ match }) {
   });
 
   const gameMode = game?.mode || "normal";
-  const deck = useMemo(() => {
-    return (
-      gameData?.deck ??
-      (gameData?.seed ? generateDeck(gameMode, gameData.seed) : null)
-    );
+  const { random, deck } = useMemo(() => {
+    const random = gameData?.seed && makeRandom(gameData.seed);
+    return {
+      random,
+      deck: gameData?.deck ?? (random && generateDeck(gameMode, random)),
+    };
   }, [gameMode, gameData?.deck, gameData?.seed]);
 
   const {
@@ -160,7 +162,7 @@ function GamePage({ match }) {
     lastKeptSet,
   } = useMemo(() => {
     if (!gameData) return {};
-    const state = computeState({ ...gameData, deck }, gameMode);
+    const state = computeState({ ...gameData, random, deck }, gameMode);
     const { current, boardSize, findState, history } = state;
     const board = current.slice(0, boardSize);
     const answer = findSet(board, gameMode, findState);

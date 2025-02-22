@@ -38,7 +38,10 @@ const useStyles = makeStyles((theme) => ({
 function BoardLayoutDialog(props) {
   const { open, onClose, title } = props;
   const classes = useStyles();
-  const board = useMemo(() => generateDeck("normal", "local").slice(0, 12), []);
+  const board = useMemo(
+    () => generateDeck("normal", Math.random).slice(0, 12),
+    []
+  );
 
   const {
     layoutOrientation,
