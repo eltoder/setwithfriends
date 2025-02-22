@@ -9,7 +9,7 @@
   "dependencies": {
     "@material-ui/core": "^4.12.3",
     "@material-ui/icons": "^4.11.2",
-    "@react-spring/web": "^9.4.4",
+    "@react-spring/web": "^9.7.5",
     "@stripe/stripe-js": "^1.25.0",
     "chart.js": "^3.7.1",
     "clsx": "^1.1.1",
