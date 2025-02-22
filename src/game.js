@@ -5,10 +5,7 @@ export const SCALING_FACTOR = 800;
 
 // xoshiro128** (Vigna & Blackman, 2018) PRNG implementaion taken from
 // https://stackoverflow.com/a/47593316/5190601
-function makeRandom(seed) {
-  if (seed === "local") {
-    return Math.random;
-  }
+export function makeRandom(seed) {
   if (!seed.startsWith("v1:")) {
     throw new Error(`Unknown seed version: ${seed}`);
   }
@@ -37,17 +34,20 @@ function makeCards(symbols, traits) {
   );
 }
 
-export function generateDeck(gameMode, seed) {
-  const deck = makeCards(["0", "1", "2"], modes[gameMode].traits);
+function shuffleCards(deck, count, random) {
   // Fisher-Yates
-  const random = makeRandom(seed);
-  for (let i = deck.length - 1; i > 0; i--) {
+  for (let i = Math.min(count, deck.length) - 1; i > 0; i--) {
     const j = Math.floor(random() * (i + 1));
     const temp = deck[i];
     deck[i] = deck[j];
     deck[j] = temp;
   }
   return deck;
+}
+
+export function generateDeck(gameMode, random) {
+  const deck = makeCards(["0", "1", "2"], modes[gameMode].traits);
+  return shuffleCards(deck, deck.length, random);
 }
 
 /** Returns the unique card c such that {a, b, c} form a set. */
@@ -297,10 +297,13 @@ function processValidEvent(internalGameState, event, cards) {
 }
 
 function updateBoard(internalGameState, event, cards) {
-  const { current, gameMode, puzzle, boardSize, minBoardSize, findState } =
+  const { current, gameMode, boardSize, minBoardSize, findState } =
     internalGameState;
+  if (internalGameState.shuffle) {
+    shuffleCards(current, boardSize, internalGameState.random);
+  }
   // in puzzle modes only advance after all sets were found
-  if (puzzle) {
+  if (internalGameState.puzzle) {
     const board = current.slice(0, boardSize);
     if (findSet(board, gameMode, findState)) return;
     findState.foundSets.clear();
@@ -355,14 +358,17 @@ export function computeState(gameData, gameMode) {
   const scores = {}; // scores of all users
   const used = {}; // set of cards that have been taken
   const history = []; // list of valid events in time order
+  const random =
+    gameData.random ?? (gameData.seed && makeRandom(gameData.seed));
   // remaining cards in the game
   const current = gameData.deck
     ? gameData.deck.slice()
-    : generateDeck(gameMode, gameData.seed);
+    : generateDeck(gameMode, random);
   const lastEvents = {}; // time of the last event for each user
   const minBoardSize = modes[gameMode].minBoardSize;
   const chain = modes[gameMode].chain;
   const puzzle = modes[gameMode].puzzle;
+  const shuffle = modes[gameMode].shuffle;
   const findState = {
     lastSet: chain ? [] : undefined,
     foundSets: puzzle ? new Set() : undefined,
@@ -377,7 +383,9 @@ export function computeState(gameData, gameMode) {
     minBoardSize,
     chain,
     puzzle,
+    shuffle,
     findState,
+    random,
     boardSize: findBoardSize(current, gameMode, minBoardSize, findState),
   };
 
@@ -505,6 +513,16 @@ export const modes = {
     traits: 4,
     chain: 0,
     puzzle: true,
+    minBoardSize: 12,
+  },
+  shuffle: {
+    name: "Shuffle",
+    color: "blue",
+    description: "Cards are shuffled after each Set.",
+    setType: "Set",
+    traits: 4,
+    chain: 0,
+    shuffle: true,
     minBoardSize: 12,
   },
   memory: {

@@ -47,12 +47,11 @@ export function generateSeed() {
   return s;
 }
 
+type Random = () => number;
+
 // xoshiro128** (Vigna & Blackman, 2018) PRNG implementaion taken from
 // https://stackoverflow.com/a/47593316/5190601
 function makeRandom(seed: string) {
-  if (seed === "local") {
-    return Math.random;
-  }
   if (!seed.startsWith("v1:")) {
     throw new Error(`Unknown seed version: ${seed}`);
   }
@@ -81,17 +80,21 @@ function makeCards(symbols: string[], traits: number): string[] {
   );
 }
 
-function generateDeck(gameMode: GameMode, seed: string | null) {
+function shuffleCards(deck: string[], count: number, random: Random) {
+  // Fisher-Yates
+  for (let i = Math.min(count, deck.length) - 1; i > 0; i--) {
+    const j = Math.floor(random() * (i + 1));
+    const temp = deck[i];
+    deck[i] = deck[j];
+    deck[j] = temp;
+  }
+  return deck;
+}
+
+function generateDeck(gameMode: GameMode, random: Random | null) {
   const deck = makeCards(["0", "1", "2"], modes[gameMode].traits);
-  if (seed) {
-    // Fisher-Yates
-    const random = makeRandom(seed);
-    for (let i = deck.length - 1; i > 0; i--) {
-      const j = Math.floor(random() * (i + 1));
-      const temp = deck[i];
-      deck[i] = deck[j];
-      deck[j] = temp;
-    }
+  if (random) {
+    shuffleCards(deck, deck.length, random);
   }
   return new Set(deck);
 }
@@ -393,6 +396,13 @@ export const modes = {
     puzzle: true,
     minBoardSize: 12,
   },
+  shuffle: {
+    setType: "Set",
+    traits: 4,
+    chain: 0,
+    puzzle: false,
+    minBoardSize: 12,
+  },
   memory: {
     setType: "Set",
     traits: 4,
@@ -424,8 +434,8 @@ export function replayEvents(
   const puzzle = modes[gameMode].puzzle;
   const minBoardSize = modes[gameMode].minBoardSize;
   // no need to shuffle the deck in non-puzzle modes
-  const seed = puzzle ? gameData.child("seed").val() : null;
-  const current = generateDeck(gameMode, seed);
+  const random = puzzle ? makeRandom(gameData.child("seed").val()) : null;
+  const current = generateDeck(gameMode, random);
   const findState: FindState = {
     lastSet: chain ? [] : undefined,
     foundSets: puzzle ? new Set() : undefined,
