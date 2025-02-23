@@ -48,15 +48,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SHAPES = ["squiggle", "oval", "diamond"];
-const SHADES = ["filled", "outline", "striped"];
+const SHAPES = ["squiggle", "oval", "diamond", "triangle"];
+const MASKS = ["", "", "url(#mask-striped)", "url(#mask-dotted)"];
 
 function Symbol(props) {
   const classes = useStyles();
 
   const color = props.color;
   const shape = SHAPES[props.shape];
-  const shade = SHADES[props.shade];
+  const shade = props.shade;
   const width = props.size === "sm" ? 8 : 36;
   const height = props.size === "sm" ? 16 : 72;
   return (
@@ -70,8 +70,8 @@ function Symbol(props) {
     >
       <use
         href={"#" + shape}
-        fill={shade === "outline" ? "transparent" : color}
-        mask={shade === "striped" ? "url(#mask-stripe)" : ""}
+        fill={shade === 1 ? "transparent" : color}
+        mask={MASKS[shade]}
       />
       <use href={"#" + shape} stroke={color} fill="none" strokeWidth={18} />
     </svg>
@@ -83,7 +83,12 @@ function SetCard(props) {
   const theme = useTheme();
   const { color, shape, shade, border, number } = cardTraits(props.value);
 
-  const COLORS = [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
+  const COLORS = [
+    theme.setCard.purple,
+    theme.setCard.green,
+    theme.setCard.red,
+    theme.setCard.orange,
+  ];
   const BORDERS =
     props.size === "sm"
       ? ["2px solid", "2px dotted", "3px double"]
@@ -99,7 +104,7 @@ function SetCard(props) {
       style={{ border: BORDERS[border] }}
       onClick={props.onClick}
     >
-      {[...Array(number + 1)].map((_, i) => (
+      {Array.from(Array(number + 1), (_, i) => (
         <Symbol
           key={i}
           color={COLORS[color]}

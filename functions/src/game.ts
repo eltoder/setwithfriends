@@ -60,8 +60,8 @@ function makeRandom(seed: string) {
   let c = parseInt(seed.slice(19, 27), 16) >>> 0;
   let d = parseInt(seed.slice(27, 35), 16) >>> 0;
   return () => {
-    let t = b << 9,
-      r = b * 5;
+    const t = b << 9;
+    let r = b * 5;
     r = ((r << 7) | (r >>> 25)) * 9;
     c ^= a;
     d ^= b;
@@ -92,14 +92,15 @@ function shuffleCards(deck: string[], count: number, random: Random) {
 }
 
 function generateDeck(gameMode: GameMode, random: Random | null) {
-  const deck = makeCards(["0", "1", "2"], modes[gameMode].traits);
-  if (random) {
-    shuffleCards(deck, deck.length, random);
-  }
-  return new Set(deck);
+  const symbols = Array.from(
+    Array(setTypes[modes[gameMode].setType].variants),
+    (_, i) => i + ""
+  );
+  const deck = makeCards(symbols, modes[gameMode].traits);
+  return new Set(random ? shuffleCards(deck, deck.length, random) : deck);
 }
 
-/** Returns the unique card c such that {a, b, c} form a set. */
+/** Return the unique card c such that {a, b, c} form a set. */
 function conjugateCard(a: string, b: string) {
   const zeroCode = "0".charCodeAt(0);
   let c = "";
@@ -112,17 +113,27 @@ function conjugateCard(a: string, b: string) {
   return c;
 }
 
-/** Check if three cards form a set. */
-export function checkSetNormal(a: string, b: string, c: string) {
+/** Return the unique card d such that {a, b, c, d} form a 4Set. */
+function conjugateCard4Set(a: string, b: string, c: string) {
+  let d = "";
   for (let i = 0; i < a.length; i++) {
-    if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3 !== 0)
-      return null;
+    d += String.fromCharCode(
+      a.charCodeAt(i) ^ b.charCodeAt(i) ^ c.charCodeAt(i)
+    );
+  }
+  return d;
+}
+
+/** Check if three cards form a set. */
+function checkSetNormal(a: string, b: string, c: string) {
+  for (let i = 0; i < a.length; i++) {
+    if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3) return null;
   }
   return [a, b, c];
 }
 
 /** Check if four cards form an ultraset */
-export function checkSetUltra(a: string, b: string, c: string, d: string) {
+function checkSetUltra(a: string, b: string, c: string, d: string) {
   if (conjugateCard(a, b) === conjugateCard(c, d)) return [a, b, c, d];
   if (conjugateCard(a, c) === conjugateCard(b, d)) return [a, c, b, d];
   if (conjugateCard(a, d) === conjugateCard(b, c)) return [a, d, b, c];
@@ -130,7 +141,7 @@ export function checkSetUltra(a: string, b: string, c: string, d: string) {
 }
 
 /** Check if six cards form a ghostset */
-export function checkSetGhost(
+function checkSetGhost(
   a: string,
   b: string,
   c: string,
@@ -146,9 +157,18 @@ export function checkSetGhost(
       d.charCodeAt(i) +
       e.charCodeAt(i) +
       f.charCodeAt(i);
-    if (sum % 3 !== 0) return null;
+    if (sum % 3) return null;
   }
   return [a, b, c, d, e, f];
+}
+
+/** Check if four cards form a 4Set */
+function checkSet4Set(a: string, b: string, c: string, d: string) {
+  for (let i = 0; i < a.length; i++) {
+    if (a.charCodeAt(i) ^ b.charCodeAt(i) ^ c.charCodeAt(i) ^ d.charCodeAt(i))
+      return null;
+  }
+  return [a, b, c, d];
 }
 
 function findSetNormal(deck: string[], gameMode: GameMode, state: FindState) {
@@ -221,6 +241,21 @@ function findSetGhost(deck: string[], gameMode: GameMode, state: FindState) {
   return null;
 }
 
+function findSet4Set(deck: string[], gameMode: GameMode, state: FindState) {
+  const deckSet = new Set(deck);
+  for (let i = 0; i < deck.length; i++) {
+    for (let j = i + 1; j < deck.length; j++) {
+      for (let k = j + 1; k < deck.length; k++) {
+        const c = conjugateCard4Set(deck[i], deck[j], deck[k]);
+        if (deckSet.has(c)) {
+          return [deck[i], deck[j], deck[k], c];
+        }
+      }
+    }
+  }
+  return null;
+}
+
 /** Find a set in an unordered collection of cards, if any, depending on mode. */
 export function findSet(deck: string[], gameMode: GameMode, state: FindState) {
   return setTypes[modes[gameMode].setType].findFn(deck, gameMode, state);
@@ -251,7 +286,7 @@ function findBoard(
   state: FindState
 ) {
   const deckIter = deck.values();
-  let board: string[] = [];
+  const board: string[] = [];
   copyFrom(deckIter, board, minBoardSize);
   while (board.length < deck.size && !findSet(board, gameMode, state)) {
     copyFrom(deckIter, board, 3 - (board.length % 3));
@@ -316,19 +351,28 @@ function replayEvent(internalGameState: InternalGameState, event: GameEvent) {
 
 const setTypes = {
   Set: {
+    variants: 3,
     size: 3,
     checkFn: checkSetNormal,
     findFn: findSetNormal,
   },
   UltraSet: {
+    variants: 3,
     size: 4,
     checkFn: checkSetUltra,
     findFn: findSetUltra,
   },
   GhostSet: {
+    variants: 3,
     size: 6,
     checkFn: checkSetGhost,
     findFn: findSetGhost,
+  },
+  "4Set": {
+    variants: 4,
+    size: 4,
+    checkFn: checkSet4Set,
+    findFn: findSet4Set,
   },
 };
 
@@ -388,6 +432,13 @@ export const modes = {
     chain: 0,
     puzzle: false,
     minBoardSize: 10,
+  },
+  "4set": {
+    setType: "4Set",
+    traits: 4,
+    chain: 0,
+    puzzle: false,
+    minBoardSize: 15,
   },
   puzzle: {
     setType: "Set",
