@@ -98,16 +98,15 @@ export function addCard(deck, card, gameMode, findState) {
   const setSize = setTypes[setType].size;
   const { lastSet, foundSets } = findState;
   // Special case for the regular set-chain modes: if you select a second card
-  // from lastSet, we unselect the first one
+  // from lastSet, we unselect the first one; also, this card goes to the front
   const cards =
     chain === 1 && lastSet.includes(card)
-      ? [...deck.filter((c) => !lastSet.includes(c)), card]
+      ? [card, ...deck.filter((c) => !lastSet.includes(c))]
       : [...deck, card];
   if (cards.length < setSize) {
     return { kind: "pending", cards };
   }
-  const doChain = chain && lastSet.length > 0;
-  if (doChain) {
+  if (chain && lastSet.length > 0) {
     const fromLast = cards.reduce((s, c) => s + lastSet.includes(c), 0);
     if (fromLast !== chain) {
       return {
@@ -124,8 +123,8 @@ export function addCard(deck, card, gameMode, findState) {
   if (modes[gameMode].puzzle && foundSets.has(set.slice().sort().join("|"))) {
     return { kind: "error", cards, error: `This ${setType} was already found` };
   }
-  if (doChain) {
-    // Align with lastSet to reduce movement of cards
+  // In ultra-chain, align set with lastSet to reduce movement of cards
+  if (chain > 1) {
     for (const [i, card] of lastSet.entries()) {
       const idx = set.indexOf(card);
       if (idx >= 0 && idx !== i) {
