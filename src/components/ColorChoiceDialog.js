@@ -27,13 +27,14 @@ function ColorChoiceDialog(props) {
   const [red, setRed] = useState(theme.setCard.red);
   const [green, setGreen] = useState(theme.setCard.green);
   const [purple, setPurple] = useState(theme.setCard.purple);
+  const [orange, setOrange] = useState(theme.setCard.orange);
 
   function handleClose() {
     onClose(null);
   }
 
   function handleSubmit() {
-    onClose({ red, green, purple });
+    onClose({ red, green, purple, orange });
   }
 
   function handleReset() {
@@ -41,6 +42,7 @@ function ColorChoiceDialog(props) {
     setRed(resetTo.setCard.red);
     setGreen(resetTo.setCard.green);
     setPurple(resetTo.setCard.purple);
+    setOrange(resetTo.setCard.orange);
   }
 
   return (
@@ -48,26 +50,33 @@ function ColorChoiceDialog(props) {
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
         <ThemeProvider theme={withCardColors(theme, { red, green, purple })}>
-          <Grid container spacing={3}>
-            <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
+          <Grid container spacing={2}>
+            <Grid item xs={12} md={3} className={classes.colorPickerColumn}>
               <ResponsiveSetCard width={225} value="0000" />
               <ChromePicker
                 color={purple}
                 onChangeComplete={(result) => setPurple(result.hex)}
               />
             </Grid>
-            <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
+            <Grid item xs={12} md={3} className={classes.colorPickerColumn}>
               <ResponsiveSetCard width={225} value="1000" />
               <ChromePicker
                 color={green}
                 onChangeComplete={(result) => setGreen(result.hex)}
               />
             </Grid>
-            <Grid item xs={12} md={4} className={classes.colorPickerColumn}>
+            <Grid item xs={12} md={3} className={classes.colorPickerColumn}>
               <ResponsiveSetCard width={225} value="2000" />
               <ChromePicker
                 color={red}
                 onChangeComplete={(result) => setRed(result.hex)}
+              />
+            </Grid>
+            <Grid item xs={12} md={3} className={classes.colorPickerColumn}>
+              <ResponsiveSetCard width={225} value="3000" />
+              <ChromePicker
+                color={orange}
+                onChangeComplete={(result) => setOrange(result.hex)}
               />
             </Grid>
           </Grid>

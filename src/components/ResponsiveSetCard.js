@@ -43,14 +43,15 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SHAPES = ["squiggle", "oval", "diamond"];
-const SHADES = ["filled", "outline", "striped"];
+const SHAPES = ["squiggle", "oval", "diamond", "triangle"];
+const MASKS = ["", "", "url(#mask-striped)", "url(#mask-dotted)"];
+const BORDERS = ["3px solid", "4px dotted", "6px double"];
 
 function ResponsiveSymbol(props) {
   const classes = useStyles();
   const color = props.color;
   const shape = SHAPES[props.shape];
-  const shade = SHADES[props.shade];
+  const shade = props.shade;
 
   return (
     <svg
@@ -62,8 +63,8 @@ function ResponsiveSymbol(props) {
     >
       <use
         href={"#" + shape}
-        fill={shade === "outline" ? "transparent" : color}
-        mask={shade === "striped" ? "url(#mask-stripe)" : ""}
+        fill={shade === 1 ? "transparent" : color}
+        mask={MASKS[shade]}
       />
       <use href={"#" + shape} stroke={color} fill="none" strokeWidth={18} />
     </svg>
@@ -82,9 +83,12 @@ function ResponsiveSetCard(props) {
   const contentHeight = height - 2 * margin;
   const { color, shape, shade, border, number } = cardTraits(value);
 
-  const COLORS = [theme.setCard.purple, theme.setCard.green, theme.setCard.red];
-
-  const BORDERS = ["3px solid", "4px dotted", "6px double"];
+  const COLORS = [
+    theme.setCard.purple,
+    theme.setCard.green,
+    theme.setCard.red,
+    theme.setCard.orange,
+  ];
 
   let extraStyle;
   if (faceDown) {
@@ -127,13 +131,13 @@ function ResponsiveSetCard(props) {
       onClick={onClick}
     >
       {faceDown ||
-        [...Array(number + 1)].map((_, i) => (
+        Array.from(Array(number + 1), (_, i) => (
           <ResponsiveSymbol
             key={i}
             color={COLORS[color]}
             shape={shape}
             shade={shade}
-            size={Math.round(contentHeight * 0.36)}
+            size={Math.round(contentHeight * 0.35)}
           />
         ))}
       {hinted && (

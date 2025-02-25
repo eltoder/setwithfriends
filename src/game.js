@@ -14,8 +14,8 @@ export function makeRandom(seed) {
   let c = parseInt(seed.slice(19, 27), 16) >>> 0;
   let d = parseInt(seed.slice(27, 35), 16) >>> 0;
   return () => {
-    let t = b << 9,
-      r = b * 5;
+    const t = b << 9;
+    let r = b * 5;
     r = ((r << 7) | (r >>> 25)) * 9;
     c ^= a;
     d ^= b;
@@ -46,11 +46,15 @@ function shuffleCards(deck, count, random) {
 }
 
 export function generateDeck(gameMode, random) {
-  const deck = makeCards(["0", "1", "2"], modes[gameMode].traits);
+  const symbols = Array.from(
+    Array(setTypes[modes[gameMode].setType].variants),
+    (_, i) => i + ""
+  );
+  const deck = makeCards(symbols, modes[gameMode].traits);
   return shuffleCards(deck, deck.length, random);
 }
 
-/** Returns the unique card c such that {a, b, c} form a set. */
+/** Return the unique card c such that {a, b, c} form a set. */
 export function conjugateCard(a, b) {
   const zeroCode = "0".charCodeAt(0);
   let c = "";
@@ -63,10 +67,20 @@ export function conjugateCard(a, b) {
   return c;
 }
 
+/** Return the unique card d such that {a, b, c, d} form a 4Set. */
+export function conjugateCard4Set(a, b, c) {
+  let d = "";
+  for (let i = 0; i < a.length; i++) {
+    d += String.fromCharCode(
+      a.charCodeAt(i) ^ b.charCodeAt(i) ^ c.charCodeAt(i)
+    );
+  }
+  return d;
+}
+
 export function checkSetNormal(a, b, c) {
   for (let i = 0; i < a.length; i++) {
-    if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3 !== 0)
-      return null;
+    if ((a.charCodeAt(i) + b.charCodeAt(i) + c.charCodeAt(i)) % 3) return null;
   }
   return [a, b, c];
 }
@@ -87,9 +101,17 @@ export function checkSetGhost(a, b, c, d, e, f) {
       d.charCodeAt(i) +
       e.charCodeAt(i) +
       f.charCodeAt(i);
-    if (sum % 3 !== 0) return null;
+    if (sum % 3) return null;
   }
   return [a, b, c, d, e, f];
+}
+
+export function checkSet4Set(a, b, c, d) {
+  for (let i = 0; i < a.length; i++) {
+    if (a.charCodeAt(i) ^ b.charCodeAt(i) ^ c.charCodeAt(i) ^ d.charCodeAt(i))
+      return null;
+  }
+  return [a, b, c, d];
 }
 
 export function addCard(deck, card, gameMode, findState) {
@@ -216,6 +238,21 @@ function findSetGhost(deck, gameMode, state) {
               if (cand) return cand;
             }
           }
+        }
+      }
+    }
+  }
+  return null;
+}
+
+function findSet4Set(deck, gameMode, state) {
+  const deckSet = new Set(deck);
+  for (let i = 0; i < deck.length; i++) {
+    for (let j = i + 1; j < deck.length; j++) {
+      for (let k = j + 1; k < deck.length; k++) {
+        const c = conjugateCard4Set(deck[i], deck[j], deck[k]);
+        if (deckSet.has(c)) {
+          return [deck[i], deck[j], deck[k], c];
         }
       }
     }
@@ -410,19 +447,28 @@ export function computeState(gameData, gameMode) {
 
 const setTypes = {
   Set: {
+    variants: 3,
     size: 3,
     checkFn: checkSetNormal,
     findFn: findSetNormal,
   },
   UltraSet: {
+    variants: 3,
     size: 4,
     checkFn: checkSetUltra,
     findFn: findSetUltra,
   },
   GhostSet: {
+    variants: 3,
     size: 6,
     checkFn: checkSetGhost,
     findFn: findSetGhost,
+  },
+  "4Set": {
+    variants: 4,
+    size: 4,
+    checkFn: checkSet4Set,
+    findFn: findSet4Set,
   },
 };
 
@@ -503,6 +549,15 @@ export const modes = {
     traits: 4,
     chain: 0,
     minBoardSize: 10,
+  },
+  "4set": {
+    name: "4Set",
+    color: "amber",
+    description: "Find 4 cards that form a 4Set.",
+    setType: "4Set",
+    traits: 4,
+    chain: 0,
+    minBoardSize: 15,
   },
   puzzle: {
     name: "Puzzle",

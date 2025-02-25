@@ -66,7 +66,7 @@ function ChatCards({ item, gameMode, startedAt }) {
         </div>
         {cards && (
           <div className={classes.setCards}>
-            {setType === "Set" &&
+            {(setType === "Set" || setType === "4Set") &&
               cards.map((card) => (
                 <SetCard key={card} size="sm" value={card} />
               ))}

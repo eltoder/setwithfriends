@@ -1,8 +1,10 @@
 import {
+  checkSet4Set,
   checkSetGhost,
   checkSetNormal,
   checkSetUltra,
   conjugateCard,
+  conjugateCard4Set,
   findSet,
 } from "./game";
 
@@ -12,8 +14,14 @@ it("computes conjugate cards", () => {
   expect(conjugateCard("0112", "0112")).toBe("0112");
 });
 
+it("computes conjugate cards (4set) ", () => {
+  expect(conjugateCard4Set("2033", "2212", "1011")).toBe("1230");
+  expect(conjugateCard4Set("3312", "3311", "2133")).toBe("2130");
+  expect(conjugateCard4Set("2330", "3220", "1202")).toBe("0312");
+});
+
 const verifySet = (cards) => {
-  expect(cards).toBeTruthy();
+  expect(cards.length).toBe(3);
   const [a, b, c] = cards;
   expect(conjugateCard(a, b)).toBe(c);
 };
@@ -29,7 +37,7 @@ it("checks sets", () => {
 });
 
 const verifyUltra = (cards) => {
-  expect(cards).toBeTruthy();
+  expect(cards.length).toBe(4);
   const [a, b, c, d] = cards;
   expect(conjugateCard(a, b)).toBe(conjugateCard(c, d));
 };
@@ -45,7 +53,7 @@ it("checks ultrasets", () => {
 });
 
 const verifyGhost = (cards) => {
-  expect(cards).toBeTruthy();
+  expect(cards.length).toBe(6);
   const [a, b, c, d, e, f] = cards;
   verifySet([conjugateCard(a, b), conjugateCard(c, d), conjugateCard(e, f)]);
 };
@@ -64,6 +72,17 @@ it("checks ghostsets", () => {
   expect(checkSetGhost("0120", "1022", "1012", "0110", "2102", "2020")).toBe(
     null
   );
+});
+
+const verify4Set = (cards) => {
+  expect(cards.length).toBe(4);
+  const [a, b, c, d] = cards;
+  expect(conjugateCard4Set(a, b, c)).toBe(d);
+};
+
+it("checks 4sets", () => {
+  verify4Set(checkSet4Set("0000", "0102", "0210", "0312"));
+  expect(checkSet4Set("0000", "0102", "0210", "0310")).toBe(null);
 });
 
 describe("findSet()", () => {
@@ -145,6 +164,24 @@ describe("findSet()", () => {
       ["1111", "1021", "0102", "2001", "2100", "1001", "0002"],
     ]) {
       expect(findSet(deck, "ghostset")).toBe(null);
+    }
+  });
+
+  it("can find 4sets", () => {
+    for (const deck of [
+      ["0000", "0102", "0210", "0312"],
+      ["0123", "0000", "0102", "0210", "0312", "3210"],
+      ["0123", "0000", "0102", "0210", "0312", "3210", "1111", "2323"],
+    ]) {
+      verify4Set(findSet(deck, "4set"));
+    }
+
+    for (const deck of [
+      ["0000", "0102", "0210", "0311"],
+      ["0123", "0000", "0102", "0210", "0311", "3210"],
+      ["0123", "0000", "0102", "0210", "0311", "3210", "1111", "2323"],
+    ]) {
+      expect(findSet(deck, "4set")).toBe(null);
     }
   });
 });
