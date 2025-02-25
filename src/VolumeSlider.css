@@ -1,0 +1,60 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+  }
+  
+  .App {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+  
+  .container {
+    background-color: rgba(255, 255, 255); 
+    width: 30vmin;
+    height: 10vmin;
+    transform: translate(-50%, -50%);
+    top: 10%;
+    left: 50%;
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    padding: 2%;
+    border-radius: 5px;
+  }
+  
+  input[type="range"] {
+    position: relative;
+    display: block;
+    width: 80%;
+    height: 0.8vmin;
+    background-color: rgb(161, 134, 161);
+    border-radius: 8px;
+  }
+  
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    height: 3vmin;
+    width: 3vmin;
+    background-color: #7a0e81;
+    border-radius: 50%;
+    cursor: pointer;
+    border: none;
+  }
+  
+  #slider-value {
+    width: 20%;
+    position: relative;
+    background-color: #7a0e81;
+    color: #fff;
+    text-align: center;
+    font-family: "Roboto Mono", monospace;
+    padding: 2%;
+    border-radius: 5vmin;
+    font-size: 2vmin;
+    left: 2%;
+  }
+  
