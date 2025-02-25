@@ -59,10 +59,9 @@ export function conjugateCard(a, b) {
   const zeroCode = "0".charCodeAt(0);
   let c = "";
   for (let i = 0; i < a.length; i++) {
-    const an = a.charCodeAt(i) - zeroCode,
-      bn = b.charCodeAt(i) - zeroCode;
-    const lastNum = an === bn ? an : 3 - an - bn;
-    c += String.fromCharCode(zeroCode + lastNum);
+    const an = a.charCodeAt(i),
+      bn = b.charCodeAt(i);
+    c += String.fromCharCode(an === bn ? an : zeroCode * 3 + 3 - an - bn);
   }
   return c;
 }
