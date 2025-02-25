@@ -404,6 +404,14 @@ function HelpPage() {
           board.
         </Typography>
         <Typography variant="h6" gutterBottom>
+          Shuffle
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Shuffle follows the same rules as the standard Set; the only
+          difference being that all cards on the board are shuffled when a Set
+          is found.
+        </Typography>
+        <Typography variant="h6" gutterBottom>
           Memory
         </Typography>
         <Typography variant="body1" gutterBottom>
