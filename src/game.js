@@ -558,6 +558,15 @@ export const modes = {
     chain: 0,
     minBoardSize: 15,
   },
+  "4setjr": {
+    name: "4Set Junior",
+    color: "amber",
+    description: "Find 4 cards that form a 4Set.",
+    setType: "4Set",
+    traits: 3,
+    chain: 0,
+    minBoardSize: 11,
+  },
   puzzle: {
     name: "Puzzle",
     color: "cyan",

@@ -43,8 +43,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-const SHAPES = ["squiggle", "oval", "diamond", "triangle"];
-const MASKS = ["", "", "url(#mask-striped)", "url(#mask-dotted)"];
+const SHAPES = ["squiggle", "oval", "diamond", "hourglass"];
+const MASKS = ["", "", "url(#mask-stripes)", "url(#mask-checkers)"];
 const BORDERS = ["3px solid", "4px dotted", "6px double"];
 
 function ResponsiveSymbol(props) {
@@ -61,11 +61,9 @@ function ResponsiveSymbol(props) {
       viewBox="0 0 200 400"
       style={{ transition: "width 0.5s, height 0.5s" }}
     >
-      <use
-        href={"#" + shape}
-        fill={shade === 1 ? "transparent" : color}
-        mask={MASKS[shade]}
-      />
+      {shade !== 1 && (
+        <use href={"#" + shape} fill={color} mask={MASKS[shade]} />
+      )}
       <use href={"#" + shape} stroke={color} fill="none" strokeWidth={18} />
     </svg>
   );

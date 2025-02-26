@@ -439,6 +439,13 @@ export const modes = {
     puzzle: false,
     minBoardSize: 15,
   },
+  "4setjr": {
+    setType: "4Set",
+    traits: 3,
+    chain: 0,
+    puzzle: false,
+    minBoardSize: 11,
+  },
   puzzle: {
     setType: "Set",
     traits: 4,
