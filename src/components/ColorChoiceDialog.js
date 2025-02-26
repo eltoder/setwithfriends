@@ -49,7 +49,9 @@ function ColorChoiceDialog(props) {
     <Dialog open={open} onClose={handleClose} maxWidth="xl">
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        <ThemeProvider theme={withCardColors(theme, { red, green, purple })}>
+        <ThemeProvider
+          theme={withCardColors(theme, { red, green, purple, orange })}
+        >
           <Grid container spacing={2}>
             <Grid item xs={12} md={3} className={classes.colorPickerColumn}>
               <ResponsiveSetCard width={225} value="0000" />
