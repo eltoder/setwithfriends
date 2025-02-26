@@ -54,42 +54,43 @@
           id="diamond"
           d="m98.544521,10.311863l-87.830189,189.330815l88.201143,189.644391l88.942329,-190.362741l-89.313283,-188.612465z"
         />
-        <path id="triangle" d="m40 10.3119 0 190 0 190 130-190-130-190z" />
+        <path
+          id="hourglass"
+          d="m118.4386 201.1739c0-19.9228 17.9239-37.4523 26.8821-47.8051 23.5179-24.6961 40.3179-68.5227 43.6821-119.5128.5578-10.3522-3.9211-19.9228-9.5239-19.9228H19.3203c-5.6028 0-10.0817 9.5703-9.5239 19.9228 3.3634 50.9901 20.1634 94.8155 43.6821 120.3075 8.9578 9.5586 26.8821 27.0888 26.8821 47.0104 0 19.1172-17.9239 36.6486-26.8821 47.0104-23.5179 25.4897-40.3179 69.3144-43.6821 120.3075-.5578 10.3522 3.9211 19.9228 9.5239 19.9228h159.6c6.1606 0 10.6394-9.5586 9.5239-19.9228-3.3634-50.9901-20.1634-94.8155-43.6821-120.3075-8.9659-9.5586-26.3235-27.0888-26.3235-47.0104z"
+        />
         <pattern
-          id="pattern-striped"
+          id="pattern-stripes"
           width="2"
           height="20"
           patternUnits="userSpaceOnUse"
         >
           <rect width="2" height="8" fill="#fff" />
         </pattern>
-        <mask id="mask-striped">
+        <mask id="mask-stripes">
           <rect
             x="0"
             y="0"
             width="200"
             height="400"
-            fill="url(#pattern-striped)"
+            fill="url(#pattern-stripes)"
           />
         </mask>
         <pattern
-          id="pattern-dotted"
-          width="50"
-          height="50"
+          id="pattern-checkers"
+          width="100"
+          height="200"
           patternUnits="userSpaceOnUse"
         >
-          <circle cx="0" cy="25" r="12" fill="#fff" />
-          <circle cx="25" cy="0" r="12" fill="#fff" />
-          <circle cx="50" cy="25" r="12" fill="#fff" />
-          <circle cx="25" cy="50" r="12" fill="#fff" />
+          <rect x="0" y="0" width="50" height="100" fill="#fff" />
+          <rect x="50" y="100" width="50" height="100" fill="#fff" />
         </pattern>
-        <mask id="mask-dotted">
+        <mask id="mask-checkers">
           <rect
             x="0"
             y="0"
             width="200"
             height="400"
-            fill="url(#pattern-dotted)"
+            fill="url(#pattern-checkers)"
           />
         </mask>
       </defs>
