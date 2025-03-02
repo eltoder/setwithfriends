@@ -110,7 +110,8 @@ function HelpPage() {
           to be a set. The three cards below do <strong>not</strong> form a set,
           due to their color. Two of the cards are green while the third is
           purple, so the three colors are neither all the same, nor all
-          different.
+          different. In general, three cards do not form a set if, for any of
+          the features, two cards are the same and the third card is different.
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="1010" />
@@ -393,6 +394,86 @@ function HelpPage() {
           easy special cases &mdash; 2 disjoint regular sets and a 3-pair
           UltraSet (that is, 3 pairs of cards that form sets with the same
           additional card).
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          4Set
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          In 4Set, each feature has <strong>four</strong> variants instead of
+          three.
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="2130" />
+          <SetCard value="3201" />
+          <SetCard value="0312" />
+          <SetCard value="1023" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          A <em>4Set</em> is a combination of four cards such that for each of
+          the four features, the variants are either{" "}
+          <strong>all the same, all different, or form two pairs</strong>. In
+          other words, combinations like <code>AAAA</code>, <code>ABCD</code>{" "}
+          and <code>AABB</code> form 4Sets, while <code>AAAB</code> and{" "}
+          <code>ABCC</code> do not. For example, the four cards shown above form
+          a 4Set, because each feature appears in all four variants.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Like in the standard Set, each feature is taken separately: some may
+          be all the same, while others are all different or pairs. Below are a
+          few more examples of 4Sets:
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0001" />
+          <SetCard value="0001" />
+          <SetCard value="1000" />
+          <SetCard value="1000" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="3101" />
+          <SetCard value="1201" />
+          <SetCard value="2231" />
+          <SetCard value="0131" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="2310" />
+          <SetCard value="1200" />
+          <SetCard value="1132" />
+          <SetCard value="2022" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          The four cards below do <strong>not</strong> form a 4Set:
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="0001" />
+          <SetCard value="0102" />
+          <SetCard value="0200" />
+          <SetCard value="1300" />
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          The colors form the <code>AAAB</code> pattern and counts form the{" "}
+          <code>ABCC</code>. In general, four cards do not form a 4Set if, for
+          any of the features, any two cards are different and the other two are
+          not.
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          This mode is pretty hard: 4Sets are harder to find than regular Sets
+          and there are 4<sup>4</sup> = 256 cards in the deck. If you are new to
+          this mode, we recommend starting with 4Set Junior.
+        </Typography>
+        <Typography variant="h6" gutterBottom>
+          4Set Junior
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          4Set Junior is a simplified version of 4Set that only uses cards with
+          solid shading. This means that every card has only{" "}
+          <strong>three</strong> features instead of four, making it a good
+          place to start playing 4Set.
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="200" />
+          <SetCard value="311" />
+          <SetCard value="022" />
+          <SetCard value="133" />
         </Typography>
         <Typography variant="h6" gutterBottom>
           Puzzle
