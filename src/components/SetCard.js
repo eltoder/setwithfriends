@@ -53,19 +53,17 @@ const MASKS = ["", "", "url(#mask-stripes)", "url(#mask-checkers)"];
 
 function Symbol(props) {
   const classes = useStyles();
-
   const color = props.color;
   const shape = SHAPES[props.shape];
   const shade = props.shade;
-  const width = props.size === "sm" ? 8 : 36;
-  const height = props.size === "sm" ? 16 : 72;
+  const width = props.size === "sm" ? 7.1 : 33.6;
   return (
     <svg
       className={clsx(classes.symbol, {
         [classes.smallSymbol]: props.size === "sm",
       })}
       width={width}
-      height={height}
+      height={width * 2}
       viewBox="0 0 200 400"
     >
       {shade !== 1 && (

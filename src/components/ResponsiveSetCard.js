@@ -7,7 +7,7 @@ import { cardTraits } from "../game";
 
 const useStyles = makeStyles((theme) => ({
   symbol: {
-    margin: 3,
+    transition: "width 0.5s, height 0.5s",
   },
   card: {
     boxSizing: "border-box",
@@ -52,14 +52,14 @@ function ResponsiveSymbol(props) {
   const color = props.color;
   const shape = SHAPES[props.shape];
   const shade = props.shade;
-
+  const margin = props.size * 0.079;
   return (
     <svg
       className={classes.symbol}
       width={props.size}
       height={2 * props.size}
       viewBox="0 0 200 400"
-      style={{ transition: "width 0.5s, height 0.5s" }}
+      style={{ margin }}
     >
       {shade !== 1 && (
         <use href={"#" + shape} fill={color} mask={MASKS[shade]} />
