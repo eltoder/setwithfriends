@@ -424,9 +424,9 @@ function HelpPage() {
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="0001" />
-          <SetCard value="0001" />
-          <SetCard value="1000" />
-          <SetCard value="1000" />
+          <SetCard value="1001" />
+          <SetCard value="2000" />
+          <SetCard value="3000" />
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="3101" />
