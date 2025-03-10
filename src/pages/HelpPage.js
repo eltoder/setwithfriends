@@ -423,10 +423,10 @@ function HelpPage() {
           few more examples of 4Sets:
         </Typography>
         <Typography component="div" align="center" gutterBottom>
-          <SetCard value="0001" />
-          <SetCard value="1001" />
-          <SetCard value="2000" />
-          <SetCard value="3000" />
+          <SetCard value="1102" />
+          <SetCard value="1101" />
+          <SetCard value="1202" />
+          <SetCard value="1201" />
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="3101" />
