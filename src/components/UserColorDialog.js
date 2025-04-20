@@ -1,4 +1,3 @@
-import clsx from "clsx";
 import { useContext } from "react";
 
 import Button from "@material-ui/core/Button";
@@ -6,31 +5,36 @@ import Dialog from "@material-ui/core/Dialog";
 import DialogActions from "@material-ui/core/DialogActions";
 import DialogContent from "@material-ui/core/DialogContent";
 import DialogTitle from "@material-ui/core/DialogTitle";
-import { makeStyles } from "@material-ui/core/styles";
+import Grid from "@material-ui/core/Grid";
+import Typography from "@material-ui/core/Typography";
+import { makeStyles, withTheme } from "@material-ui/core/styles";
+import CheckIcon from "@material-ui/icons/Check";
 
 import { UserContext } from "../context";
 import firebase from "../firebase";
-import { colors } from "../util";
+import { colors, getColor } from "../util";
+import User from "./User";
 
-const useStyles = makeStyles({
+const useStyles = makeStyles((theme) => ({
   colorBox: {
-    display: "block",
-    height: 24,
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    height: 60,
     width: "100%",
     cursor: "pointer",
-    outline: "none",
     border: "none",
-    transition: "margin 0.1s",
-    "&:hover": {
-      margin: "2px 0",
+    color: theme.palette.primary.contrastText,
+    "@media(hover: hover) and (pointer: fine)": {
+      "&:hover": {
+        outline: "3px dashed",
+        outlineOffset: -3,
+      },
     },
   },
-  active: {
-    margin: "2px 0",
-  },
-});
+}));
 
-function UserColorDialog({ open, onClose, title }) {
+function UserColorDialog({ open, onClose, title, theme }) {
   const user = useContext(UserContext);
   const classes = useStyles();
 
@@ -42,17 +46,25 @@ function UserColorDialog({ open, onClose, title }) {
     <Dialog open={open} onClose={onClose}>
       <DialogTitle>{title}</DialogTitle>
       <DialogContent>
-        {Object.keys(colors).map((color) => (
-          <button
-            key={color}
-            className={clsx({
-              [classes.colorBox]: true,
-              [classes.active]: color === user.color,
-            })}
-            style={{ background: colors[color][400] }}
-            onClick={() => handleChange(color)}
-          />
-        ))}
+        <User
+          id={user.id}
+          component={Typography}
+          variant="subtitle1"
+          style={{ textAlign: "center", marginBottom: 8 }}
+        />
+        <Grid container direction="row" style={{ width: 240 }}>
+          {Object.keys(colors).map((color) => (
+            <Grid item key={color} xs={3}>
+              <button
+                className={classes.colorBox}
+                style={{ background: getColor(color, theme) }}
+                onClick={() => handleChange(color)}
+              >
+                {color === user.color && <CheckIcon fontSize="large" />}
+              </button>
+            </Grid>
+          ))}
+        </Grid>
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
@@ -63,4 +75,4 @@ function UserColorDialog({ open, onClose, title }) {
   );
 }
 
-export default UserColorDialog;
+export default withTheme(UserColorDialog);

@@ -23,6 +23,7 @@ import pink from "@material-ui/core/colors/pink";
 import purple from "@material-ui/core/colors/purple";
 import red from "@material-ui/core/colors/red";
 import teal from "@material-ui/core/colors/teal";
+import yellow from "@material-ui/core/colors/yellow";
 
 import animals from "./utils/animals.json";
 
@@ -58,6 +59,7 @@ export const colors = {
   green,
   lightGreen,
   lime,
+  yellow,
   amber,
   orange,
   deepOrange,
@@ -98,6 +100,11 @@ export const standardLayouts = {
 export function generateColor() {
   const colorsArray = Object.keys(colors);
   return colorsArray[Math.floor(Math.random() * colorsArray.length)];
+}
+
+export function getColor(color, theme) {
+  const c = colors.hasOwnProperty(color) ? colors[color] : indigo;
+  return c[theme.palette.type === "dark" ? 100 : 900];
 }
 
 export function generateName() {

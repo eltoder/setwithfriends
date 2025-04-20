@@ -10,7 +10,7 @@ import VisibilityIcon from "@material-ui/icons/Visibility";
 
 import { modes } from "../game";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import { colors } from "../util";
+import { getColor } from "../util";
 import ElapsedTime from "./ElapsedTime";
 import User from "./User";
 
@@ -73,14 +73,7 @@ function GameInfoRow({ gameId, onClick }) {
           <TableCell>
             {game.users ? Object.keys(game.users).length : 0}
           </TableCell>
-          <TableCell
-            style={{
-              color:
-                colors[modes[gameMode].color][
-                  theme.palette.type === "dark" ? 100 : 900
-                ],
-            }}
-          >
+          <TableCell style={{ color: getColor(modes[gameMode].color, theme) }}>
             {modes[gameMode].name}
           </TableCell>
           <TableCell>{actionIcon(host)}</TableCell>
