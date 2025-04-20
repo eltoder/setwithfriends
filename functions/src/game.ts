@@ -242,12 +242,14 @@ function findSetGhost(deck: string[], gameMode: GameMode, state: FindState) {
 
 function findSet4Set(deck: string[], gameMode: GameMode, state: FindState) {
   const deckSet = new Set(deck);
-  for (let i = 0; i < deck.length; i++) {
-    for (let j = i + 1; j < deck.length; j++) {
-      for (let k = j + 1; k < deck.length; k++) {
-        const c = conjugateCard4Set(deck[i], deck[j], deck[k]);
+  const first =
+    modes[gameMode].chain && state.lastSet!.length > 0 ? state.lastSet! : deck;
+  for (let i = 0; i < first.length; i++) {
+    for (let j = i + 1; j < first.length; j++) {
+      for (let k = first === deck ? j + 1 : 0; k < deck.length; k++) {
+        const c = conjugateCard4Set(first[i], first[j], deck[k]);
         if (deckSet.has(c)) {
-          return [deck[i], deck[j], deck[k], c];
+          return [first[i], first[j], deck[k], c];
         }
       }
     }
@@ -443,6 +445,13 @@ export const modes = {
     setType: "4Set",
     traits: 3,
     chain: 0,
+    puzzle: false,
+    minBoardSize: 11,
+  },
+  "4setjrchain": {
+    setType: "4Set",
+    traits: 3,
+    chain: 2,
     puzzle: false,
     minBoardSize: 11,
   },

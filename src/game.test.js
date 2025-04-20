@@ -174,6 +174,7 @@ describe("findSet()", () => {
       ["0123", "0000", "0102", "0210", "0312", "3210", "1111", "2323"],
     ]) {
       verify4Set(findSet(deck, "4set"));
+      verify4Set(findSet(deck, "4setjrchain", { lastSet: [] }));
     }
 
     for (const deck of [
@@ -182,6 +183,16 @@ describe("findSet()", () => {
       ["0123", "0000", "0102", "0210", "0311", "3210", "1111", "2323"],
     ]) {
       expect(findSet(deck, "4set")).toBe(null);
+      expect(findSet(deck, "4setjrchain", { lastSet: [] })).toBe(null);
     }
+  });
+
+  it("can find 4set-chains", () => {
+    const state = { lastSet: ["1202", "0001", "0002", "2101"] };
+    expect(
+      findSet(["0000", "0102", "0210", "0311"], "4setjrchain", state)
+    ).toBe(null);
+    verify4Set(findSet(["0000", "0102", "0210", "0003"], "4setjrchain", state));
+    verify4Set(findSet(["0000", "0102", "0210", "3201"], "4setjrchain", state));
   });
 });

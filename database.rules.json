@@ -19,7 +19,7 @@
         },
         "mode": {
           ".write": "auth != null && auth.uid == data.parent().child('host').val() && data.parent().child('status').val() == 'waiting' && newData.exists()",
-          ".validate": "newData.isString() && newData.val().matches(/^normal|junior|setchain|ultraset|ultrachain|ultra9|megaset|ghostset|4set|4setjr|puzzle|shuffle|memory$/)"
+          ".validate": "newData.isString() && newData.val().matches(/^normal|junior|setchain|ultraset|ultrachain|ultra9|megaset|ghostset|4set|4setjr|4setjrchain|puzzle|shuffle|memory$/)"
         },
         "enableHint": {
           ".write": "auth != null && auth.uid == data.parent().child('host').val() && data.parent().child('status').val() == 'waiting' && newData.exists()",
@@ -52,7 +52,7 @@
         "events": {
           "$eventId": {
             ".write": "!data.exists() && newData.exists() && auth != null && root.hasChild('games/' + $gameId + '/users/' + auth.uid) && root.child('games/' + $gameId + '/status').val() == 'ingame'",
-            ".validate": "newData.hasChildren(['user', 'time', 'c1', 'c2', 'c3']) && (newData.hasChild('c4') == root.child('games/' + $gameId + '/mode').val().matches(/^ultraset|ultrachain|ultra9|ghostset|4set|4setjr$/)) && (newData.hasChildren(['c5', 'c6']) == (root.child('games/' + $gameId + '/mode').val() == 'ghostset'))",
+            ".validate": "newData.hasChildren(['user', 'time', 'c1', 'c2', 'c3']) && (newData.hasChild('c4') == root.child('games/' + $gameId + '/mode').val().matches(/^ultraset|ultrachain|ultra9|ghostset|4set|4setjr|4setjrchain$/)) && (newData.hasChildren(['c5', 'c6']) == (root.child('games/' + $gameId + '/mode').val() == 'ghostset'))",
             "user": {
               ".validate": "newData.isString() && newData.val() == auth.uid"
             },
