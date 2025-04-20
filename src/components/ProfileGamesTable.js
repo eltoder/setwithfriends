@@ -14,7 +14,7 @@ import FitnessCenterIcon from "@material-ui/icons/FitnessCenter";
 import StarIcon from "@material-ui/icons/Star";
 
 import { modes } from "../game";
-import { colors, formatTime } from "../util";
+import { formatTime, getColor } from "../util";
 import ElapsedTime from "./ElapsedTime";
 import Loading from "./Loading";
 import User from "./User";
@@ -96,14 +96,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
                     <User id={game.host} />
                   </TableCell>
                   <TableCell>{Object.keys(game.users).length}</TableCell>
-                  <TableCell
-                    style={{
-                      color:
-                        colors[modeInfo.color][
-                          theme.palette.type === "dark" ? 100 : 900
-                        ],
-                    }}
-                  >
+                  <TableCell style={{ color: getColor(modeInfo.color, theme) }}>
                     {modeInfo.name}
                   </TableCell>
                   <TableCell>{game.scores[userId] || 0}</TableCell>

@@ -4,7 +4,7 @@ import WhatshotIcon from "@material-ui/icons/Whatshot";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useStats from "../hooks/useStats";
-import { colors } from "../util";
+import { getColor } from "../util";
 
 const useStyles = makeStyles((theme) => ({
   rating: {
@@ -42,9 +42,7 @@ function User({
   const userEl = (
     <Component
       style={{
-        color: colors.hasOwnProperty(user.color)
-          ? colors[user.color][theme.palette.type === "dark" ? 100 : 900]
-          : "inherit",
+        color: getColor(user.color, theme),
         fontWeight: 500,
         ...style,
       }}
