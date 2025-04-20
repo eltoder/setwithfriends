@@ -8,7 +8,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import Grid from "@material-ui/core/Grid";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles, withTheme } from "@material-ui/core/styles";
-import CheckIcon from "@material-ui/icons/Check";
+import DoneIcon from "@material-ui/icons/Done";
 
 import { UserContext } from "../context";
 import firebase from "../firebase";
@@ -60,7 +60,7 @@ function UserColorDialog({ open, onClose, title, theme }) {
                 style={{ background: getColor(color, theme) }}
                 onClick={() => handleChange(color)}
               >
-                {color === user.color && <CheckIcon fontSize="large" />}
+                {color === user.color && <DoneIcon fontSize="large" />}
               </button>
             </Grid>
           ))}
