@@ -8,6 +8,7 @@ import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import MoreVertIcon from "@material-ui/icons/MoreVert";
 
+import { isDev } from "../config";
 import { UserContext } from "../context";
 import firebase from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
@@ -100,7 +101,7 @@ function Chat({
   const classes = useStyles();
   const [stats, loadingStats] = useStats(gameId ? null : user.id);
   const chatDisabled =
-    !gameId && (loadingStats || stats.all.all.totalSets < 55);
+    !gameId && !isDev && (loadingStats || stats.all.all.totalSets < 55);
 
   const chatEl = useRef();
   useEffect(() => {

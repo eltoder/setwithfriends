@@ -30,12 +30,17 @@ new release is created with version number `vA.B.C`.
 ## Contributing
 
 This game is in active development, and we welcome contributions from developers
-of all backgrounds. I would recommend talking to us on Discord (link above) or
-submitting an issue if you want to see a new feature added. If you would like to
-help by contributing code, that's great – we would be happy to set up a time to
-chat!
+of all backgrounds. I would recommend talking to us on
+[Discord](https://discord.gg/XbjJyc9) or submitting an issue if you want to see
+a new feature added. If you would like to help by contributing code, that's
+great – we would be happy to set up a time to chat!
 
 To build the site for development:
+
+> **NOTE:** If you are on Windows, I recommend installing
+> [WSL2](https://learn.microsoft.com/en-us/windows/wsl/install) and using the
+> resulting Linux environment for better developer experience. However, recent
+> versions of the fork run on Windows directly as well.
 
 - Install Node.js 20 and npm 10.
 - Run `npm install -g firebase-tools` to globally install the Firebase CLI. This
@@ -48,7 +53,15 @@ To build the site for development:
   - Start the Firebase Local Emulator Suite.
   - Start the frontend with React Fast Refresh enabled.
 
-You should also be able to access the Emulator UI at `http://localhost:4000`,
+This will open the game in the browser at http://localhost:3000. The first time
+the database will be empty, so you will not see any games or chat messages, but
+everything should work. Try starting a game or posting a message. If something
+does not work, check for errors in the developer tools (in Chrome: press
+`Ctrl+Shift+I` or `F12` and switch to the "Console" tab) and in the terminal
+window where you ran `npm`. Feel free to reach out for help. Send screenshots of
+both the devtools console and the terminal.
+
+You should also be able to access the Emulator UI at http://localhost:4000,
 which contains useful information and allows you to inspect/modify the database
 during development. Changes to client code in `src` should be immediately
 visible, as well as changes to code in `functions`.

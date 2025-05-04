@@ -11,6 +11,7 @@ const path = require("path");
 const { spawn, spawnSync } = require("child_process");
 const { PubSub } = require("@google-cloud/pubsub");
 
+const isWin = process.platform === "win32";
 let build, emulators, app;
 
 process.on("exit", () => {
@@ -23,6 +24,7 @@ process.on("exit", () => {
 spawnSync("npm", ["run", "build"], {
   cwd: path.join(__dirname, "functions"),
   stdio: ["ignore", "inherit", "inherit"],
+  shell: isWin,
 });
 
 // Incremental watch builds
@@ -32,6 +34,7 @@ build = spawn(
   {
     cwd: path.join(__dirname, "functions"),
     stdio: ["ignore", "inherit", "inherit"],
+    shell: isWin,
   }
 );
 
@@ -48,6 +51,7 @@ emulators = spawn(
   {
     cwd: __dirname,
     stdio: ["ignore", "inherit", "inherit"],
+    shell: isWin,
   }
 );
 
@@ -56,6 +60,7 @@ app = spawn("npm", ["start"], {
   cwd: __dirname,
   stdio: ["ignore", "pipe", "inherit"],
   env: Object.assign({ FORCE_COLOR: true }, process.env),
+  shell: isWin,
 });
 app.stdout.pipe(process.stdout);
 
