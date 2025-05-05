@@ -74,7 +74,9 @@ function Navbar() {
   }
 
   function handleChangeNotifications() {
-    settings.setNotifications((notifications) => (notifications === "on" ? "off" : "on"));
+    settings.setNotifications((notifications) =>
+      notifications === "on" ? "off" : "on"
+    );
   }
 
   useKeydown((event) => {
@@ -168,6 +170,15 @@ function Navbar() {
           </MenuItem>
           <MenuItem
             onClick={() => {
+              handleChangeNotifications();
+              handleCloseMenu();
+            }}
+          >
+            {settings.notifications === "on" ? "Disable" : "Enable"}{" "}
+            notifications
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
               handleChangeTheme();
               handleCloseMenu();
             }}
@@ -213,14 +224,6 @@ function Navbar() {
             }}
           >
             Change keyboard layout
-          </MenuItem>
-          <MenuItem
-            onClick={() => {
-              handleChangeNotifications();
-              handleCloseMenu();
-            }}
-          >
-            Turn {settings.notifications === "off" ? "on" : "off"} game notifications
           </MenuItem>
           <MenuItem
             onClick={() => {

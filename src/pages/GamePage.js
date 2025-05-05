@@ -81,8 +81,7 @@ const useStyles = makeStyles((theme) => ({
 
 function GamePage({ match }) {
   const user = useContext(UserContext);
-  const { volume } = useContext(SettingsContext);
-  const { notifications } = useContext(SettingsContext);
+  const { volume, notifications } = useContext(SettingsContext);
   const gameId = match.params.id;
   const classes = useStyles();
 
@@ -261,8 +260,8 @@ function GamePage({ match }) {
           return state.cards;
         case "set":
           handleSet(state.cards);
+          if (volume === "on") playSuccess();
           if (notifications === "on") {
-            if (volume === "on") playSuccess();
             setSnack({
               open: true,
               variant: "success",
@@ -271,8 +270,8 @@ function GamePage({ match }) {
           }
           return [];
         case "error":
+          if (volume === "on") playFail();
           if (notifications === "on") {
-            if (volume === "on") playFail();
             setSnack({
               open: true,
               variant: "error",

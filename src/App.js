@@ -88,10 +88,7 @@ function App() {
     "vertical"
   );
   const [volume, setVolume] = useStorage("volume", "on");
-  const [notifications, setNotifications] = useStorage(
-    "notifications",
-    "on"
-  )
+  const [notifications, setNotifications] = useStorage("notifications", "on");
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged((user) => {
