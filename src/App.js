@@ -88,6 +88,7 @@ function App() {
     "vertical"
   );
   const [volume, setVolume] = useStorage("volume", "on");
+  const [notifications, setNotifications] = useStorage("notifications", "on");
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged((user) => {
@@ -159,6 +160,8 @@ function App() {
                 setCustomCardColors,
                 volume,
                 setVolume,
+                notifications,
+                setNotifications,
                 layoutOrientation,
                 setLayoutOrientation,
                 cardOrientation,

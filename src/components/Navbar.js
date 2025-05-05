@@ -73,6 +73,12 @@ function Navbar() {
     );
   }
 
+  function handleChangeNotifications() {
+    settings.setNotifications((notifications) =>
+      notifications === "on" ? "off" : "on"
+    );
+  }
+
   useKeydown((event) => {
     if (getModifierState(event) === "Control") {
       if (event.key === "s") {
@@ -161,6 +167,15 @@ function Navbar() {
             }}
           >
             {settings.volume === "on" ? "Mute" : "Unmute"} sound
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleChangeNotifications();
+              handleCloseMenu();
+            }}
+          >
+            {settings.notifications === "on" ? "Disable" : "Enable"}{" "}
+            notifications
           </MenuItem>
           <MenuItem
             onClick={() => {
