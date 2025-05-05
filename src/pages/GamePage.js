@@ -82,6 +82,7 @@ const useStyles = makeStyles((theme) => ({
 function GamePage({ match }) {
   const user = useContext(UserContext);
   const { volume } = useContext(SettingsContext);
+  const { notifications } = useContext(SettingsContext);
   const gameId = match.params.id;
   const classes = useStyles();
 
@@ -261,19 +262,23 @@ function GamePage({ match }) {
         case "set":
           handleSet(state.cards);
           if (volume === "on") playSuccess();
-          setSnack({
-            open: true,
-            variant: "success",
-            message: `Found a ${state.setType}`,
-          });
+          if (notifications === "on") {
+            setSnack({
+              open: true,
+              variant: "success",
+              message: `Found a ${state.setType}`,
+            });
+          }
           return [];
         case "error":
           if (volume === "on") playFail();
-          setSnack({
-            open: true,
-            variant: "error",
-            message: state.error,
-          });
+          if (notifications === "on") {
+            setSnack({
+              open: true,
+              variant: "error",
+              message: state.error,
+            });
+          }
           if (gameMode === "memory") {
             clearSelected.current = true;
             return state.cards;
