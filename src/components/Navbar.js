@@ -73,6 +73,10 @@ function Navbar() {
     );
   }
 
+  function handleChangeNotifications() {
+    settings.setNotifications((notifications) => (notifications === "on" ? "off" : "on"));
+  }
+
   useKeydown((event) => {
     if (getModifierState(event) === "Control") {
       if (event.key === "s") {
@@ -209,6 +213,14 @@ function Navbar() {
             }}
           >
             Change keyboard layout
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleChangeNotifications();
+              handleCloseMenu();
+            }}
+          >
+            Turn {settings.notifications === "off" ? "on" : "off"} game notifications
           </MenuItem>
           <MenuItem
             onClick={() => {
