@@ -48,14 +48,7 @@ function AboutPage() {
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
         <Typography variant="body2">
           By using this site, you agree to our{" "}
-          <InternalLink to="/legal">terms of service</InternalLink>. Sounds from{" "}
-          <Link
-            href="https://notificationsounds.com/terms-of-use"
-            underline="hover"
-          >
-            notificationsounds.com
-          </Link>
-          .
+          <InternalLink to="/legal">terms of service</InternalLink>.
         </Typography>
       </Paper>
       <Typography
