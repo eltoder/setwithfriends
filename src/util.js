@@ -27,22 +27,55 @@ import yellow from "@material-ui/core/colors/yellow";
 
 import animals from "./utils/animals.json";
 
+function isPunctuation(charCode) {
+  return (
+    (charCode >= 33 && charCode <= 47) ||
+    (charCode >= 58 && charCode <= 64) ||
+    (charCode >= 91 && charCode <= 96) ||
+    (charCode >= 0x2000 && charCode <= 0x206f)
+  );
+}
+
 const fixedDataset = englishDataset
-  .removePhrasesIf((phrase) => phrase.metadata.originalWord === "dick")
   .addPhrase((phrase) =>
-    phrase
-      .setMetadata({ originalWord: "dick" })
-      .addPattern(pattern`dick`)
-      .addPattern(pattern`|dck|`)
-      .addWhitelistedTerm("benedick")
-      .addWhitelistedTerm("dickens")
+    phrase.setMetadata({ originalWord: "skibidi" }).addPattern(pattern`skibidi`)
   )
   .addPhrase((phrase) =>
-    phrase.setMetadata({ originalWord: "fuck" }).addWhitelistedTerm("fick")
+    phrase.setMetadata({ originalWord: "rizz" }).addPattern(pattern`|riz`)
+  )
+  .addPhrase((phrase) =>
+    phrase.setMetadata({ originalWord: "gyatt" }).addPattern(pattern`gyat`)
+  )
+  .addPhrase((phrase) =>
+    phrase.setMetadata({ originalWord: "sigma" }).addPattern(pattern`sigma`)
+  )
+  .addPhrase((phrase) =>
+    phrase.setMetadata({ originalWord: "admits" }).addPattern(pattern`admits`)
+  )
+  .addPhrase((phrase) =>
+    phrase.setMetadata({ originalWord: "xook" }).addPattern(pattern`xook`)
+  )
+  .addPhrase((phrase) =>
+    phrase.setMetadata({ originalWord: "xoink" }).addPattern(pattern`xoink`)
+  )
+  .addPhrase((phrase) =>
+    phrase
+      .setMetadata({ originalWord: "Charlotte Mound" })
+      .addPattern(pattern`mound`)
   );
+// Work-around for:
+// https://github.com/jo3-l/obscenity/issues/100
+// https://github.com/jo3-l/obscenity/pull/101
+function createSimpleTransformer(transformer) {
+  return { type: 0 /* TransformerType.Simple */, transform: transformer };
+}
 export const badWords = new RegExpMatcher({
   ...fixedDataset.build(),
   ...englishRecommendedTransformers,
+  blacklistMatcherTransformers: [
+    ...englishRecommendedTransformers.blacklistMatcherTransformers,
+    createSimpleTransformer((c) => (!isPunctuation(c) ? c : undefined)),
+  ],
 });
 const censor = new TextCensor().setStrategy(fixedPhraseCensorStrategy("🤬"));
 

@@ -13,5 +13,6 @@ describe("bad words filter", () => {
     expect(badWords.hasMatch("deck")).toBe(false);
     expect(badWords.hasMatch("fick")).toBe(false);
     expect(badWords.hasMatch("fickle")).toBe(false);
+    expect(badWords.hasMatch("a\u200dsshole")).toBe(true);
   });
 });
