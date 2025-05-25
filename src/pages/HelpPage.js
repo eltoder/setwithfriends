@@ -476,13 +476,43 @@ function HelpPage() {
           <SetCard value="133" />
         </Typography>
         <Typography variant="h6" gutterBottom>
+          4Set Junior-Chain
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          Chain your (junior) 4Sets. After you pick the first 4Set, every new
+          4Set should have{" "}
+          <strong>exactly two cards from the previous 4Set</strong>. For
+          example, the first three 4Sets of a game might look as follows:
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="200" />
+          <SetCard value="311" />
+          <SetCard value="022" />
+          <SetCard value="133" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="311" />
+          <SetCard value="022" />
+          <SetCard value="011" />
+          <SetCard value="322" />
+        </Typography>
+        <Typography component="div" align="center" gutterBottom>
+          <SetCard value="311" />
+          <SetCard value="322" />
+          <SetCard value="123" />
+          <SetCard value="110" />
+        </Typography>
+        <Typography variant="h6" gutterBottom>
           Puzzle
         </Typography>
         <Typography variant="body1" gutterBottom>
-          This mode is inspired by The Daily SET Puzzle website. The rules are
-          the same as in the standard Set, except that you have to find{" "}
-          <strong>all sets</strong> on each board before you move to the next
-          board.
+          This mode is inspired by{" "}
+          <Link href="https://www.setgame.com/set/puzzle">
+            The Daily SET Puzzle website
+          </Link>
+          . The rules are the same as in the standard Set, except that you have
+          to find <strong>all sets</strong> on each board before you move to the
+          next board.
         </Typography>
         <Typography variant="h6" gutterBottom>
           Shuffle
@@ -497,7 +527,7 @@ function HelpPage() {
         </Typography>
         <Typography variant="body1" gutterBottom>
           <strong>
-            Memory variant is experimental and details are likely to change in
+            Memory game mode is experimental and details are likely to change in
             the future.
           </strong>
         </Typography>
