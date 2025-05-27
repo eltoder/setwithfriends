@@ -48,20 +48,6 @@ const fixedDataset = englishDataset
   )
   .addPhrase((phrase) =>
     phrase.setMetadata({ originalWord: "sigma" }).addPattern(pattern`sigma`)
-  )
-  .addPhrase((phrase) =>
-    phrase.setMetadata({ originalWord: "admits" }).addPattern(pattern`admits`)
-  )
-  .addPhrase((phrase) =>
-    phrase.setMetadata({ originalWord: "xook" }).addPattern(pattern`xook`)
-  )
-  .addPhrase((phrase) =>
-    phrase.setMetadata({ originalWord: "xoink" }).addPattern(pattern`xoink`)
-  )
-  .addPhrase((phrase) =>
-    phrase
-      .setMetadata({ originalWord: "Charlotte Mound" })
-      .addPattern(pattern`mound`)
   );
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
