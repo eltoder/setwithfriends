@@ -22,6 +22,7 @@ it("computes conjugate cards (4set) ", () => {
 
 const verifySet = (cards) => {
   expect(cards.length).toBe(3);
+  expect(new Set(cards).size).toBe(3);
   const [a, b, c] = cards;
   expect(conjugateCard(a, b)).toBe(c);
 };
@@ -32,14 +33,20 @@ it("checks sets", () => {
   expect(checkSetNormal("0010", "0002", "0000")).toBe(null);
   verifySet(checkSetNormal("1201", "1002", "1100"));
   expect(checkSetNormal("1221", "1002", "1100")).toBe(null);
-  verifySet(checkSetNormal("0112", "0112", "0112"));
   expect(checkSetNormal("0112", "0122", "0112")).toBe(null);
 });
 
 const verifyUltra = (cards) => {
   expect(cards.length).toBe(4);
+  expect(new Set(cards).size).toBe(4);
   const [a, b, c, d] = cards;
   expect(conjugateCard(a, b)).toBe(conjugateCard(c, d));
+};
+
+const verifyUltraAnyOrder = (cards) => {
+  expect(cards.length).toBe(4);
+  expect(new Set(cards).size).toBe(4);
+  expect(checkSetUltra(...cards)).not.toBe(null);
 };
 
 it("checks ultrasets", () => {
@@ -54,8 +61,12 @@ it("checks ultrasets", () => {
 
 const verifyGhost = (cards) => {
   expect(cards.length).toBe(6);
+  expect(new Set(cards).size).toBe(6);
   const [a, b, c, d, e, f] = cards;
-  verifySet([conjugateCard(a, b), conjugateCard(c, d), conjugateCard(e, f)]);
+  const ga = conjugateCard(a, b),
+    gb = conjugateCard(c, d),
+    gc = conjugateCard(e, f);
+  expect(conjugateCard(ga, gb)).toBe(gc);
 };
 
 it("checks ghostsets", () => {
@@ -88,8 +99,8 @@ it("checks 4sets", () => {
 describe("findSet()", () => {
   it("can find normal sets", () => {
     for (const deck of [
-      ["0112", "0112", "0112"],
-      ["2012", "0112", "0112", "2011", "0112"],
+      ["0110", "0111", "0112"],
+      ["2012", "0112", "0111", "2011", "0110"],
       ["1111", "2222", "1010", "2021", "0201", "1021", "1022", "0112"],
     ]) {
       verifySet(findSet(deck, "normal"));
@@ -148,6 +159,18 @@ describe("findSet()", () => {
     );
     verifyUltra(findSet(["1001", "1221", "1010", "2112"], "ultrachain", state));
     verifyUltra(findSet(["1001", "1221", "1010", "1220"], "ultrachain", state));
+  });
+
+  it("can find puzzle ultrasets", () => {
+    const board = ["0000", "0001", "1002", "2002", "0020", "0011", "1010"];
+    const state = { foundSets: new Set() };
+    for (let i = 0; i < 6; i++) {
+      const set = findSet(board, "ultra9puzzle", state);
+      verifyUltraAnyOrder(set);
+      expect(state.foundSets.has(set.slice().sort().join("|"))).toBe(false);
+      state.foundSets.add(set.slice().sort().join("|"));
+    }
+    expect(findSet(board, "ultra9puzzle", state)).toBe(null);
   });
 
   it("can find ghostsets", () => {

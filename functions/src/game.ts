@@ -190,25 +190,34 @@ function findSetNormal(deck: string[], gameMode: GameMode, state: FindState) {
 }
 
 function findSetUltra(deck: string[], gameMode: GameMode, state: FindState) {
+  const foundSets = modes[gameMode].puzzle && state.foundSets!;
   const cutoff = modes[gameMode].chain ? state.lastSet!.length : 0;
-  let cards, conjugates: Array<Map<string, [string, string]> | null>;
-  if (cutoff > 0) {
-    cards = state.lastSet!.concat(deck);
-    conjugates = [new Map(), null, null, null].fill(new Map(), 1, 3);
+  const deckSet = new Set(deck);
+  let first, second, prevSet;
+  if (!cutoff) {
+    first = second = deck;
   } else {
-    cards = deck;
-    conjugates = Array(4).fill(new Map());
+    second = state.lastSet!;
+    first = second.concat(deck);
+    prevSet = new Set(second);
   }
-  for (let i = 0; i < cards.length - 1; i++) {
-    for (let j = i + 1; j < cards.length; j++) {
-      const c = conjugateCard(cards[i], cards[j]);
-      const idx = (+(i < cutoff) << 1) | +(j < cutoff);
-      const res = conjugates[idx] && conjugates[idx].get(c);
-      if (res) {
-        return [...res, cards[i], cards[j]];
-      }
-      if (conjugates[3 - idx]) {
-        conjugates[3 - idx]!.set(c, [cards[i], cards[j]]);
+  for (let i = 0; i < first.length; i++) {
+    const checkSet = !cutoff || i < cutoff ? deckSet : prevSet;
+    for (let j = !cutoff || i < cutoff ? i + 1 : 0; j < second.length; j++) {
+      const c1 = conjugateCard(first[i], second[j]);
+      for (let k = second === deck ? j + 1 : 0; k < deck.length; k++) {
+        const c2 = conjugateCard(c1, deck[k]);
+        if (
+          checkSet!.has(c2) &&
+          c2 !== first[i] &&
+          c2 !== second[j] &&
+          c2 !== deck[k]
+        ) {
+          const set = [first[i], second[j], deck[k], c2];
+          if (!(foundSets && foundSets.has(set.sort().join("|")))) {
+            return set;
+          }
+        }
       }
     }
   }
@@ -461,6 +470,13 @@ export const modes = {
     chain: 0,
     puzzle: true,
     minBoardSize: 12,
+  },
+  ultra9puzzle: {
+    setType: "UltraSet",
+    traits: 4,
+    chain: 0,
+    puzzle: true,
+    minBoardSize: 9,
   },
   shuffle: {
     setType: "Set",
