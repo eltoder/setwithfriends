@@ -14,6 +14,7 @@ import SettingsIcon from "@material-ui/icons/Settings";
 import { version } from "../config";
 import { SettingsContext, UserContext } from "../context";
 import firebase from "../firebase";
+import useFirebaseRef from "../hooks/useFirebaseRef";
 import useKeydown, { getModifierState } from "../hooks/useKeydown";
 import AccountOptionsDialog from "./AccountOptionsDialog";
 import BoardLayoutDialog from "./BoardLayoutDialog";
@@ -27,6 +28,7 @@ import UserColorDialog from "./UserColorDialog";
 function Navbar() {
   const user = useContext(UserContext);
   const settings = useContext(SettingsContext);
+  const [siteTitle] = useFirebaseRef("/site/title");
   const [anchorEl, setAnchorEl] = useState(null);
   const [changeName, setChangeName] = useState(false);
   const [changeUserColor, setChangeUserColor] = useState(false);
@@ -106,7 +108,7 @@ function Navbar() {
       <Toolbar variant="dense">
         <Typography variant="h6" style={{ flexGrow: 1, whiteSpace: "nowrap" }}>
           <InternalLink underline="none" color="inherit" to="/">
-            Set with Friends
+            {siteTitle || "Set with Friends"}
           </InternalLink>
         </Typography>
         <Typography

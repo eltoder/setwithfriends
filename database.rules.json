@@ -175,6 +175,9 @@
     },
     "stats": {
       ".read": "auth != null"
+    },
+    "site": {
+      ".read": "auth != null"
     }
   }
 }
