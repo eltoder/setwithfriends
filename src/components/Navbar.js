@@ -9,6 +9,8 @@ import MenuItem from "@material-ui/core/MenuItem";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
+import { makeStyles } from "@material-ui/core/styles";
+import EditIcon from "@material-ui/icons/Edit";
 import SettingsIcon from "@material-ui/icons/Settings";
 
 import { version } from "../config";
@@ -25,11 +27,32 @@ import PromptDialog from "./PromptDialog";
 import User from "./User";
 import UserColorDialog from "./UserColorDialog";
 
+const useStyles = makeStyles({
+  editIcon: {
+    marginLeft: 4,
+    cursor: "pointer",
+    "&:hover": {
+      fill: "#f06292",
+    },
+    visibility: "hidden",
+  },
+  title: {
+    display: "flex",
+    alignItems: "center",
+    flexGrow: 1,
+    "&:hover > $editIcon": {
+      visibility: "visible",
+    },
+  },
+});
+
 function Navbar() {
   const user = useContext(UserContext);
+  const classes = useStyles();
   const settings = useContext(SettingsContext);
   const [siteTitle] = useFirebaseRef("/site/title");
   const [anchorEl, setAnchorEl] = useState(null);
+  const [changeSiteTitle, setChangeSiteTitle] = useState(false);
   const [changeName, setChangeName] = useState(false);
   const [changeUserColor, setChangeUserColor] = useState(false);
   const [changeCardColors, setChangeCardColors] = useState(false);
@@ -43,6 +66,14 @@ function Navbar() {
 
   function handleCloseMenu() {
     setAnchorEl(null);
+  }
+
+  function handleChangeSiteTitle(title) {
+    setChangeSiteTitle(false);
+    title = (title || "").trim();
+    if (title) {
+      firebase.database().ref("/site/title").set(title);
+    }
   }
 
   function handleChangeName(name) {
@@ -106,11 +137,19 @@ function Navbar() {
   return (
     <AppBar position="relative" color="transparent" elevation={0}>
       <Toolbar variant="dense">
-        <Typography variant="h6" style={{ flexGrow: 1, whiteSpace: "nowrap" }}>
-          <InternalLink underline="none" color="inherit" to="/">
-            {siteTitle || "Set with Friends"}
-          </InternalLink>
-        </Typography>
+        <div className={classes.title}>
+          <Typography variant="h6" style={{ whiteSpace: "nowrap" }}>
+            <InternalLink underline="none" color="inherit" to="/">
+              {siteTitle || "Set with Friends"}
+            </InternalLink>
+          </Typography>
+          {user.admin && (
+            <EditIcon
+              className={classes.editIcon}
+              onClick={() => setChangeSiteTitle(true)}
+            />
+          )}
+        </div>
         <Typography
           variant="subtitle1"
           style={{ marginLeft: "2em", marginRight: 8, minWidth: 0 }}
@@ -236,6 +275,14 @@ function Navbar() {
             Account options
           </MenuItem>
         </Menu>
+        <PromptDialog
+          open={changeSiteTitle}
+          onClose={handleChangeSiteTitle}
+          title="Change Site Title"
+          message="Enter the new site title. It will be visible for everyone on the site. Please change responsibly."
+          label="Title"
+          maxLength={100}
+        />
         <PromptDialog
           open={changeName}
           onClose={handleChangeName}

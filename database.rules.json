@@ -177,7 +177,8 @@
       ".read": "auth != null"
     },
     "site": {
-      ".read": "auth != null"
+      ".read": "auth != null",
+      ".write": "auth != null && root.child('users/' + auth.uid + '/admin').val() == true"
     }
   }
 }

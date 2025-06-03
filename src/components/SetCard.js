@@ -13,7 +13,6 @@ const useStyles = makeStyles((theme) => ({
     border: `1px solid ${theme.palette.text.primary}`,
     borderRadius: 6,
     display: "inline-flex",
-    flexDirection: "row",
     alignItems: "center",
     justifyContent: "center",
     flexShrink: 0,

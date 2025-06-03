@@ -23,6 +23,8 @@ const useStyles = makeStyles((theme) => ({
     visibility: "hidden",
   },
   name: {
+    display: "flex",
+    marginBottom: 6,
     "&:hover > $vertIcon": {
       visibility: "visible",
     },
@@ -71,10 +73,7 @@ function ProfileName({ userId }) {
           player.connections && Object.keys(player.connections).length > 0;
         return (
           <section>
-            <div
-              style={{ display: "flex", flexDirection: "row", marginBottom: 6 }}
-              className={classes.name}
-            >
+            <div className={classes.name}>
               <Typography variant="h4" style={{ overflowWrap: "anywhere" }}>
                 {userEl}
               </Typography>
