@@ -60,6 +60,7 @@ const useStyles = makeStyles((theme) => ({
     visibility: "hidden",
   },
   message: {
+    display: "flex",
     "& > p": {
       margin: "0.15em 0",
     },
@@ -234,7 +235,6 @@ function Chat({
             ) : (
               <div
                 key={key}
-                style={{ display: "flex", flexDirection: "row" }}
                 className={clsx(classes.message, {
                   [classes.mentioned]: mentionRE.test(item.message),
                 })}
