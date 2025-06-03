@@ -22,7 +22,7 @@ function PromptDialog(props) {
   }
 
   function handleSubmit() {
-    if (!user.patron && !value.match(/^[\p{L}\p{M}\p{N}\p{P}\p{Zs}]*$/u)) {
+    if (!user.admin && !value.match(/^[\p{L}\p{M}\p{N}\p{P}\p{Zs}]*$/u)) {
       alert("Please use only letters, numbers, and punctuation.");
     } else {
       onClose(censorText(value));
