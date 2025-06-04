@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Divider from "@material-ui/core/Divider";
@@ -50,7 +50,8 @@ function Navbar() {
   const user = useContext(UserContext);
   const classes = useStyles();
   const settings = useContext(SettingsContext);
-  const [siteTitle] = useFirebaseRef("/site/title");
+  const [siteTitleDb] = useFirebaseRef("/site/title");
+  const siteTitle = siteTitleDb || "Set with Friends";
   const [anchorEl, setAnchorEl] = useState(null);
   const [changeSiteTitle, setChangeSiteTitle] = useState(false);
   const [changeName, setChangeName] = useState(false);
@@ -59,6 +60,10 @@ function Navbar() {
   const [changeBoardLayout, setChangeBoardLayout] = useState(false);
   const [changeKeyboardLayout, setChangeKeyboardLayout] = useState(false);
   const [showOptions, setShowOptions] = useState(false);
+
+  useEffect(() => {
+    document.title = siteTitle;
+  }, [siteTitle]);
 
   function handleMenu(event) {
     setAnchorEl(event.currentTarget);
@@ -140,7 +145,7 @@ function Navbar() {
         <div className={classes.title}>
           <Typography variant="h6" style={{ whiteSpace: "nowrap" }}>
             <InternalLink underline="none" color="inherit" to="/">
-              {siteTitle || "Set with Friends"}
+              {siteTitle}
             </InternalLink>
           </Typography>
           {user.admin && (
