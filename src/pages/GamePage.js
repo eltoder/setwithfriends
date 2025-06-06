@@ -81,10 +81,22 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+function getNextGameId(gameId) {
+  const idx = gameId.lastIndexOf("-");
+  let id = gameId,
+    num = 0;
+  if (gameId.slice(idx + 1).match(/[0-9]+/)) {
+    id = gameId.slice(0, idx);
+    num = parseInt(gameId.slice(idx + 1));
+  }
+  return `${id}-${num + 1}`;
+}
+
 function GamePage({ match }) {
   const user = useContext(UserContext);
   const { volume, notifications } = useContext(SettingsContext);
   const gameId = match.params.id;
+  const nextGameId = useMemo(() => getNextGameId(gameId), [gameId]);
   const classes = useStyles();
 
   const [waiting, setWaiting] = useState(false);
@@ -95,6 +107,11 @@ function GamePage({ match }) {
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
+  const [hasNextGame] = useFirebaseRef(
+    game?.status === "done" && (!game.users || !(user.id in game.users))
+      ? `games/${nextGameId}/status`
+      : null
+  );
   const [playSuccess] = useSound(foundSfx);
   const [playFail1] = useSound(failSfx1);
   const [playFail2] = useSound(failSfx2);
@@ -333,35 +350,29 @@ function GamePage({ match }) {
   }
 
   async function handlePlayAgain() {
-    if (game?.status !== "done" || spectating || waiting) {
+    if (game?.status !== "done" || (spectating && !hasNextGame) || waiting) {
       return;
     }
-    const idx = gameId.lastIndexOf("-");
-    let id = gameId,
-      num = 0;
-    if (gameId.slice(idx + 1).match(/[0-9]+/)) {
-      id = gameId.slice(0, idx);
-      num = parseInt(gameId.slice(idx + 1));
-    }
-    setWaiting(true);
-    const newId = `${id}-${num + 1}`;
-    const newGame = {
-      gameId: newId,
-      access: game.access,
-      mode: game.mode,
-      enableHint: game.enableHint,
-    };
-    firebase.analytics().logEvent("play_again", newGame);
-    try {
-      await createGame(newGame);
-    } catch (error) {
-      if (error.code !== "functions/already-exists") {
-        alert(error.toString());
-        setWaiting(false);
-        return;
+    if (!spectating) {
+      setWaiting(true);
+      const newGame = {
+        gameId: nextGameId,
+        access: game.access,
+        mode: game.mode,
+        enableHint: game.enableHint,
+      };
+      firebase.analytics().logEvent("play_again", newGame);
+      try {
+        await createGame(newGame);
+      } catch (error) {
+        if (error.code !== "functions/already-exists") {
+          alert(error.toString());
+          setWaiting(false);
+          return;
+        }
       }
     }
-    setRedirect(`/room/${newId}`);
+    setRedirect(`/room/${nextGameId}`);
   }
 
   return (
@@ -420,7 +431,7 @@ function GamePage({ match }) {
                         Runner-up: <User id={leaderboard[1]} />
                       </Typography>
                     )}
-                    {!spectating && (
+                    {(!spectating || hasNextGame) && (
                       <Tooltip
                         placement="top"
                         title="Create or join a new game with the same settings. (Ctrl+Enter)"
@@ -432,7 +443,13 @@ function GamePage({ match }) {
                           style={{ marginTop: 12 }}
                           disabled={waiting}
                         >
-                          {waiting ? <Loading /> : "Play Again"}
+                          {waiting ? (
+                            <Loading />
+                          ) : spectating ? (
+                            "Next Game"
+                          ) : (
+                            "Play Again"
+                          )}
                         </Button>
                       </Tooltip>
                     )}

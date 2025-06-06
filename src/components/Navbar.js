@@ -50,7 +50,7 @@ function Navbar() {
   const user = useContext(UserContext);
   const classes = useStyles();
   const settings = useContext(SettingsContext);
-  const [siteTitleDb] = useFirebaseRef("/site/title");
+  const [siteTitleDb] = useFirebaseRef("site/title");
   const siteTitle = siteTitleDb || "Set with Forks";
   const [anchorEl, setAnchorEl] = useState(null);
   const [changeSiteTitle, setChangeSiteTitle] = useState(false);
@@ -77,7 +77,7 @@ function Navbar() {
     setChangeSiteTitle(false);
     title = (title || "").trim();
     if (title) {
-      firebase.database().ref("/site/title").set(title);
+      firebase.database().ref("site/title").set(title);
     }
   }
 
