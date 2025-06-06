@@ -22,10 +22,10 @@ function WelcomeDialog() {
   const handleClose = () => setVisited("returning-user");
   return (
     <Dialog open={visited === "new-user"} onClose={handleClose}>
-      <DialogTitle>Set with Friends</DialogTitle>
+      <DialogTitle>Set with Forks</DialogTitle>
       <DialogContent dividers>
         <Typography variant="body1">
-          Welcome to <em>Set with Friends</em>, an online multiplayer card game!
+          Welcome to <em>Set with Forks</em>, an online multiplayer card game!
           It looks like this is your first visit, so here's a couple of ways you
           can use the site:
         </Typography>

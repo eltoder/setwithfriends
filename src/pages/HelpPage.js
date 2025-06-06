@@ -40,7 +40,7 @@ function HelpPage() {
           Rules
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Welcome to Set with Friends! This web app allows you to play Set, the
+          Welcome to Set with Forks! This web app allows you to play Set, the
           popular real-time card game designed by Marsha Falco in 1974 (
           <Link href="https://en.wikipedia.org/wiki/Set_(card_game)">
             Wikipedia
@@ -547,7 +547,7 @@ function HelpPage() {
           Rating system
         </Typography>
         <Typography variant="body1" gutterBottom>
-          Set with Friends includes a rating system based on the well known Elo
+          Set with Forks includes a rating system based on the well known Elo
           system. The system assigns a number to every player, and updates its
           value based on your performance compared to your opponents. The
           ratings are tracked separately for each game mode.

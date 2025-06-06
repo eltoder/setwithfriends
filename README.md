@@ -1,8 +1,8 @@
-# Set with Friends
+# Set with Forks
 
 ![Logo](https://i.imgur.com/YTldFYX.png)
 
-This is the source code for [Set with Friends](https://setwithfriends.com/), an
+This is the source code for [Set with Forks](https://setwithfriends.com/), an
 online, multiplayer implementation of the real-time card game
 [Set](<https://en.wikipedia.org/wiki/Set_(card_game)>). Your goal is to find
 triplets of cards that follow a certain pattern as quickly as possible.

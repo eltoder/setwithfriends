@@ -34,7 +34,7 @@ const TermsOfService = () => (
     <Typography variant="h6">2. Use License</Typography>
     <Typography variant="body1" gutterBottom>
       Permission is granted to temporarily download one copy of the materials
-      (information or software) on Set with Friends' website for personal,
+      (information or software) on Set with Forks website for personal,
       non-commercial transitory viewing only. This is the grant of a license,
       not a transfer of title, and under this license you may not:
     </Typography>
@@ -47,7 +47,7 @@ const TermsOfService = () => (
         </li>
         <li>
           attempt to decompile or reverse engineer any software contained on Set
-          with Friends' website;
+          with Forks website;
         </li>
         <li>
           remove any copyright or other proprietary notations from the
@@ -61,7 +61,7 @@ const TermsOfService = () => (
     </Typography>
     <Typography variant="body1" gutterBottom>
       This license shall automatically terminate if you violate any of these
-      restrictions and may be terminated by Set with Friends at any time. Upon
+      restrictions and may be terminated by Set with Forks at any time. Upon
       terminating your viewing of these materials or upon the termination of
       this license, you must destroy any downloaded materials in your possession
       whether in electronic or printed format.
@@ -69,15 +69,15 @@ const TermsOfService = () => (
 
     <Typography variant="h6">3. Disclaimer</Typography>
     <Typography variant="body1" gutterBottom>
-      The materials on Set with Friends' website are provided on an 'as is'
-      basis. Set with Friends makes no warranties, expressed or implied, and
-      hereby disclaims and negates all other warranties including, without
-      limitation, implied warranties or conditions of merchantability, fitness
-      for a particular purpose, or non-infringement of intellectual property or
-      other violation of rights.
+      The materials on Set with Forks website are provided on an 'as is' basis.
+      Set with Forks makes no warranties, expressed or implied, and hereby
+      disclaims and negates all other warranties including, without limitation,
+      implied warranties or conditions of merchantability, fitness for a
+      particular purpose, or non-infringement of intellectual property or other
+      violation of rights.
     </Typography>
     <Typography variant="body1" gutterBottom>
-      Further, Set with Friends does not warrant or make any representations
+      Further, Set with Forks does not warrant or make any representations
       concerning the accuracy, likely results, or reliability of the use of the
       materials on its website or otherwise relating to such materials or on any
       sites linked to this site.
@@ -85,38 +85,38 @@ const TermsOfService = () => (
 
     <Typography variant="h6">4. Limitations</Typography>
     <Typography variant="body1" gutterBottom>
-      In no event shall Set with Friends or its suppliers be liable for any
+      In no event shall Set with Forks or its suppliers be liable for any
       damages (including, without limitation, damages for loss of data or
       profit, or due to business interruption) arising out of the use or
-      inability to use the materials on Set with Friends' website, even if Set
-      with Friends or a Set with Friends authorized representative has been
-      notified orally or in writing of the possibility of such damage. Because
-      some jurisdictions do not allow limitations on implied warranties, or
+      inability to use the materials on Set with Forks website, even if Set with
+      Forks or a Set with Forks authorized representative has been notified
+      orally or in writing of the possibility of such damage. Because some
+      jurisdictions do not allow limitations on implied warranties, or
       limitations of liability for consequential or incidental damages, these
       limitations may not apply to you.
     </Typography>
 
     <Typography variant="h6">5. Accuracy of materials</Typography>
     <Typography variant="body1" gutterBottom>
-      The materials appearing on Set with Friends' website could include
-      technical, typographical, or photographic errors. Set with Friends does
-      not warrant that any of the materials on its website are accurate,
-      complete or current. Set with Friends may make changes to the materials
-      contained on its website at any time without notice. However Set with
-      Friends does not make any commitment to update the materials.
+      The materials appearing on Set with Forks website could include technical,
+      typographical, or photographic errors. Set with Forks does not warrant
+      that any of the materials on its website are accurate, complete or
+      current. Set with Forks may make changes to the materials contained on its
+      website at any time without notice. However Set with Forks does not make
+      any commitment to update the materials.
     </Typography>
 
     <Typography variant="h6">6. Links</Typography>
     <Typography variant="body1" gutterBottom>
-      Set with Friends has not reviewed all of the sites linked to its website
-      and is not responsible for the contents of any such linked site. The
-      inclusion of any link does not imply endorsement by Set with Friends of
-      the site. Use of any such linked website is at the user's own risk.
+      Set with Forks has not reviewed all of the sites linked to its website and
+      is not responsible for the contents of any such linked site. The inclusion
+      of any link does not imply endorsement by Set with Forks of the site. Use
+      of any such linked website is at the user's own risk.
     </Typography>
 
     <Typography variant="h6">7. Modifications</Typography>
     <Typography variant="body1" gutterBottom>
-      Set with Friends may revise these terms of service for its website at any
+      Set with Forks may revise these terms of service for its website at any
       time without notice. By using this website you are agreeing to be bound by
       the then current version of these terms of service.
     </Typography>
@@ -140,7 +140,7 @@ const PrivacyPolicy = () => (
     </Typography>
 
     <Typography variant="body1" gutterBottom>
-      Your privacy is important to us. It is Set with Friends' policy to respect
+      Your privacy is important to us. It is Set with Forks policy to respect
       your privacy regarding any information we may collect from you across our
       website, <Link href="/">https://setwithfriends.com/</Link>, and other
       sites we own and operate.
