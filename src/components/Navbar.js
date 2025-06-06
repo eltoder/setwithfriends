@@ -51,7 +51,7 @@ function Navbar() {
   const classes = useStyles();
   const settings = useContext(SettingsContext);
   const [siteTitleDb] = useFirebaseRef("/site/title");
-  const siteTitle = siteTitleDb || "Set with Friends";
+  const siteTitle = siteTitleDb || "Set with Forks";
   const [anchorEl, setAnchorEl] = useState(null);
   const [changeSiteTitle, setChangeSiteTitle] = useState(false);
   const [changeName, setChangeName] = useState(false);

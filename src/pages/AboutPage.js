@@ -13,7 +13,7 @@ function AboutPage() {
       </Typography>
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
         <Typography variant="body1" gutterBottom>
-          Set with Friends was started by{" "}
+          Set with Forks was originally started as Set with Friends by{" "}
           <Link href="https://github.com/ekzhang">Eric Zhang</Link> and{" "}
           <Link href="https://github.com/cynthiakedu">Cynthia Du</Link> in early
           2020. We love the game, and our goal was to bridge the distance
