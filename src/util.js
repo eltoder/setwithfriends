@@ -36,19 +36,19 @@ function isPunctuation(charCode) {
   );
 }
 
-const fixedDataset = englishDataset
-  .addPhrase((phrase) =>
-    phrase.setMetadata({ originalWord: "skibidi" }).addPattern(pattern`skibidi`)
-  )
-  .addPhrase((phrase) =>
-    phrase.setMetadata({ originalWord: "rizz" }).addPattern(pattern`|riz`)
-  )
-  .addPhrase((phrase) =>
-    phrase.setMetadata({ originalWord: "gyatt" }).addPattern(pattern`gyat`)
-  )
-  .addPhrase((phrase) =>
-    phrase.setMetadata({ originalWord: "sigma" }).addPattern(pattern`sigma`)
-  );
+const fixedDataset = englishDataset.addPhrase((phrase) =>
+  phrase
+    .setMetadata({ originalWord: "brainrot" })
+    .addPattern(pattern`skibidi`)
+    .addPattern(pattern`|riz`)
+    .addPattern(pattern`gyat`)
+    .addPattern(pattern`sigma`)
+    .addPattern(pattern`xook`)
+    .addPattern(pattern`xoink`)
+    .addPattern(pattern`xiooix`)
+    .addPattern(pattern`admits`)
+    .addPattern(pattern`orz`)
+);
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
 // https://github.com/jo3-l/obscenity/pull/101
