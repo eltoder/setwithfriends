@@ -128,7 +128,7 @@ function LobbyPage() {
   const gamesQuery = useMemo(() => {
     return firebase
       .database()
-      .ref("/publicGames")
+      .ref("publicGames")
       .orderByValue()
       .limitToLast(35);
   }, []);
@@ -143,7 +143,7 @@ function LobbyPage() {
   }, [user.id]);
   const myGames = useFirebaseQuery(myGamesQuery);
 
-  const [stats, loadingStats] = useFirebaseRef("/stats");
+  const [stats, loadingStats] = useFirebaseRef("stats");
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue);
