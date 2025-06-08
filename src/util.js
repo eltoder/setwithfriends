@@ -26,7 +26,6 @@ import teal from "@material-ui/core/colors/teal";
 import yellow from "@material-ui/core/colors/yellow";
 
 import animals from "./utils/animals.json";
-import { PagesSharp } from "@material-ui/icons";
 
 function isPunctuation(charCode) {
   return (
