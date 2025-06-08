@@ -16,7 +16,7 @@ import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 
 import { modes } from "../game";
 import useMoment from "../hooks/useMoment";
-import { capitalizeFirst, formatTime } from "../util";
+import { capitalizeFirst, formatTime, formatDate } from "../util";
 import Subheading from "./Subheading";
 import User from "./User";
 
@@ -48,6 +48,8 @@ function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
   const classes = useStyles();
   const { pathname } = useLocation();
   const time = useMoment(500);
+
+  const date = new Date(game.startedAt);
 
   const gameTime = endedAt || time;
   const pauseTime =
@@ -119,6 +121,10 @@ function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
             />
           ))}
         </List>
+      <Divider style={{ margin: "8px 0" }} />
+      <Typography variant="p" align="center">
+        <span style={{opacity: 0.9}}>{formatDate(date)}</span>
+      </Typography>
       </div>
     </Paper>
   );

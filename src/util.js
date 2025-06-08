@@ -26,6 +26,7 @@ import teal from "@material-ui/core/colors/teal";
 import yellow from "@material-ui/core/colors/yellow";
 
 import animals from "./utils/animals.json";
+import { PagesSharp } from "@material-ui/icons";
 
 function isPunctuation(charCode) {
   return (
@@ -149,4 +150,10 @@ export function censorText(text) {
 
 export function capitalizeFirst(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
+}
+
+export function formatDate(UTCdate) {
+  const time = UTCdate.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false});
+  const date = UTCdate.toLocaleDateString();
+  return `${date}, ${time}`
 }
