@@ -1,4 +1,4 @@
-import { grey, indigo, red } from "@material-ui/core/colors";
+import { blueGrey, grey, indigo, red } from "@material-ui/core/colors";
 import { createTheme } from "@material-ui/core/styles";
 
 export const darkTheme = createTheme({
@@ -58,6 +58,7 @@ export const darkTheme = createTheme({
     ],
   },
   alarm: red[700],
+  alarmDone: blueGrey[500],
   profileTable: {
     row: "#282828",
   },
@@ -108,6 +109,7 @@ export const lightTheme = createTheme({
     ],
   },
   alarm: red[700],
+  alarmDone: blueGrey[500],
   profileTable: {
     row: "#fff",
   },

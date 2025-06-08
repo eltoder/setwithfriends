@@ -198,12 +198,12 @@ function Chat({
     );
   };
 
-  const formatTime = (time) => {
+  const formatTime = (timestamp) => {
     const opts = { timeStyle: "short", hour12: false };
     return (
       showMessageTimes && (
         <span className={classes.messageTime}>
-          {new Date(time).toLocaleTimeString(undefined, opts)}
+          {new Date(timestamp).toLocaleTimeString(undefined, opts)}
         </span>
       )
     );

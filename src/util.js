@@ -150,3 +150,9 @@ export function censorText(text) {
 export function capitalizeFirst(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
+
+export function formatDateTime(timestamp) {
+  const d = new Date(timestamp);
+  const opts = { timeStyle: "short", hour12: false };
+  return `${d.toLocaleDateString()} ${d.toLocaleTimeString(undefined, opts)}`;
+}
