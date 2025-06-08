@@ -151,8 +151,8 @@ export function capitalizeFirst(text) {
   return text.charAt(0).toUpperCase() + text.slice(1);
 }
 
-export function formatDate(UTCdate) {
-  const time = UTCdate.toLocaleTimeString([], {hour: "2-digit", minute: "2-digit", second: "2-digit", hour12: false});
-  const date = UTCdate.toLocaleDateString();
-  return `${date}, ${time}`
+export function formatDateTime(timestamp) {
+  const d = new Date(timestamp);
+  const opts = { timeStyle: "short", hour12: false };
+  return `${d.toLocaleDateString()} ${d.toLocaleTimeString(undefined, opts)}`;
 }

@@ -10,13 +10,14 @@ import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import AlarmIcon from "@material-ui/icons/Alarm";
+import AlarmOnIcon from "@material-ui/icons/AlarmOn";
 import FitnessCenterIcon from "@material-ui/icons/FitnessCenter";
 import SnoozeIcon from "@material-ui/icons/Snooze";
 import SportsEsportsIcon from "@material-ui/icons/SportsEsports";
 
 import { modes } from "../game";
 import useMoment from "../hooks/useMoment";
-import { capitalizeFirst, formatTime, formatDate } from "../util";
+import { capitalizeFirst, formatDateTime, formatTime } from "../util";
 import Subheading from "./Subheading";
 import User from "./User";
 
@@ -37,6 +38,9 @@ const useStyles = makeStyles((theme) => ({
     marginRight: 10,
     marginBottom: 3,
   },
+  alarmDone: {
+    color: theme.alarmDone,
+  },
   panel: {
     display: "flex",
     flexDirection: "column",
@@ -48,9 +52,6 @@ function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
   const classes = useStyles();
   const { pathname } = useLocation();
   const time = useMoment(500);
-
-  const date = new Date(game.startedAt);
-
   const gameTime = endedAt || time;
   const pauseTime =
     (pause?.previous ?? 0) +
@@ -71,7 +72,14 @@ function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
       <Divider style={{ margin: "4px 0" }} />
       {/* Timer */}
       <div className={classes.timer} style={{ marginTop: 6 }}>
-        <AlarmIcon className={classes.alarm} fontSize="large" />
+        {!endedAt ? (
+          <AlarmIcon className={classes.alarm} fontSize="large" />
+        ) : (
+          <AlarmOnIcon
+            className={`${classes.alarm} ${classes.alarmDone}`}
+            fontSize="large"
+          />
+        )}
         <Typography variant="h4" align="center">
           {/* Hide the sub-second time resolution while game is active to
           avoid stressing beginners. */}
@@ -121,10 +129,12 @@ function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
             />
           ))}
         </List>
-      <Divider style={{ margin: "8px 0" }} />
-      <Typography variant="p" align="center">
-        <span style={{opacity: 0.9}}>{formatDate(date)}</span>
-      </Typography>
+        <Divider style={{ margin: "8px 0" }} />
+        <Typography variant="body2" align="center">
+          <span style={{ fontWeight: 300 }}>
+            {formatDateTime(game.startedAt)}
+          </span>
+        </Typography>
       </div>
     </Paper>
   );
