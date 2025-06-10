@@ -9,8 +9,9 @@ import MoreVertIcon from "@material-ui/icons/MoreVert";
 
 import { UserContext } from "../context";
 import firebase from "../firebase";
-import { generateColor, generateName } from "../util";
+import { generateColor, generateName, parseDuration } from "../util";
 import ElapsedTime from "./ElapsedTime";
+import PromptDialog from "./PromptDialog";
 import User from "./User";
 
 const useStyles = makeStyles((theme) => ({
@@ -35,8 +36,8 @@ function ProfileName({ userId }) {
   const theme = useTheme();
   const user = useContext(UserContext);
   const classes = useStyles();
-
   const [anchorEl, setAnchorEl] = useState(null);
+  const [banUser, setBanUser] = useState(false);
 
   const handleClickVertIcon = (event) => {
     setAnchorEl(event.currentTarget);
@@ -52,9 +53,13 @@ function ProfileName({ userId }) {
     handleClose();
   };
 
-  const handleBan = (minutes) => {
-    const endTime = Date.now() + minutes * 60000;
-    firebase.database().ref(`users/${userId}/banned`).set(endTime);
+  const handleBan = (duration) => {
+    setBanUser(false);
+    const seconds = parseDuration((duration || "").trim());
+    if (seconds) {
+      const endTime = Date.now() + seconds * 1000;
+      firebase.database().ref(`users/${userId}/banned`).set(endTime);
+    }
   };
 
   const handleUnban = () => {
@@ -96,17 +101,7 @@ function ProfileName({ userId }) {
                 {player.banned && Date.now() < player.banned ? (
                   <MenuItem onClick={() => handleUnban()}>Unban</MenuItem>
                 ) : (
-                  [
-                    <MenuItem key={1} onClick={() => handleBan(30)}>
-                      Ban for 30 minutes
-                    </MenuItem>,
-                    <MenuItem key={2} onClick={() => handleBan(24 * 60)}>
-                      Ban for 1 day
-                    </MenuItem>,
-                    <MenuItem key={3} onClick={() => handleBan(7 * 24 * 60)}>
-                      Ban for 1 week
-                    </MenuItem>,
-                  ]
+                  <MenuItem onClick={() => setBanUser(true)}>Ban</MenuItem>
                 )}
               </Menu>
             </div>
@@ -132,6 +127,14 @@ function ProfileName({ userId }) {
                 )}
               </span>
             </Typography>
+            <PromptDialog
+              open={banUser}
+              onClose={handleBan}
+              title="Ban User"
+              message="Enter ban duration (examples: 1w, 3d, 1.5h, 1h20m, 30m)."
+              label="Duration"
+              maxLength={25}
+            />
           </section>
         );
       }}

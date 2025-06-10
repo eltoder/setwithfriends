@@ -156,3 +156,15 @@ export function formatDateTime(timestamp) {
   const opts = { timeStyle: "short", hour12: false };
   return `${d.toLocaleDateString()} ${d.toLocaleTimeString(undefined, opts)}`;
 }
+
+export function parseDuration(spec) {
+  const units = [7 * 24 * 3600, 24 * 3600, 3600, 60, 1];
+  const re =
+    /^(?:(\d+(?:\.\d+)?)w)?(?:(\d+(?:\.\d+)?)d)?(?:(\d+(?:\.\d+)?)h)?(?:(\d+(?:\.\d+)?)m)?(?:(\d+(?:\.\d+)?)s)?$/i;
+  const m = re.exec(spec);
+  return !m || !m[0]
+    ? null
+    : units
+        .map((v, i) => (m[i + 1] ? parseFloat(m[i + 1]) * v : 0))
+        .reduce((a, c) => a + c);
+}
