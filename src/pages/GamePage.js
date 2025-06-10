@@ -37,6 +37,7 @@ import {
 } from "../game";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useKeydown, { getModifierState } from "../hooks/useKeydown";
+import { formatANoun } from "../util";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 
@@ -288,7 +289,7 @@ function GamePage({ match }) {
             setSnack({
               open: true,
               variant: "success",
-              message: `Found a ${state.setType}`,
+              message: `Found ${formatANoun(state.setType)}`,
             });
           }
           return [];

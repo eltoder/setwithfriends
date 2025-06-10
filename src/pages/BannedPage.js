@@ -2,8 +2,9 @@ import Container from "@material-ui/core/Container";
 import Link from "@material-ui/core/Link";
 import Typography from "@material-ui/core/Typography";
 
+import { formatDateTime } from "../util";
+
 function BannedPage({ time }) {
-  const date = new Date(time);
   return (
     <Container style={{ padding: 16 }}>
       <Typography variant="h4" align="center" gutterBottom>
@@ -11,7 +12,7 @@ function BannedPage({ time }) {
       </Typography>
       <Typography variant="body1" align="center" gutterBottom>
         Due to a violation of the site's code of conduct,{" "}
-        <strong>you have been banned until {date.toLocaleString()}</strong>.
+        <strong>you have been banned until {formatDateTime(time)}</strong>.
       </Typography>
       <Typography variant="body1" align="center" gutterBottom>
         Please take some time to cool off. If you have questions about this,

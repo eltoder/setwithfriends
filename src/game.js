@@ -1,4 +1,4 @@
-import { formatCount } from "./util";
+import { formatANoun, formatCount } from "./util";
 
 export const BASE_RATING = 1200;
 export const SCALING_FACTOR = 800;
@@ -139,7 +139,7 @@ export function addCard(deck, card, gameMode, findState) {
   }
   const set = setTypes[setType].checkFn(...cards);
   if (!set) {
-    return { kind: "error", cards, error: `Not a ${setType}` };
+    return { kind: "error", cards, error: `Not ${formatANoun(setType)}` };
   }
   if (modes[gameMode].puzzle && foundSets.has(set.slice().sort().join("|"))) {
     return { kind: "error", cards, error: `This ${setType} was already found` };

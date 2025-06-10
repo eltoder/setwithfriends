@@ -143,6 +143,11 @@ export function formatCount(count, singular, plural = null) {
   return `${count} ${noun}`;
 }
 
+export function formatANoun(word) {
+  const a = /^[aeiou]/i.test(word) ? "an" : "a"; // crud heuristic
+  return `${a} ${word}`;
+}
+
 export function censorText(text) {
   return censor.applyTo(text, badWords.getAllMatches(text));
 }
@@ -153,8 +158,8 @@ export function capitalizeFirst(text) {
 
 export function formatDateTime(timestamp) {
   const d = new Date(timestamp);
-  const opts = { timeStyle: "short", hour12: false };
-  return `${d.toLocaleDateString()} ${d.toLocaleTimeString(undefined, opts)}`;
+  const opts = { dateStyle: "medium", timeStyle: "short", hour12: false };
+  return d.toLocaleString(undefined, opts);
 }
 
 export function parseDuration(spec) {
