@@ -1,4 +1,4 @@
-import { badWords, parseDuration } from "./util";
+import { badWords, formatANoun, parseDuration } from "./util";
 
 describe("bad words filter", () => {
   it("sort of works", () => {
@@ -15,6 +15,13 @@ describe("bad words filter", () => {
     expect(badWords.hasMatch("fickle")).toBe(false);
     expect(badWords.hasMatch("a\u200dsshole")).toBe(true);
   });
+});
+
+it("parseDuration works", () => {
+  expect(formatANoun("Set")).toBe("a Set");
+  expect(formatANoun("UltraSet")).toBe("an UltraSet");
+  expect(formatANoun("GhostSet")).toBe("a GhostSet");
+  expect(formatANoun("4Set")).toBe("a 4Set");
 });
 
 it("parseDuration works", () => {
