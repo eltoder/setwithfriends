@@ -80,6 +80,9 @@ const useStyles = makeStyles((theme) => ({
     margin: "0 -4px",
     padding: "0 4px 0 2px",
   },
+  action: {
+    fontStyle: "italic",
+  },
 }));
 
 const makeMentionRE = (username) => {
@@ -87,6 +90,8 @@ const makeMentionRE = (username) => {
   username = username.replace(/^anonymous /i, "($&)?");
   return new RegExp(`@(all|${username})(\\W|$)`, "iu");
 };
+
+const emojiRE = /:([a-z0-9_+-]+):/g;
 
 /** A chat sidebar element, opens lobby chat when the `gameId` prop is not set. */
 function Chat({
@@ -129,14 +134,17 @@ function Chat({
 
   function handleSubmit(event) {
     event.preventDefault();
-    const trimmed = input.trim();
-    if (trimmed) {
+    let text = input.trim();
+    if (text) {
+      if (text.startsWith("/slap ")) {
+        text = `/me slaps ${text.slice(6)} around a bit with a large trout`;
+      }
       firebase
         .database()
         .ref(databasePath)
         .push({
           user: user.id,
-          message: censorText(trimmed),
+          message: censorText(text),
           time: firebase.database.ServerValue.TIMESTAMP,
         });
     }
@@ -210,7 +218,7 @@ function Chat({
   };
 
   const processText = (text) => {
-    return text.replace(/:([a-z0-9_+-]+):/g, (m, n) => emoji[n] || m);
+    return text.replace(emojiRE, (m, n) => emoji[n] || m);
   };
 
   return (
@@ -243,13 +251,29 @@ function Chat({
                   item.time,
                   <Typography variant="body2">
                     {formatTime(item.time)}
-                    <User
-                      id={item.user}
-                      component={InternalLink}
-                      to={`/profile/${item.user}`}
-                      underline="none"
-                    />
-                    : {item.message}
+                    {item.message.startsWith("/me ") ? (
+                      <span className={classes.action}>
+                        *{" "}
+                        <User
+                          id={item.user}
+                          style={{ color: "inherit", fontWeight: "inherit" }}
+                          showIcon={false}
+                          component={InternalLink}
+                          to={`/profile/${item.user}`}
+                        />
+                        {item.message.slice(3)}
+                      </span>
+                    ) : (
+                      <>
+                        <User
+                          id={item.user}
+                          component={InternalLink}
+                          to={`/profile/${item.user}`}
+                          underline="none"
+                        />
+                        : {item.message}
+                      </>
+                    )}
                   </Typography>
                 )}
                 {user.admin && (
