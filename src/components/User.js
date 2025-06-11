@@ -1,6 +1,5 @@
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Security from "@material-ui/icons/Security";
-import WhatshotIcon from "@material-ui/icons/Whatshot";
 
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useStats from "../hooks/useStats";
@@ -24,8 +23,8 @@ function User({
   style,
   component,
   render,
-  forcePatron,
   showRating,
+  showIcon = true,
   ...other
 }) {
   const theme = useTheme();
@@ -53,7 +52,7 @@ function User({
           {loadingStats ? "⋯" : Math.round(stats[showRating].rating)}
         </span>
       )}
-      {user.admin ? (
+      {showIcon && user.admin && (
         <Security
           fontSize="inherit"
           style={{
@@ -64,19 +63,6 @@ function User({
             color: "inherit",
           }}
         />
-      ) : (
-        (user.patron || forcePatron) && (
-          <WhatshotIcon
-            fontSize="inherit"
-            style={{
-              display: "inline",
-              position: "relative",
-              left: "-0.1em",
-              top: "0.15em",
-              color: "inherit",
-            }}
-          />
-        )
       )}
       <span>{user.name}</span>
     </Component>
