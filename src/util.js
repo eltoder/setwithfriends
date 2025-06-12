@@ -162,6 +162,13 @@ export function formatDateTime(timestamp) {
   return d.toLocaleString(undefined, opts);
 }
 
+const trimRegex =
+  /^[\p{White_Space}\p{Default_Ignorable_Code_Point}]+|[\p{White_Space}\p{Default_Ignorable_Code_Point}]+$/gu;
+
+export function unicodeTrim(str) {
+  return str.replace(trimRegex, "");
+}
+
 export function parseDuration(spec) {
   const units = [7 * 24 * 3600, 24 * 3600, 3600, 60, 1];
   const re =

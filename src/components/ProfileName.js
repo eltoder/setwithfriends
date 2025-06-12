@@ -55,7 +55,7 @@ function ProfileName({ userId }) {
 
   const handleBan = (duration) => {
     setBanUser(false);
-    const seconds = parseDuration((duration || "").trim());
+    const seconds = parseDuration(duration);
     if (seconds) {
       const endTime = Date.now() + seconds * 1000;
       firebase.database().ref(`users/${userId}/banned`).set(endTime);

@@ -18,15 +18,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function User({
-  id,
-  style,
-  component,
-  render,
-  showRating,
-  showIcon = true,
-  ...other
-}) {
+function User({ id, style, component, render, showRating, ...other }) {
   const theme = useTheme();
   const classes = useStyles();
 
@@ -52,7 +44,7 @@ function User({
           {loadingStats ? "⋯" : Math.round(stats[showRating].rating)}
         </span>
       )}
-      {showIcon && user.admin && (
+      {user.admin && (
         <Security
           fontSize="inherit"
           style={{

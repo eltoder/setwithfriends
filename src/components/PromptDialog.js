@@ -9,7 +9,7 @@ import DialogTitle from "@material-ui/core/DialogTitle";
 import TextField from "@material-ui/core/TextField";
 
 import { UserContext } from "../context";
-import { censorText } from "../util";
+import { censorText, unicodeTrim } from "../util";
 
 function PromptDialog(props) {
   const { open, onClose, title, message, label, maxLength } = props;
@@ -25,7 +25,7 @@ function PromptDialog(props) {
     if (!user.admin && !value.match(/^[\p{L}\p{M}\p{N}\p{P}\p{Zs}]*$/u)) {
       alert("Please use only letters, numbers, and punctuation.");
     } else {
-      onClose(censorText(value));
+      onClose(censorText(unicodeTrim(value)));
       setValue("");
     }
   }

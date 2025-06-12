@@ -14,7 +14,7 @@ import firebase from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
 import useStats from "../hooks/useStats";
 import useStorage from "../hooks/useStorage";
-import { censorText } from "../util";
+import { censorText, unicodeTrim } from "../util";
 import autoscroll from "../utils/autoscroll";
 import emoji from "../utils/emoji";
 import ChatCards from "./ChatCards";
@@ -80,9 +80,6 @@ const useStyles = makeStyles((theme) => ({
     margin: "0 -4px",
     padding: "0 4px 0 2px",
   },
-  action: {
-    fontStyle: "italic",
-  },
 }));
 
 const makeMentionRE = (username) => {
@@ -134,11 +131,8 @@ function Chat({
 
   function handleSubmit(event) {
     event.preventDefault();
-    let text = input.trim();
+    const text = unicodeTrim(input);
     if (text) {
-      if (text.startsWith("/slap ")) {
-        text = `/me slaps ${text.slice(6)} around a bit with a large trout`;
-      }
       firebase
         .database()
         .ref(databasePath)
@@ -251,29 +245,13 @@ function Chat({
                   item.time,
                   <Typography variant="body2">
                     {formatTime(item.time)}
-                    {item.message.startsWith("/me ") ? (
-                      <span className={classes.action}>
-                        *{" "}
-                        <User
-                          id={item.user}
-                          style={{ color: "inherit", fontWeight: "inherit" }}
-                          showIcon={false}
-                          component={InternalLink}
-                          to={`/profile/${item.user}`}
-                        />
-                        {item.message.slice(3)}
-                      </span>
-                    ) : (
-                      <>
-                        <User
-                          id={item.user}
-                          component={InternalLink}
-                          to={`/profile/${item.user}`}
-                          underline="none"
-                        />
-                        : {item.message}
-                      </>
-                    )}
+                    <User
+                      id={item.user}
+                      component={InternalLink}
+                      to={`/profile/${item.user}`}
+                      underline="none"
+                    />
+                    : {item.message}
                   </Typography>
                 )}
                 {user.admin && (
