@@ -75,7 +75,6 @@ function Navbar() {
 
   function handleChangeSiteTitle(title) {
     setChangeSiteTitle(false);
-    title = (title || "").trim();
     if (title) {
       firebase.database().ref("site/title").set(title);
     }
@@ -83,7 +82,6 @@ function Navbar() {
 
   function handleChangeName(name) {
     setChangeName(false);
-    name = (name || "").trim();
     if (name) {
       firebase.database().ref(`users/${user.id}/name`).set(name);
     }
