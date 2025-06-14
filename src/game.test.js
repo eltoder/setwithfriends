@@ -218,4 +218,16 @@ describe("findSet()", () => {
     verify4Set(findSet(["0000", "0102", "0210", "0003"], "4setjrchain", state));
     verify4Set(findSet(["0000", "0102", "0210", "3201"], "4setjrchain", state));
   });
+
+  it("can find puzzle 4sets", () => {
+    const board = ["0000", "0102", "0210", "0312", "1111", "1013", "1203"];
+    const state = { foundSets: new Set() };
+    for (let i = 0; i < 7; i++) {
+      const set = findSet(board, "4setjrpuzzle", state);
+      verify4Set(set);
+      expect(state.foundSets.has(set.slice().sort().join("|"))).toBe(false);
+      state.foundSets.add(set.slice().sort().join("|"));
+    }
+    expect(findSet(board, "4setjrpuzzle", state)).toBe(null);
+  });
 });

@@ -253,12 +253,16 @@ function findSet4Set(deck: string[], gameMode: GameMode, state: FindState) {
   const deckSet = new Set(deck);
   const first =
     modes[gameMode].chain && state.lastSet!.length > 0 ? state.lastSet! : deck;
+  const foundSets = modes[gameMode].puzzle && state.foundSets!;
   for (let i = 0; i < first.length; i++) {
     for (let j = i + 1; j < first.length; j++) {
       for (let k = first === deck ? j + 1 : 0; k < deck.length; k++) {
         const c = conjugateCard4Set(first[i], first[j], deck[k]);
         if (deckSet.has(c)) {
-          return [first[i], first[j], deck[k], c];
+          const set = [first[i], first[j], deck[k], c];
+          if (!(foundSets && foundSets.has(set.sort().join("|")))) {
+            return set;
+          }
         }
       }
     }
@@ -477,6 +481,13 @@ export const modes = {
     chain: 0,
     puzzle: true,
     minBoardSize: 9,
+  },
+  "4setjrpuzzle": {
+    setType: "4Set",
+    traits: 3,
+    chain: 0,
+    puzzle: true,
+    minBoardSize: 11,
   },
   shuffle: {
     setType: "Set",
