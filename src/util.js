@@ -48,6 +48,9 @@ const fixedDataset = englishDataset.addPhrase((phrase) =>
     .addPattern(pattern`xiooix`)
     .addPattern(pattern`admits`)
     .addPattern(pattern`orz`)
+    .addPattern(pattern`otz`)
+    .addPattern(pattern`ozr`)
+    .addPattern(pattern`lebron`)
 );
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
