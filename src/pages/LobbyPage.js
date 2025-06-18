@@ -208,7 +208,7 @@ function LobbyPage() {
         <Box clone order={{ xs: 2, md: 1 }} className={classes.chatColumn}>
           <Grid item xs={12} sm={12} md={6}>
             <Paper className={classes.chatColumnPaper}>
-              <Chat title="Lobby Chat" messageLimit={200} showMessageTimes />
+              <Chat title="Lobby Chat" messageLimit={100} showMessageTimes />
             </Paper>
             <div className={classes.gameCounters}>
               <Typography variant="body2">
