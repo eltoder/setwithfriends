@@ -475,7 +475,7 @@ function GamePage({ match }) {
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>
           <Grid item xs={12} md={3} className={classes.sideColumn}>
-            <Box order={{ xs: 2, md: 1 }}>
+            <Box order={{ xs: 2, md: 1 }} style={{ maxHeight: "100%" }}>
               <GameSidebar
                 game={game}
                 scores={scores}

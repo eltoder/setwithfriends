@@ -1,4 +1,4 @@
-import { ArcElement, Chart as ChartJS } from "chart.js";
+import { ArcElement, Chart as ChartJS, Legend, Tooltip } from "chart.js";
 import { memo } from "react";
 import { Pie } from "react-chartjs-2";
 
@@ -8,7 +8,7 @@ import { makeStyles, useTheme } from "@material-ui/core/styles";
 
 import { formatTime } from "../util";
 
-ChartJS.register(ArcElement);
+ChartJS.register(ArcElement, Tooltip, Legend);
 
 const useStyles = makeStyles((theme) => ({
   statisticsPanel: {
@@ -58,7 +58,7 @@ function UserStatistics({ stats, variant }) {
     plugins: {
       legend: {
         position: "bottom",
-        onClick: (e) => e.stopPropagation(),
+        onClick: () => {}, // disable click to show/hide category
       },
       tooltip: {
         enabled: num.finishedGames > 0,
