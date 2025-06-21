@@ -129,13 +129,14 @@ function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
             />
           ))}
         </List>
-        <Divider style={{ margin: "8px 0" }} />
-        <Typography variant="body2" align="center">
-          <span style={{ fontWeight: 300 }}>
-            {formatDateTime(game.startedAt)}
-          </span>
-        </Typography>
       </div>
+      <Divider style={{ margin: "8px 0" }} />
+      {/* Footer */}
+      <Typography variant="body2" align="center">
+        <span style={{ fontWeight: 300 }}>
+          {formatDateTime(game.startedAt)}
+        </span>
+      </Typography>
     </Paper>
   );
 }
