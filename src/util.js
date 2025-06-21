@@ -36,22 +36,26 @@ function isPunctuation(charCode) {
   );
 }
 
-const fixedDataset = englishDataset.addPhrase((phrase) =>
-  phrase
-    .setMetadata({ originalWord: "brainrot" })
-    .addPattern(pattern`skibidi`)
-    .addPattern(pattern`|riz`)
-    .addPattern(pattern`gyat`)
-    .addPattern(pattern`sigma`)
-    .addPattern(pattern`xook`)
-    .addPattern(pattern`xoink`)
-    .addPattern(pattern`xiooix`)
-    .addPattern(pattern`admits`)
-    .addPattern(pattern`orz`)
-    .addPattern(pattern`otz`)
-    .addPattern(pattern`ozr`)
-    .addPattern(pattern`lebron`)
-);
+const fixedDataset = englishDataset
+  .addPhrase((phrase) =>
+    phrase.setMetadata({ originalWord: "ass" }).addWhitelistedTerm("45s")
+  )
+  .addPhrase((phrase) =>
+    phrase
+      .setMetadata({ originalWord: "brainrot" })
+      .addPattern(pattern`skibidi`)
+      .addPattern(pattern`|riz`)
+      .addPattern(pattern`gyat`)
+      .addPattern(pattern`sigma`)
+      .addPattern(pattern`xook`)
+      .addPattern(pattern`xoink`)
+      .addPattern(pattern`xiooix`)
+      .addPattern(pattern`admits`)
+      .addPattern(pattern`orz`)
+      .addPattern(pattern`otz`)
+      .addPattern(pattern`ozr`)
+      .addPattern(pattern`lebron`)
+  );
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
 // https://github.com/jo3-l/obscenity/pull/101
@@ -165,11 +169,10 @@ export function formatDateTime(timestamp) {
   return d.toLocaleString(undefined, opts);
 }
 
-const trimRegex =
-  /^[\p{White_Space}\p{Default_Ignorable_Code_Point}]+|[\p{White_Space}\p{Default_Ignorable_Code_Point}]+$/gu;
+const trimRegex = /\p{Default_Ignorable_Code_Point}+/gu;
 
 export function unicodeTrim(str) {
-  return str.replace(trimRegex, "");
+  return str.replace(trimRegex, "").trim();
 }
 
 export function parseDuration(spec) {
@@ -182,4 +185,8 @@ export function parseDuration(spec) {
     : units
         .map((v, i) => (m[i + 1] ? parseFloat(m[i + 1]) * v : 0))
         .reduce((a, c) => a + c);
+}
+
+export function sleep(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
 }

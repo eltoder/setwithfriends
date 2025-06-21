@@ -37,7 +37,7 @@ import {
 } from "../game";
 import useFirebaseRef from "../hooks/useFirebaseRef";
 import useKeydown, { getModifierState } from "../hooks/useKeydown";
-import { formatANoun } from "../util";
+import { formatANoun, sleep } from "../util";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
 
@@ -93,6 +93,22 @@ function getNextGameId(gameId) {
   return `${id}-${num + 1}`;
 }
 
+function ensureConnected() {
+  return new Promise((resolve) => {
+    const ref = firebase.database().ref(".info/connected");
+    let wasConnected = true;
+    const update = (snap) => {
+      if (snap.val() === true) {
+        ref.off("value", update);
+        resolve(wasConnected);
+      } else {
+        wasConnected = false;
+      }
+    };
+    ref.on("value", update);
+  });
+}
+
 function GamePage({ match }) {
   const user = useContext(UserContext);
   const { volume, notifications } = useContext(SettingsContext);
@@ -133,7 +149,7 @@ function GamePage({ match }) {
     if (finished.gameId === gameId) {
       // Attempt to finish the game a few times before giving up
       (async () => {
-        const numRetries = 8;
+        const numRetries = 10;
         for (let i = 0; i < numRetries; i++) {
           try {
             await finishGame({ gameId });
@@ -141,9 +157,8 @@ function GamePage({ match }) {
           } catch (error) {
             if (i === numRetries - 1) {
               setFinished({ gameId, error: error + "" });
-            } else {
-              const delay = 100 * Math.pow(2, i);
-              await new Promise((resolve) => setTimeout(resolve, delay));
+            } else if (await ensureConnected()) {
+              await sleep(100 * Math.pow(1.5, i));
             }
           }
         }
