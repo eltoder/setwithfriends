@@ -47,14 +47,15 @@ const fixedDataset = englishDataset
       .addPattern(pattern`|riz`)
       .addPattern(pattern`gyat`)
       .addPattern(pattern`sigma`)
-      .addPattern(pattern`xook`)
+      .addPattern(pattern`xook[s]`)
+      .addPattern(pattern`zook[s]`)
       .addPattern(pattern`xoink`)
+      .addPattern(pattern`xooink`)
+      .addPattern(pattern`xioix`)
       .addPattern(pattern`xiooix`)
       .addPattern(pattern`admits`)
-      .addPattern(pattern`orz`)
-      .addPattern(pattern`otz`)
-      .addPattern(pattern`ozr`)
       .addPattern(pattern`lebron`)
+      .addPattern(pattern`lebroon`)
   );
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
@@ -169,10 +170,11 @@ export function formatDateTime(timestamp) {
   return d.toLocaleString(undefined, opts);
 }
 
-const trimRegex = /\p{Default_Ignorable_Code_Point}+/gu;
+const trimRegex =
+  /^[\p{White_Space}\p{Default_Ignorable_Code_Point}]+|[\p{White_Space}\p{Default_Ignorable_Code_Point}]+$/gu;
 
 export function unicodeTrim(str) {
-  return str.replace(trimRegex, "").trim();
+  return str.replace(trimRegex, "");
 }
 
 export function parseDuration(spec) {
