@@ -124,6 +124,7 @@ function GamePage({ match }) {
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
+  const newEvents = useRef(new Set());
   const [hasNextGame] = useFirebaseRef(
     game?.status === "done" && (!game.users || !(user.id in game.users))
       ? `games/${nextGameId}/status`
@@ -201,7 +202,11 @@ function GamePage({ match }) {
     lastKeptSet,
   } = useMemo(() => {
     if (!gameData) return {};
-    const state = computeState({ ...gameData, random, deck }, gameMode);
+    const state = computeState(
+      { ...gameData, random, deck },
+      gameMode,
+      newEvents.current
+    );
     const { current, boardSize, findState, history } = state;
     const board = current.slice(0, boardSize);
     const answer = findSet(board, gameMode, findState);
@@ -251,7 +256,7 @@ function GamePage({ match }) {
     if (numHints) {
       firebase.database().ref(`gameData/${gameId}/hints`).remove();
     }
-    firebase
+    const eventRef = firebase
       .database()
       .ref(`gameData/${gameId}/events`)
       .push({
@@ -259,6 +264,21 @@ function GamePage({ match }) {
         user: user.id,
         time: firebase.database.ServerValue.TIMESTAMP,
       });
+    // Track "new" events that have approximate times. An event is new since
+    // the time it was created until its time is updated from the server.
+    // This happens when our callback is called the second time (the first
+    // time it is called with the approximate time).
+    const eventKey = eventRef.key;
+    const timeRef = eventRef.child("time");
+    newEvents.current.add(eventKey);
+    let updateCount = 0;
+    const timeUpdated = () => {
+      if (++updateCount === 2) {
+        newEvents.current.delete(eventKey);
+        timeRef.off("value", timeUpdated);
+      }
+    };
+    timeRef.on("value", timeUpdated);
   }
 
   const hint = game.enableHint && answer ? answer.slice(0, numHints) : null;

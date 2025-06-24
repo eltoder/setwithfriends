@@ -401,7 +401,7 @@ function processEvent(internalGameState, event) {
   updateBoard(internalGameState, event, cards);
 }
 
-export function computeState(gameData, gameMode) {
+export function computeState(gameData, gameMode, newEvents = null) {
   if (!modes.hasOwnProperty(gameMode)) {
     throw new Error(`invalid gameMode: ${gameMode}`);
   }
@@ -440,10 +440,21 @@ export function computeState(gameData, gameMode) {
   };
 
   if (gameData.events) {
-    // Array.sort() is guaranteed to be stable in since around 2018
-    const events = Object.values(gameData.events).sort(
-      (e1, e2) => e1.time - e2.time
-    );
+    let events;
+    // Array.sort() is guaranteed to be stable in since around 2018.
+    if (newEvents?.size) {
+      // Always sort new events (with approximate times) after old events.
+      events = Object.entries(gameData.events)
+        .sort(
+          ([k1, e1], [k2, e2]) =>
+            newEvents.has(k1) - newEvents.has(k2) || e1.time - e2.time
+        )
+        .map(([k, e]) => e);
+    } else {
+      events = Object.values(gameData.events).sort(
+        (e1, e2) => e1.time - e2.time
+      );
+    }
     for (const event of events) {
       processEvent(internalGameState, event);
     }
