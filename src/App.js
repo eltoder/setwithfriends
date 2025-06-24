@@ -89,6 +89,7 @@ function App() {
   );
   const [volume, setVolume] = useStorage("volume", "on");
   const [notifications, setNotifications] = useStorage("notifications", "on");
+  const [focusMode, setFocusMode] = useStorage("focusMode", "off");
 
   useEffect(() => {
     return firebase.auth().onAuthStateChanged((user) => {
@@ -162,6 +163,8 @@ function App() {
                 setVolume,
                 notifications,
                 setNotifications,
+                focusMode,
+                setFocusMode,
                 layoutOrientation,
                 setLayoutOrientation,
                 cardOrientation,
