@@ -111,7 +111,7 @@ function ensureConnected() {
 
 function GamePage({ match }) {
   const user = useContext(UserContext);
-  const { volume, notifications } = useContext(SettingsContext);
+  const { volume, notifications, focusMode } = useContext(SettingsContext);
   const gameId = match.params.id;
   const nextGameId = useMemo(() => getNextGameId(gameId), [gameId]);
   const classes = useStyles();
@@ -432,16 +432,18 @@ function GamePage({ match }) {
       <Grid container spacing={2}>
         <Box clone order={{ xs: 3, sm: 1 }}>
           <Grid item xs={12} sm={4} md={3} className={classes.sideColumn}>
-            <Paper style={{ display: "flex", height: "100%", padding: 8 }}>
-              <Chat
-                title="Game Chat"
-                messageLimit={200}
-                gameId={gameId}
-                history={history}
-                startedAt={game.startedAt}
-                gameMode={gameMode}
-              />
-            </Paper>
+            {(focusMode !== "on" || gameEnded) && (
+              <Paper style={{ display: "flex", height: "100%", padding: 8 }}>
+                <Chat
+                  title="Game Chat"
+                  messageLimit={200}
+                  gameId={gameId}
+                  history={history}
+                  startedAt={game.startedAt}
+                  gameMode={gameMode}
+                />
+              </Paper>
+            )}
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, sm: 2 }} position="relative">
@@ -510,21 +512,23 @@ function GamePage({ match }) {
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>
           <Grid item xs={12} md={3} className={classes.sideColumn}>
-            <Box order={{ xs: 2, md: 1 }} style={{ maxHeight: "100%" }}>
-              <GameSidebar
-                game={game}
-                scores={scores}
-                leaderboard={leaderboard}
-                pause={gameData.pause}
-                endedAt={
-                  game.status === "done"
-                    ? game.endedAt
-                    : !answer && history.length > 0
-                      ? history[history.length - 1].time
-                      : 0
-                }
-              />
-            </Box>
+            {(focusMode !== "on" || gameEnded) && (
+              <Box order={{ xs: 2, md: 1 }} style={{ maxHeight: "100%" }}>
+                <GameSidebar
+                  game={game}
+                  scores={scores}
+                  leaderboard={leaderboard}
+                  pause={gameData.pause}
+                  endedAt={
+                    game.status === "done"
+                      ? game.endedAt
+                      : !answer && history.length > 0
+                        ? history[history.length - 1].time
+                        : 0
+                  }
+                />
+              </Box>
+            )}
             {game.enableHint && (
               <Box order={{ xs: 1, md: 2 }}>
                 <Box mt={{ xs: 0, md: 2 }} mb={1}>

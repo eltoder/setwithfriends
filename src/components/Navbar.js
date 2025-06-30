@@ -115,6 +115,10 @@ function Navbar() {
     );
   }
 
+  function handleChangeFocusMode() {
+    settings.setFocusMode((focusMode) => (focusMode === "on" ? "off" : "on"));
+  }
+
   useKeydown((event) => {
     if (getModifierState(event) === "Control") {
       if (event.key === "s") {
@@ -220,6 +224,14 @@ function Navbar() {
           >
             {settings.notifications === "on" ? "Disable" : "Enable"}{" "}
             notifications
+          </MenuItem>
+          <MenuItem
+            onClick={() => {
+              handleChangeFocusMode();
+              handleCloseMenu();
+            }}
+          >
+            {settings.focusMode === "on" ? "Disable" : "Enable"} focus mode
           </MenuItem>
           <MenuItem
             onClick={() => {
