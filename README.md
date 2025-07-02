@@ -42,13 +42,14 @@ To build the site for development:
 > resulting Linux environment for better developer experience. However, recent
 > versions of the fork run on Windows directly as well.
 
-- Install Node.js 20 and npm 10.
-- Run `npm install -g firebase-tools` to globally install the Firebase CLI. This
-  requires Java version 11 or higher.
+- Install Node.js 20 and npm 10. Use these exact versions, though newer versions
+  _might_ work.
+- Install Java version 11 or higher.
+- Run `npm install -g firebase-tools` to globally install the Firebase CLI.
 - Run `npm install` in the root folder to get dependencies.
 - Run `npm install` in the `functions` folder.
-- To start the project, run `npm run dev`. This runs a script, which is
-  responsible for doing several things concurrently:
+- To start the project, run `npm run dev` in the root folder. This runs a script,
+  which is responsible for doing several things concurrently:
   - Build the TypeScript cloud functions in watch mode.
   - Start the Firebase Local Emulator Suite.
   - Start the frontend with React Fast Refresh enabled.
