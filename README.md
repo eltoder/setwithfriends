@@ -48,8 +48,8 @@ To build the site for development:
 - Run `npm install -g firebase-tools` to globally install the Firebase CLI.
 - Run `npm install` in the root folder to get dependencies.
 - Run `npm install` in the `functions` folder.
-- To start the project, run `npm run dev` in the root folder. This runs a script,
-  which is responsible for doing several things concurrently:
+- To start the project, run `npm run dev` in the root folder. This runs a
+  script, which is responsible for doing several things concurrently:
   - Build the TypeScript cloud functions in watch mode.
   - Start the Firebase Local Emulator Suite.
   - Start the frontend with React Fast Refresh enabled.
@@ -59,8 +59,10 @@ the database will be empty, so you will not see any games or chat messages, but
 everything should work. Try starting a game or posting a message. If something
 does not work, check for errors in the developer tools (in Chrome: press
 `Ctrl+Shift+I` or `F12` and switch to the "Console" tab) and in the terminal
-window where you ran `npm`. Feel free to reach out for help. Send screenshots of
-both the devtools console and the terminal.
+window where you ran `npm`. Feel free to reach out for help. When asking for
+help, please explain what you did, what happened, and attach the
+`firebase-debug.log` file from the root folder and screenshots of both the
+devtools console and the terminal.
 
 You should also be able to access the Emulator UI at http://localhost:4000,
 which contains useful information and allows you to inspect/modify the database
