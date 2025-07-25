@@ -72,8 +72,8 @@ const fixedDataset = englishDataset
   .addPhrase((phrase) =>
     phrase
       .setMetadata({ originalWord: "brainrot" })
-      .addPattern(pattern`skibid`)
-      .addPattern(pattern`skidib`)
+      .addPattern(pattern`sk[i][ee]b[i][ee]d`)
+      .addPattern(pattern`sk[i][ee]d[i][ee]b`)
       .addPattern(pattern`sybau`)
       .addPattern(pattern`sygau`)
       .addPattern(pattern`|riz`)
