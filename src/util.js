@@ -27,14 +27,43 @@ import yellow from "@material-ui/core/colors/yellow";
 
 import animals from "./utils/animals.json";
 
-function isPunctuation(charCode) {
-  return (
-    (charCode >= 33 && charCode <= 47) ||
-    (charCode >= 58 && charCode <= 64) ||
-    (charCode >= 91 && charCode <= 96) ||
-    (charCode >= 0x2000 && charCode <= 0x206f)
-  );
-}
+const invisibleChars = new Set([
+  0x00a0, // No-break space
+  0x00ad, // Soft hyphen
+  0x034f, // Combining grapheme joiner
+  0x061c, // Arabic letter mark
+  0x06dd, // Arabic end of ayah
+  0x070f, // Syriac abbreviation mark
+  0x08e2, // Arabic discourse mark
+  0x1680, // Ogham space mark
+  0x180e, // Mongolian vowel separator
+  0x110bd, // Kaithi number sign (formatting)
+  0x110cd, // Grantha punctuation (invisible)
+  0x2800, // Braille pattern blank
+  0x3000, // Ideographic space
+  0xfeff, // Zero-width no-break space (also BOM)
+]);
+(function () {
+  const ranges = [
+    [0x00, 0x1f], // ASCII control characters
+    [0x7f, 0x9f], // Delete and extended C1 control characters
+    [0x0600, 0x0605], // Arabic control characters (e.g., Arabic number signs)
+    [0x0890, 0x0891], // Arabic script invisible formatting marks
+    [0x2000, 0x200f], // En quad to Right-to-Left mark (various spaces and directional marks)
+    [0x2028, 0x2029], // Line separator, Paragraph separator
+    [0x202a, 0x202e], // Left-to-right embedding to Right-to-left override
+    [0x2060, 0x206f], // Word joiner to Nominal digit shapes (invisible formatting characters)
+    [0xfff9, 0xfffb], // Interlinear annotation formatting characters
+    [0x1bca0, 0x1bca3], // Shorthand format controls
+    [0x1d173, 0x1d17a], // Musical symbol formatting characters
+    [0xe0020, 0xe007f], // TAG characters (invisible language tags)
+  ];
+  for (const [start, end] of ranges) {
+    for (let code = start; code <= end; code++) {
+      invisibleChars.add(code);
+    }
+  }
+})();
 
 const fixedDataset = englishDataset
   .addPhrase((phrase) =>
@@ -43,7 +72,10 @@ const fixedDataset = englishDataset
   .addPhrase((phrase) =>
     phrase
       .setMetadata({ originalWord: "brainrot" })
-      .addPattern(pattern`skibidi`)
+      .addPattern(pattern`skibid`)
+      .addPattern(pattern`skidib`)
+      .addPattern(pattern`sybau`)
+      .addPattern(pattern`sygau`)
       .addPattern(pattern`|riz`)
       .addPattern(pattern`gyat`)
       .addPattern(pattern`sigma`)
@@ -53,9 +85,8 @@ const fixedDataset = englishDataset
       .addPattern(pattern`xooink`)
       .addPattern(pattern`xioix`)
       .addPattern(pattern`xiooix`)
-      .addPattern(pattern`admits`)
-      .addPattern(pattern`lebron`)
-      .addPattern(pattern`lebroon`)
+      .addPattern(pattern`l[l]e[e]b[b]ro[o]n`)
+      .addPattern(pattern`prickl[l]e`)
   );
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
@@ -68,7 +99,7 @@ export const badWords = new RegExpMatcher({
   ...englishRecommendedTransformers,
   blacklistMatcherTransformers: [
     ...englishRecommendedTransformers.blacklistMatcherTransformers,
-    createSimpleTransformer((c) => (!isPunctuation(c) ? c : undefined)),
+    createSimpleTransformer((c) => (!invisibleChars.has(c) ? c : undefined)),
   ],
 });
 const censor = new TextCensor().setStrategy(fixedPhraseCensorStrategy("🤬"));
