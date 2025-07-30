@@ -543,7 +543,6 @@ const emoji = {
   broccoli: "🥦",
   tomato: "🍅",
   eggplant: "🍆",
-  cucumber: "🥒",
   carrot: "🥕",
   hot_pepper: "🌶",
   potato: "🥔",
