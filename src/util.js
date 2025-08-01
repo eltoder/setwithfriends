@@ -86,7 +86,9 @@ const fixedDataset = englishDataset
       .addPattern(pattern`xioix`)
       .addPattern(pattern`xiooix`)
       .addPattern(pattern`l[l]e[e]b[b]ro[o]n`)
+      .addPattern(pattern`ie[e]b[b]ro[o]n`)
       .addPattern(pattern`prickl[l]e`)
+      .addPattern(pattern`prickie`)
   );
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
