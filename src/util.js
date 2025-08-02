@@ -2,10 +2,12 @@ import moment from "moment";
 import {
   RegExpMatcher,
   TextCensor,
+  createSimpleTransformer,
   englishDataset,
   englishRecommendedTransformers,
   fixedPhraseCensorStrategy,
   pattern,
+  remapCharactersTransformer,
 } from "obscenity";
 
 import amber from "@material-ui/core/colors/amber";
@@ -92,14 +94,11 @@ const fixedDataset = englishDataset
   );
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
-// https://github.com/jo3-l/obscenity/pull/101
-function createSimpleTransformer(transformer) {
-  return { type: 0 /* TransformerType.Simple */, transform: transformer };
-}
 export const badWords = new RegExpMatcher({
   ...fixedDataset.build(),
   ...englishRecommendedTransformers,
   blacklistMatcherTransformers: [
+    remapCharactersTransformer({ l: "/", i: "ı" }),
     ...englishRecommendedTransformers.blacklistMatcherTransformers,
     createSimpleTransformer((c) => (!invisibleChars.has(c) ? c : undefined)),
   ],
