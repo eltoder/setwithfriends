@@ -98,9 +98,9 @@ export const badWords = new RegExpMatcher({
   ...fixedDataset.build(),
   ...englishRecommendedTransformers,
   blacklistMatcherTransformers: [
+    createSimpleTransformer((c) => (!invisibleChars.has(c) ? c : undefined)),
     remapCharactersTransformer({ l: "/", i: "ı" }),
     ...englishRecommendedTransformers.blacklistMatcherTransformers,
-    createSimpleTransformer((c) => (!invisibleChars.has(c) ? c : undefined)),
   ],
 });
 const censor = new TextCensor().setStrategy(fixedPhraseCensorStrategy("🤬"));
