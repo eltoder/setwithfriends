@@ -87,10 +87,8 @@ const fixedDataset = englishDataset
       .addPattern(pattern`xooink`)
       .addPattern(pattern`xioix`)
       .addPattern(pattern`xiooix`)
-      .addPattern(pattern`l[l]e[e]b[b]ro[o]n`)
-      .addPattern(pattern`ie[e]b[b]ro[o]n`)
-      .addPattern(pattern`prickl[l]e`)
-      .addPattern(pattern`prickie`)
+      .addPattern(pattern`[i][l][l]e[e]b[b]ro[o]n`)
+      .addPattern(pattern`pr[i][l][l][ee]ck[i][l][l]e`)
   );
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
@@ -99,7 +97,7 @@ export const badWords = new RegExpMatcher({
   ...englishRecommendedTransformers,
   blacklistMatcherTransformers: [
     createSimpleTransformer((c) => (!invisibleChars.has(c) ? c : undefined)),
-    remapCharactersTransformer({ l: "/", i: "ı" }),
+    remapCharactersTransformer({ l: "/" }),
     ...englishRecommendedTransformers.blacklistMatcherTransformers,
   ],
 });
