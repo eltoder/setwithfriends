@@ -30,6 +30,14 @@ import yellow from "@material-ui/core/colors/yellow";
 import animals from "./utils/animals.json";
 
 const invisibleChars = new Set([
+  0x0028, // (
+  0x0029, // )
+  0x003c, // <
+  0x003e, // >
+  0x005b, // [
+  0x005d, // ]
+  0x007b, // {
+  0x007d, // }
   0x00a0, // No-break space
   0x00ad, // Soft hyphen
   0x034f, // Combining grapheme joiner
