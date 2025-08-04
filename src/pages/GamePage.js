@@ -264,6 +264,7 @@ function GamePage({ match }) {
 
   const hint = game.enableHint && answer ? answer.slice(0, numHints) : null;
   const gameEnded = !answer || game.status === "done";
+  const shouldFocus = focusMode === "on" && !spectating && !gameEnded;
   if (
     !answer &&
     !spectating &&
@@ -412,7 +413,7 @@ function GamePage({ match }) {
       <Grid container spacing={2}>
         <Box clone order={{ xs: 3, sm: 1 }}>
           <Grid item xs={12} sm={4} md={3} className={classes.sideColumn}>
-            {(focusMode !== "on" || spectating || gameEnded) && (
+            {shouldFocus || (
               <Paper style={{ display: "flex", height: "100%", padding: 8 }}>
                 <Chat
                   title="Game Chat"
@@ -493,7 +494,7 @@ function GamePage({ match }) {
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>
           <Grid item xs={12} md={3} className={classes.sideColumn}>
-            {(focusMode !== "on" || spectating || gameEnded) && (
+            {shouldFocus || (
               <Box order={{ xs: 2, md: 1 }} style={{ maxHeight: "100%" }}>
                 <GameSidebar
                   game={game}
