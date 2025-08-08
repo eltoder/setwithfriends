@@ -76,6 +76,7 @@ const invisibleChars = new Set([
 })();
 
 const fixedDataset = englishDataset
+  .removePhrasesIf((phrase) => phrase.metadata.originalWord === "prick")
   .addPhrase((phrase) =>
     phrase.setMetadata({ originalWord: "ass" }).addWhitelistedTerm("45s")
   )
@@ -95,8 +96,6 @@ const fixedDataset = englishDataset
       .addPattern(pattern`xooink`)
       .addPattern(pattern`xioix`)
       .addPattern(pattern`xiooix`)
-      .addPattern(pattern`[i][l][l]e[e]b[b]ro[o]n`)
-      .addPattern(pattern`pr[i][l][l][ee]ck[i][l][l]e`)
   );
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
