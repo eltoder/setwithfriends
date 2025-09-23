@@ -125,7 +125,7 @@ function ResponsiveSetCard(props) {
         borderRadius: margin,
         border: faceDown ? undefined : BORDERS[border],
       }}
-      onClick={onClick}
+      onMouseDown={onClick}
     >
       {faceDown ||
         Array.from(Array(number + 1), (_, i) => (
