@@ -22,6 +22,7 @@ const useStyles = makeStyles((theme) => ({
   },
   clickable: {
     cursor: "pointer",
+    touchAction: "none",
     "@media(hover: hover) and (pointer: fine)": {
       "&:hover": {
         boxShadow: "0px 0px 5px 3px #bbb",
@@ -126,6 +127,8 @@ function ResponsiveSetCard(props) {
         border: faceDown ? undefined : BORDERS[border],
       }}
       onMouseDown={onClick}
+      onTouchStart={onClick}
+      onTouchEnd={(event) => event.preventDefault()}
     >
       {faceDown ||
         Array.from(Array(number + 1), (_, i) => (
