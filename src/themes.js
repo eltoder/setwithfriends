@@ -1,5 +1,6 @@
 import { blueGrey, grey, indigo, red } from "@material-ui/core/colors";
 import { createTheme } from "@material-ui/core/styles";
+
 import leavesLightImage from "./assets/leaves-light.png";
 
 export const darkTheme = createTheme({
