@@ -82,6 +82,12 @@ const fixedDataset = englishDataset
   )
   .addPhrase((phrase) =>
     phrase
+      .setMetadata({ originalWord: "dick" })
+      .addWhitelistedTerm("dickory")
+      .addWhitelistedTerm("dickety")
+  )
+  .addPhrase((phrase) =>
+    phrase
       .setMetadata({ originalWord: "brainrot" })
       .addPattern(pattern`sk[i][ee]b[i][ee]d`)
       .addPattern(pattern`sk[i][ee]d[i][ee]b`)
