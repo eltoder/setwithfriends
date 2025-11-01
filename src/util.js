@@ -78,7 +78,10 @@ const invisibleChars = new Set([
 const fixedDataset = englishDataset
   .removePhrasesIf((phrase) => phrase.metadata.originalWord === "prick")
   .addPhrase((phrase) =>
-    phrase.setMetadata({ originalWord: "ass" }).addWhitelistedTerm("45s")
+    phrase
+      .setMetadata({ originalWord: "ass" })
+      .addWhitelistedTerm("45s")
+      .addWhitelistedTerm("assess")
   )
   .addPhrase((phrase) =>
     phrase
@@ -95,7 +98,7 @@ const fixedDataset = englishDataset
       .addPattern(pattern`sygau`)
       .addPattern(pattern`|riz`)
       .addPattern(pattern`gyat`)
-      .addPattern(pattern`sigma`)
+      .addPattern(pattern`sig[g]ma`)
       .addPattern(pattern`xook[s]`)
       .addPattern(pattern`zook[s]`)
       .addPattern(pattern`xoink`)
