@@ -1,7 +1,8 @@
 import { blueGrey, grey, indigo, red } from "@material-ui/core/colors";
 import { createTheme } from "@material-ui/core/styles";
 
-import leavesLightImage from "./assets/leaves-light.png";
+import holidaysDarkImage from "./assets/holidays-dark.jpg";
+import holidaysLightImage from "./assets/holidays-light.jpg";
 
 export const darkTheme = createTheme({
   palette: {
@@ -27,7 +28,7 @@ export const darkTheme = createTheme({
     background: {
       panel: "#303030",
       paper: "#262626",
-      default: "#2c2c2c",
+      default: "#161616",
     },
   },
   input: {
@@ -69,7 +70,7 @@ export const darkTheme = createTheme({
     MuiCssBaseline: {
       "@global": {
         body: {
-          backgroundImage: `url("${leavesLightImage}")`,
+          backgroundImage: `url("${holidaysDarkImage}")`,
         },
       },
     },
@@ -129,7 +130,7 @@ export const lightTheme = createTheme({
     MuiCssBaseline: {
       "@global": {
         body: {
-          backgroundImage: `url("${leavesLightImage}")`,
+          backgroundImage: `url("${holidaysLightImage}")`,
         },
       },
     },
