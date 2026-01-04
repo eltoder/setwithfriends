@@ -3,12 +3,27 @@ import { useContext, useEffect, useMemo, useState } from "react";
 import Divider from "@material-ui/core/Divider";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
-import { animated, useTransition } from "@react-spring/web";
+import { makeStyles } from "@material-ui/core/styles";
+import { animated, to, useTransition } from "@react-spring/web";
 
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import { SettingsContext } from "../context";
 import useDimensions from "../hooks/useDimensions";
 import useKeydown, { getModifierState } from "../hooks/useKeydown";
+
+const useStyles = makeStyles({
+  staticCard: {
+    position: "absolute",
+  },
+  movingCard: {
+    position: "absolute",
+    pointerEvents: "none",
+    zIndex: 1,
+    "& > div": {
+      backgroundColor: "transparent !important",
+    },
+  },
+});
 
 const gamePadding = 8;
 
@@ -36,6 +51,7 @@ function Game({
   showShortcuts,
   remaining = -1,
 }) {
+  const classes = useStyles();
   const { keyboardLayout, layoutOrientation, cardOrientation } =
     useContext(SettingsContext);
   const isHorizontal = cardOrientation === "horizontal";
@@ -229,14 +245,12 @@ function Game({
           card && (
             <animated.div
               key={card}
-              style={{
-                position: "absolute",
-                zIndex: style.opacity.to((x) => (x === 1 ? "auto" : 1)),
-                pointerEvents: style.opacity.to((x) =>
-                  x === 1 ? "auto" : "none"
-                ),
-                ...style,
-              }}
+              className={to([style.left, style.top], () =>
+                style.left.idle && style.top.idle
+                  ? classes.staticCard
+                  : classes.movingCard
+              )}
+              style={style}
             >
               {showShortcuts ? (
                 <div
