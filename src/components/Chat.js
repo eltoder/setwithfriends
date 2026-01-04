@@ -84,14 +84,12 @@ const useStyles = makeStyles((theme) => ({
 
 const makeMentionRE = (username) => {
   username = username.toLowerCase().replace(/[\\^$.*+?()[\]{}|]/g, "\\$&");
-  var anon = "";
-  const anonIdx = username.indexOf("anonymous ");
-  if (anonIdx !== -1) {
-    anon = `(${username.slice(0, anonIdx + 10)})?`;
-    username = username.slice(anonIdx + 10);
-  }
-  const parts = username.split(/\s+/).filter((s) => s);
-  return new RegExp(`(\\W|^)@(all|${anon}(${parts.join("|")}))(\\W|$)`, "iu");
+  username = username.replace(
+    /(?<!(^|\W)anonymous)\s(?!(.*\W)?anonymous).*$/,
+    ""
+  );
+  username = username.replace(/^(.*\W)?anonymous /, "($&)?");
+  return new RegExp(`(\\W|^)@(all|${username})(\\W|$)`, "iu");
 };
 
 const emojiRE = /:([a-z0-9_+-]+):/g;
