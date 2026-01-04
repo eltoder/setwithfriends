@@ -1,8 +1,8 @@
 import { blueGrey, grey, indigo, red } from "@material-ui/core/colors";
 import { createTheme } from "@material-ui/core/styles";
 
-import holidaysDarkImage from "./assets/holidays-dark.jpg";
-import holidaysLightImage from "./assets/holidays-light.jpg";
+import snowDarkImage from "./assets/snow-dark.jpg";
+import snowLightImage from "./assets/snow-light.jpg";
 
 export const darkTheme = createTheme({
   palette: {
@@ -28,7 +28,7 @@ export const darkTheme = createTheme({
     background: {
       panel: "#303030",
       paper: "#262626",
-      default: "#161616",
+      default: "#2c2c2c",
     },
   },
   input: {
@@ -70,7 +70,7 @@ export const darkTheme = createTheme({
     MuiCssBaseline: {
       "@global": {
         body: {
-          backgroundImage: `url("${holidaysDarkImage}")`,
+          backgroundImage: `url("${snowDarkImage}")`,
         },
       },
     },
@@ -130,7 +130,7 @@ export const lightTheme = createTheme({
     MuiCssBaseline: {
       "@global": {
         body: {
-          backgroundImage: `url("${holidaysLightImage}")`,
+          backgroundImage: `url("${snowLightImage}")`,
         },
       },
     },
