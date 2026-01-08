@@ -31,7 +31,7 @@ function addLastSet(board, lastSet) {
   if (lastSet?.length) {
     const n = lastSet?.length % 3;
     if (n > 0) {
-      lastSet = lastSet.concat([null]);
+      lastSet = [...lastSet, null];
       if (n === 1) lastSet.splice(-3, 0, null);
     }
     board = lastSet.concat(board);
@@ -57,13 +57,13 @@ function Game({
   const isHorizontal = cardOrientation === "horizontal";
   const isLandscape = layoutOrientation === "landscape";
   const [gameDimensions, gameEl] = useDimensions();
-  const [highlightCards, setHighlightCards] = useState(null);
+  const [movingCards, setMovingCards] = useState(null);
 
   const lastKeptCards = lastKeptSet?.join("|");
   useEffect(() => {
-    setHighlightCards(lastKeptCards?.split("|"));
+    setMovingCards(lastKeptCards?.split("|").map((card) => " " + card));
     if (lastKeptCards) {
-      const timer = setTimeout(() => setHighlightCards(null), 300);
+      const timer = setTimeout(() => setMovingCards(null), 0);
       return () => clearTimeout(timer);
     }
   }, [lastKeptCards]);
@@ -117,7 +117,7 @@ function Game({
   // NOTE: put rotate into useTransition() instead of adding it to the style
   // outside to get a nice animation when cardOrientation changes.
   const cardProps = (card) => {
-    const i = board.indexOf(card);
+    const i = board.indexOf(card?.trimLeft());
     let positionX, positionY;
     let r, c;
     if (!isLandscape) {
@@ -145,13 +145,16 @@ function Game({
       opacity: 1,
     };
   };
-  const transitions = useTransition(board, {
-    from: {
-      left: -cardWidth,
-      top: gameHeight / 2 - cardHeight / 2,
-      rotate: rotateAmount,
-      opacity: 0,
-    },
+  const transitions = useTransition(movingCards?.concat(board) || board, {
+    from: (card) =>
+      card?.startsWith(" ")
+        ? cardProps(card)
+        : {
+            left: -cardWidth,
+            top: gameHeight / 2 - cardHeight / 2,
+            rotate: rotateAmount,
+            opacity: 0,
+          },
     enter: cardProps,
     update: cardProps,
     leave: {
@@ -244,7 +247,6 @@ function Game({
         (style, card) =>
           card && (
             <animated.div
-              key={card}
               className={to([style.left, style.top], () =>
                 style.left.idle && style.top.idle
                   ? classes.staticCard
@@ -273,11 +275,10 @@ function Game({
                 </div>
               ) : (
                 <ResponsiveSetCard
-                  value={card}
+                  value={card.trimLeft()}
                   width={cardWidth}
                   hinted={answer?.includes(card)}
                   active={selected?.includes(card)}
-                  highlight={highlightCards?.includes(card)}
                   faceDown={
                     faceDown === "all" ||
                     (faceDown &&

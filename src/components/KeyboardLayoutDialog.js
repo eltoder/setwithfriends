@@ -63,13 +63,13 @@ function KeyboardLayoutDialog(props) {
     );
   };
 
-  const menuItems = Object.keys(standardLayouts)
-    .concat(["Custom"])
-    .map((layoutName) => (
+  const menuItems = [...Object.keys(standardLayouts), "Custom"].map(
+    (layoutName) => (
       <MenuItem key={layoutName} value={layoutName}>
         {layoutName}
       </MenuItem>
-    ));
+    )
+  );
 
   return (
     <Dialog open={open} onClose={onClose}>

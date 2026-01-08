@@ -50,7 +50,6 @@ export const darkTheme = createTheme({
     orange: "#47b0ff",
     background: "#262626",
     hinted: "rgba(41, 182, 246, 0.25)",
-    highlight: "#404040",
     backColors: [
       grey[900],
       grey[800],
@@ -110,7 +109,6 @@ export const lightTheme = createTheme({
     orange: "#fb8c00",
     background: "#fff",
     hinted: "rgba(3, 169, 244, 0.2)",
-    highlight: "#fffedc",
     backColors: [
       indigo[600],
       indigo[300],
