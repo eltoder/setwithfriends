@@ -31,9 +31,6 @@ const useStyles = makeStyles((theme) => ({
   active: {
     boxShadow: "0px 0px 5px 3px #4b9e9e !important",
   },
-  highlight: {
-    backgroundColor: theme.setCard.highlight,
-  },
   hintedOverlay: {
     position: "absolute",
     inset: 0,
@@ -73,7 +70,7 @@ function ResponsiveSetCard(props) {
   const theme = useTheme();
 
   // Black magic below to scale cards given any width
-  const { width, value, onClick, hinted, active, highlight, faceDown } = props;
+  const { width, value, onClick, hinted, active, faceDown } = props;
   const height = Math.round(width / 1.6);
   const margin = Math.round(width * 0.035);
   const contentWidth = width - 2 * margin;
@@ -114,7 +111,6 @@ function ResponsiveSetCard(props) {
       className={clsx(classes.card, {
         [classes.clickable]: onClick,
         [classes.active]: active,
-        [classes.highlight]: highlight,
       })}
       style={{
         ...extraStyle,
