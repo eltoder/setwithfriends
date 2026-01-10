@@ -61,8 +61,7 @@ function RoomPage({ match, location }) {
   useEffect(() => {
     if (
       !leaving &&
-      game &&
-      game.status === "waiting" &&
+      game?.status === "waiting" &&
       (!game.users || !(user.id in game.users))
     ) {
       const updates = {

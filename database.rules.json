@@ -13,7 +13,7 @@
         },
         "users": {
           "$userId": {
-            ".write": "auth != null && auth.uid == $userId && data.parent().parent().child('status').val() == 'waiting' && !(root.hasChild('users/' + auth.uid + '/banned') && now < root.child('users/' + auth.uid + '/banned').val())",
+            ".write": "auth != null && auth.uid == $userId && data.parent().parent().child('status').val() == 'waiting' && newData.parent().parent().parent().parent().hasChild('userGames/' + $userId + '/' + $gameId) == newData.exists() && !(root.hasChild('users/' + auth.uid + '/banned') && now < root.child('users/' + auth.uid + '/banned').val())",
             ".validate": "newData.isNumber() && newData.val() == now"
           }
         },
@@ -117,7 +117,7 @@
         ".read": "auth != null",
         ".indexOn": ".value",
         "$gameId": {
-          ".write": "auth != null && auth.uid == $userId",
+          ".write": "auth != null && auth.uid == $userId && newData.parent().parent().parent().hasChild('games/' + $gameId + '/users/' + $userId) == newData.exists()",
           ".validate": "newData.isNumber() && newData.val() == root.child('games/' + $gameId + '/createdAt').val()"
         }
       }
