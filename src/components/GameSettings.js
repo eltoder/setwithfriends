@@ -56,7 +56,7 @@ function GameSettings({ game, gameId, userId }) {
           to={`/help#rules-${gameMode}`}
           style={{ marginLeft: "0.5em" }}
         >
-          (Read the rules)
+          (Rules)
         </InternalLink>
       </div>
       <Tooltip arrow placement="left" title={practiceModeTip}>
