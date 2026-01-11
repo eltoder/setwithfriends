@@ -9,10 +9,12 @@ import { makeStyles } from "@material-ui/core/styles";
 import firebase from "../firebase";
 import { modes } from "../game";
 import useStorage from "../hooks/useStorage";
+import InternalLink from "./InternalLink";
 
-const useStyles = makeStyles(() => ({
+const useStyles = makeStyles({
   settings: { display: "flex", justifyContent: "space-evenly" },
-}));
+  modeSelector: { display: "flex", alignItems: "baseline", marginRight: "1em" },
+});
 
 const practiceModeTip =
   "Practice mode is only available in private games. " +
@@ -37,21 +39,25 @@ function GameSettings({ game, gameId, userId }) {
 
   return (
     <div className={classes.settings}>
-      <div style={{ display: "flex", alignItems: "baseline" }}>
-        <Typography style={{ marginRight: "0.6em" }}>Mode:</Typography>
+      <div className={classes.modeSelector}>
+        <Typography style={{ marginRight: "0.5em" }}>Mode:</Typography>
         <Select
           value={gameMode}
           disabled={userId !== game.host}
           onChange={handleChangeMode}
         >
-          {Object.entries(modes).map(([key, { name, description }]) => (
+          {Object.entries(modes).map(([key, { name }]) => (
             <MenuItem key={key} value={key}>
-              <Tooltip key={key} arrow placement="left" title={description}>
-                <Typography>{name}</Typography>
-              </Tooltip>
+              <Typography>{name}</Typography>
             </MenuItem>
           ))}
         </Select>
+        <InternalLink
+          to={`/help#rules-${gameMode}`}
+          style={{ marginLeft: "0.5em" }}
+        >
+          (Read the rules)
+        </InternalLink>
       </div>
       <Tooltip arrow placement="left" title={practiceModeTip}>
         <FormControlLabel

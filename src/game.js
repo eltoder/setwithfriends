@@ -490,7 +490,6 @@ export const modes = {
   normal: {
     name: "Normal",
     color: "purple",
-    description: "Find 3 cards that form a Set.",
     setType: "Set",
     traits: 4,
     chain: 0,
@@ -499,8 +498,6 @@ export const modes = {
   junior: {
     name: "Junior",
     color: "green",
-    description:
-      "A simplified version that only uses cards with solid shading.",
     setType: "Set",
     traits: 3,
     chain: 0,
@@ -509,7 +506,6 @@ export const modes = {
   setchain: {
     name: "Set-Chain",
     color: "teal",
-    description: "In every Set you have to use 1 card from the previous Set.",
     setType: "Set",
     traits: 4,
     chain: 1,
@@ -518,8 +514,6 @@ export const modes = {
   ultraset: {
     name: "UltraSet",
     color: "pink",
-    description:
-      "Find 4 cards such that the first pair and the second pair form a Set with the same additional card.",
     setType: "UltraSet",
     traits: 4,
     chain: 0,
@@ -528,8 +522,6 @@ export const modes = {
   ultrachain: {
     name: "UltraSet-Chain",
     color: "orange",
-    description:
-      "In every UltraSet you have to use 2 cards from the previous Set.",
     setType: "UltraSet",
     traits: 4,
     chain: 2,
@@ -538,8 +530,6 @@ export const modes = {
   ultra9: {
     name: "Ultra9",
     color: "deepOrange",
-    description:
-      "Same as UltraSet, but only 9 cards are dealt at a time, unless they don't contain any sets.",
     setType: "UltraSet",
     traits: 4,
     chain: 0,
@@ -548,7 +538,6 @@ export const modes = {
   megaset: {
     name: "MegaSet",
     color: "lime",
-    description: "Each card has 5 traits instead of 4.",
     setType: "Set",
     traits: 5,
     chain: 0,
@@ -557,8 +546,6 @@ export const modes = {
   ghostset: {
     name: "GhostSet",
     color: "lightBlue",
-    description:
-      "Find 3 disjoint pairs of cards such that the cards that complete them to Sets themselves form a Set.",
     setType: "GhostSet",
     traits: 4,
     chain: 0,
@@ -567,7 +554,6 @@ export const modes = {
   "4set": {
     name: "4Set",
     color: "amber",
-    description: "Find 4 cards that form a 4Set.",
     setType: "4Set",
     traits: 4,
     chain: 0,
@@ -576,7 +562,6 @@ export const modes = {
   "4setjr": {
     name: "4Set Junior",
     color: "amber",
-    description: "Find 4 cards that form a 4Set.",
     setType: "4Set",
     traits: 3,
     chain: 0,
@@ -585,8 +570,6 @@ export const modes = {
   "4setjrchain": {
     name: "4Set Jr-Chain",
     color: "red",
-    description:
-      "In every 4Set you have to use 2 cards from the previous 4Set.",
     setType: "4Set",
     traits: 3,
     chain: 2,
@@ -595,7 +578,6 @@ export const modes = {
   puzzle: {
     name: "Puzzle",
     color: "cyan",
-    description: "Find all Sets on the board before moving to the next board.",
     setType: "Set",
     traits: 4,
     chain: 0,
@@ -605,8 +587,6 @@ export const modes = {
   ultra9puzzle: {
     name: "Ultra9 Puzzle",
     color: "orange",
-    description:
-      "Find all UltraSets on the board before moving to the next board.",
     setType: "UltraSet",
     traits: 4,
     chain: 0,
@@ -616,7 +596,6 @@ export const modes = {
   "4setjrpuzzle": {
     name: "4Set Jr-Puzzle",
     color: "indigo",
-    description: "Find all 4Sets on the board before moving to the next board.",
     setType: "4Set",
     traits: 3,
     chain: 0,
@@ -626,7 +605,6 @@ export const modes = {
   shuffle: {
     name: "Shuffle",
     color: "blue",
-    description: "Cards are shuffled after each Set.",
     setType: "Set",
     traits: 4,
     chain: 0,
@@ -636,7 +614,6 @@ export const modes = {
   memory: {
     name: "Memory",
     color: "red",
-    description: "Cards are dealt face down and are turned up 3 at a time.",
     setType: "Set",
     traits: 4,
     chain: 0,
