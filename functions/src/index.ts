@@ -258,30 +258,38 @@ export const createGame = functions.https.onCall(async (data, context) => {
       "The function must be called while authenticated."
     );
   }
-
   const userId = context.auth.uid;
-  const oneHourAgo = Date.now() - 3600000;
-  const recentGameIds = await admin
-    .database()
-    .ref(`userGames/${userId}`)
-    .orderByValue()
-    .startAt(oneHourAgo)
-    .once("value");
 
-  const recentGames = await Promise.all(
-    Object.keys(recentGameIds.val() || {}).map((recentGameId) =>
-      admin.database().ref(`games/${recentGameId}`).once("value")
-    )
-  );
+  if (access === "public") {
+    const oneHourAgo = Date.now() - 3600000;
+    const recentGameIds = await admin
+      .database()
+      .ref(`userGames/${userId}`)
+      .orderByValue()
+      .startAt(oneHourAgo)
+      .once("value");
 
-  let unfinishedGames = 0;
-  for (const snap of recentGames) {
-    if (
-      snap.child("host").val() === userId &&
-      snap.child("status").val() !== "done" &&
-      snap.child("access").val() === "public"
-    ) {
-      ++unfinishedGames;
+    const recentGames = await Promise.all(
+      Object.keys(recentGameIds.val() || {}).map((recentGameId) =>
+        admin.database().ref(`games/${recentGameId}`).once("value")
+      )
+    );
+
+    let unfinishedGames = 0;
+    for (const snap of recentGames) {
+      if (
+        snap.child("access").val() === "public" &&
+        snap.child("status").val() !== "done" &&
+        snap.child("host").val() === userId
+      ) {
+        ++unfinishedGames;
+      }
+    }
+    if (unfinishedGames >= MAX_UNFINISHED_GAMES_PER_HOUR) {
+      throw new functions.https.HttpsError(
+        "resource-exhausted",
+        "Too many unfinished public games were recently created."
+      );
     }
   }
 
@@ -289,27 +297,17 @@ export const createGame = functions.https.onCall(async (data, context) => {
     .database()
     .ref(`games/${gameId}`)
     .transaction((currentData) => {
-      if (currentData === null) {
-        if (
-          unfinishedGames >= MAX_UNFINISHED_GAMES_PER_HOUR &&
-          access === "public"
-        ) {
-          throw new functions.https.HttpsError(
-            "resource-exhausted",
-            "Too many unfinished public games were recently created."
-          );
-        }
-        return {
-          host: userId,
-          createdAt: admin.database.ServerValue.TIMESTAMP,
-          status: "waiting",
-          access,
-          mode,
-          enableHint,
-        };
-      } else {
-        return;
+      if (currentData !== null) {
+        return; // the game already exists, bail out
       }
+      return {
+        host: userId,
+        createdAt: admin.database.ServerValue.TIMESTAMP,
+        status: "waiting",
+        access,
+        mode,
+        enableHint,
+      };
     });
   if (!committed) {
     throw new functions.https.HttpsError(
