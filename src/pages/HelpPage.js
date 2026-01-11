@@ -7,6 +7,7 @@ import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 
 import InternalLink from "../components/InternalLink";
+import ScrollToHash from "../components/ScrollToHash";
 import SetCard from "../components/SetCard";
 import { SettingsContext } from "../context";
 import { BASE_RATING, SCALING_FACTOR } from "../game";
@@ -31,29 +32,30 @@ function HelpPage() {
 
   return (
     <Container>
+      <ScrollToHash />
       <Typography variant="h4" align="center" style={{ marginTop: 24 }}>
         Help
       </Typography>
 
       <Paper style={{ padding: "1rem", maxWidth: 720, margin: "12px auto" }}>
-        <Typography variant="h5" gutterBottom>
-          Rules
-        </Typography>
         <Typography variant="body1" gutterBottom>
           Welcome to Set with Forks! This web app allows you to play Set, the
           popular real-time card game designed by Marsha Falco in 1974 (
           <Link href="https://en.wikipedia.org/wiki/Set_(card_game)">
             Wikipedia
           </Link>
-          ). The game is a race to find as many <em>sets</em>, or three-card
-          triplets with a certain property, as possible from among the cards in
-          the playing area. In this online variant, this is as simple as
-          clicking on the three cards when you find a set, and the computer will
-          handle all the details of dealing cards and keeping score.
+          ). The game is a race to find as many <em>sets</em> &mdash; triplets
+          of cards with a certain property &mdash; as possible from the cards on
+          the board. In this online variant, this is as simple as clicking on
+          the three cards when you find a set, and the computer will handle all
+          the details of dealing cards and keeping score.
         </Typography>
         <Typography variant="body1" gutterBottom>
           If you haven't played before, don't worry! We'll explain the rules
           below.
+        </Typography>
+        <Typography id="rules-normal" variant="h5" gutterBottom>
+          Rules
         </Typography>
         <Typography component="div" align="center" gutterBottom>
           <SetCard value="1120" />
@@ -210,7 +212,8 @@ function HelpPage() {
           standard Set game. Currently this site lets you play the following
           variants:
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-junior" variant="h6" gutterBottom>
           Junior
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -224,7 +227,8 @@ function HelpPage() {
           <SetCard value="011" />
           <SetCard value="122" />
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-setchain" variant="h6" gutterBottom>
           Set-Chain
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -253,7 +257,8 @@ function HelpPage() {
           the first set, and the first card in the third set is the second card
           from the second set.
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-ultraset" variant="h6" gutterBottom>
           UltraSet
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -296,7 +301,8 @@ function HelpPage() {
           Note that you do not have to select the four cards in any particular
           order while playing.
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-ultrachain" variant="h6" gutterBottom>
           UltraSet-Chain
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -323,17 +329,19 @@ function HelpPage() {
           <SetCard value="2220" />
           <SetCard value="2011" />
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-ultra9" variant="h6" gutterBottom>
           Ultra9
         </Typography>
         <Typography variant="body1" gutterBottom>
           Ultra9 follows the same rules as UltraSet, but 9 cards are dealt
           instead of 12. This makes the game harder because there are many fewer
-          UltraSets on the board. In the very rare case that there are no
-          UltraSets among the 9 cards, 3 additional cards are dealt. (There is
-          always an UltraSet in any 10 cards.)
+          UltraSets on the board (on average around 5 vs around 19). In the very
+          rare case that there are no UltraSets among the 9 cards, 3 additional
+          cards are dealt. (There is always an UltraSet in any 10 cards.)
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-megaset" variant="h6" gutterBottom>
           MegaSet
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -357,7 +365,8 @@ function HelpPage() {
           With 5 features, there are 3<sup>5</sup> = 243 cards in the deck. Be
           prepared for a long game.
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-ghostset" variant="h6" gutterBottom>
           GhostSet
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -395,7 +404,8 @@ function HelpPage() {
           UltraSet (that is, 3 pairs of cards that form sets with the same
           additional card).
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-4set" variant="h6" gutterBottom>
           4Set
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -413,7 +423,7 @@ function HelpPage() {
           the four features, the variants are either{" "}
           <strong>all the same, all different, or form two pairs</strong>. In
           other words, combinations like <code>AAAA</code>, <code>ABCD</code>{" "}
-          and <code>AABB</code> form 4Sets, while <code>AAAB</code> and{" "}
+          and <code>AABB</code> form 4Sets, while <code>ABBB</code> and{" "}
           <code>ABCC</code> do not. For example, the four cards shown above form
           a 4Set, because each feature appears in all four variants.
         </Typography>
@@ -460,7 +470,8 @@ function HelpPage() {
           and there are 4<sup>4</sup> = 256 cards in the deck. If you are new to
           this mode, we recommend starting with 4Set Junior.
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-4setjr" variant="h6" gutterBottom>
           4Set Junior
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -475,7 +486,8 @@ function HelpPage() {
           <SetCard value="022" />
           <SetCard value="133" />
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-4setjrchain" variant="h6" gutterBottom>
           4Set Junior-Chain
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -502,7 +514,8 @@ function HelpPage() {
           <SetCard value="123" />
           <SetCard value="110" />
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-puzzle" variant="h6" gutterBottom>
           Puzzle
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -514,7 +527,25 @@ function HelpPage() {
           to find <strong>all sets</strong> on each board before you move to the
           next board.
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-ultra9puzzle" variant="h6" gutterBottom>
+          Ultra9 Puzzle
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          A puzzle variation where you have to find UltraSets. It is based on
+          Ultra9 (9 cards on the board), because the average number of UltraSets
+          on the board for Ultra9 is around 5, while for regular UltraSet it is
+          around 19.
+        </Typography>
+
+        <Typography id="rules-4setjrpuzzle" variant="h6" gutterBottom>
+          4Set Junior Puzzle
+        </Typography>
+        <Typography variant="body1" gutterBottom>
+          A puzzle variation where you have to find junior 4Sets.
+        </Typography>
+
+        <Typography id="rules-shuffle" variant="h6" gutterBottom>
           Shuffle
         </Typography>
         <Typography variant="body1" gutterBottom>
@@ -522,7 +553,8 @@ function HelpPage() {
           difference being that all cards on the board are shuffled when a Set
           is found.
         </Typography>
-        <Typography variant="h6" gutterBottom>
+
+        <Typography id="rules-memory" variant="h6" gutterBottom>
           Memory
         </Typography>
         <Typography variant="body1" gutterBottom>
