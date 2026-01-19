@@ -9,7 +9,7 @@ import { animated, to, useTransition } from "@react-spring/web";
 import ResponsiveSetCard from "../components/ResponsiveSetCard";
 import { SettingsContext } from "../context";
 import useDimensions from "../hooks/useDimensions";
-import useKeydown, { getModifierState } from "../hooks/useKeydown";
+import useKeydown, { getKeyState } from "../hooks/useKeydown";
 
 const useStyles = makeStyles({
   staticCard: {
@@ -174,13 +174,10 @@ function Game({
     ? keyboardLayout.horizontalLayout
     : keyboardLayout.verticalLayout;
   useKeydown((event) => {
-    const mod = getModifierState(event);
-    if (mod !== "" && mod !== "Shift") {
+    const { key, modifier } = getKeyState(event);
+    if (modifier !== "" && modifier !== "Shift") {
       return;
     }
-    // Ignore CapsLock: make key case depend only on Shift.
-    const key =
-      mod === "Shift" ? event.key.toUpperCase() : event.key.toLowerCase();
     if (key === "escape" || key === " ") {
       event.preventDefault();
       onClear();

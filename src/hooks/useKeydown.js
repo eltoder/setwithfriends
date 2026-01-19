@@ -9,6 +9,14 @@ export function getModifierState(event) {
   return res.slice(1);
 }
 
+export function getKeyState(event) {
+  return {
+    // Ignore CapsLock: make key case depend only on Shift.
+    key: event.shiftKey ? event.key.toUpperCase() : event.key.toLowerCase(),
+    modifier: getModifierState(event),
+  };
+}
+
 function useKeydown(handler) {
   useEffect(() => {
     const patchedHandler = (event) =>

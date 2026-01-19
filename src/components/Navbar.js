@@ -17,7 +17,7 @@ import { version } from "../config";
 import { SettingsContext, UserContext } from "../context";
 import firebase from "../firebase";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import useKeydown, { getModifierState } from "../hooks/useKeydown";
+import useKeydown, { getKeyState } from "../hooks/useKeydown";
 import AccountOptionsDialog from "./AccountOptionsDialog";
 import BoardLayoutDialog from "./BoardLayoutDialog";
 import ColorChoiceDialog from "./ColorChoiceDialog";
@@ -120,19 +120,23 @@ function Navbar() {
   }
 
   useKeydown((event) => {
-    if (getModifierState(event) === "Control") {
-      if (event.key === "s") {
+    const { key, modifier } = getKeyState(event);
+    if (modifier === "Control|Shift") {
+      if (key === "S") {
         event.preventDefault();
         handleChangeVolume();
-      } else if (event.key === "e") {
+      } else if (key === "F") {
+        event.preventDefault();
+        handleChangeFocusMode();
+      } else if (key === "H") {
         event.preventDefault();
         handleChangeTheme();
-      } else if (event.key === "o") {
+      } else if (key === "B") {
         event.preventDefault();
         settings.setLayoutOrientation((layoutOrientation) =>
           layoutOrientation === "portrait" ? "landscape" : "portrait"
         );
-      } else if (event.key === "i") {
+      } else if (key === "C") {
         event.preventDefault();
         settings.setCardOrientation((cardOrientation) =>
           cardOrientation === "vertical" ? "horizontal" : "vertical"
