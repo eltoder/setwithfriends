@@ -124,10 +124,9 @@ function GamePage({ match }) {
 
   const [game, loadingGame] = useFirebaseRef(`games/${gameId}`);
   const [gameData, loadingGameData] = useFirebaseRef(`gameData/${gameId}`);
+  const spectating = !(game?.users && user.id in game.users);
   const [hasNextGame] = useFirebaseRef(
-    game?.status === "done" && (!game.users || !(user.id in game.users))
-      ? `games/${nextGameId}/status`
-      : null
+    spectating && game?.status === "done" ? `games/${nextGameId}/status` : null
   );
   const [playSuccess] = useSound(foundSfx);
   const [playFail1] = useSound(failSfx1);
@@ -241,7 +240,6 @@ function GamePage({ match }) {
 
   const numHints = gameData.hints ?? 0;
   const paused = gameData.pause?.start && !gameData.pause.end;
-  const spectating = !game.users || !(user.id in game.users);
   const leaderboard = Object.keys(game.users).sort(
     (u1, u2) =>
       (scores[u2] || 0) - (scores[u1] || 0) ||
@@ -268,8 +266,7 @@ function GamePage({ match }) {
   const gameEnded = !answer || game.status === "done";
   if (
     !answer &&
-    game.users &&
-    user.id in game.users &&
+    !spectating &&
     game.status === "ingame" &&
     finished.gameId !== gameId
   ) {
@@ -424,6 +421,7 @@ function GamePage({ match }) {
                   history={history}
                   startedAt={game.startedAt}
                   gameMode={gameMode}
+                  isPlaying={!spectating}
                 />
               </Paper>
             )}

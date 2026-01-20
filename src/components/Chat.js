@@ -103,12 +103,13 @@ function Chat({
   history,
   gameMode,
   startedAt,
+  isPlaying = false,
 }) {
   const user = useContext(UserContext);
   const classes = useStyles();
-  const [stats, loadingStats] = useStats(gameId ? null : user.id);
+  const [stats, loadingStats] = useStats(isPlaying ? null : user.id);
   const chatDisabled =
-    !gameId && !isDev && (loadingStats || stats.all.all.totalSets < 55);
+    !isPlaying && !isDev && (loadingStats || stats.all.all.totalSets < 67);
 
   const chatEl = useRef();
   useEffect(() => {
@@ -187,7 +188,7 @@ function Chat({
   };
 
   const items = messages;
-  if (gameId && history) {
+  if (history) {
     for (let i = 0; i < history.length; i++) {
       items[`card@${i}`] = history[i];
     }
@@ -290,7 +291,7 @@ function Chat({
             arrow
             title={
               chatDisabled
-                ? "New users cannot chat. Play a couple games first!"
+                ? "New users can only chat when playing. Play a couple games first!"
                 : ""
             }
           >
