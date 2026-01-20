@@ -5,6 +5,7 @@ import CssBaseline from "@material-ui/core/CssBaseline";
 import { ThemeProvider } from "@material-ui/core/styles";
 
 import ConnectionsTracker from "./components/ConnectionsTracker";
+import Footer from "./components/Footer";
 import Navbar from "./components/Navbar";
 import WelcomeDialog from "./components/WelcomeDialog";
 import { SettingsContext, UserContext } from "./context";
@@ -185,6 +186,7 @@ function App() {
                 <Route exact path="/profile/:id" component={ProfilePage} />
                 <Route component={NotFoundPage} />
               </Switch>
+              <Footer />
             </SettingsContext.Provider>
           </UserContext.Provider>
         )}
