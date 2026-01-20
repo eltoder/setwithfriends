@@ -446,7 +446,7 @@ function GamePage({ match }) {
                     <Typography variant="body1">
                       Winner: <User id={leaderboard[0]} />
                     </Typography>
-                    {leaderboard.length >= 2 && (
+                    {leaderboard.length > 2 && scores[leaderboard[1]] && (
                       <Typography variant="body2">
                         Runner-up: <User id={leaderboard[1]} />
                       </Typography>
