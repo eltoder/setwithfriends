@@ -6,7 +6,6 @@ import Box from "@material-ui/core/Box";
 import Button from "@material-ui/core/Button";
 import Container from "@material-ui/core/Container";
 import Grid from "@material-ui/core/Grid";
-import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Tab from "@material-ui/core/Tab";
 import Table from "@material-ui/core/Table";
@@ -22,7 +21,6 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import Chat from "../components/Chat";
 import GameInfoRow from "../components/GameInfoRow";
-import InternalLink from "../components/InternalLink";
 import { UserContext } from "../context";
 import firebase, { createGame } from "../firebase";
 import useFirebaseQuery from "../hooks/useFirebaseQuery";
