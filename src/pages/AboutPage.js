@@ -51,13 +51,6 @@ function AboutPage() {
           <InternalLink to="/legal">terms of service</InternalLink>.
         </Typography>
       </Paper>
-      <Typography
-        variant="body1"
-        align="center"
-        style={{ marginTop: 12, paddingBottom: 12 }}
-      >
-        <InternalLink to="/">Return to home</InternalLink>
-      </Typography>
     </Container>
   );
 }

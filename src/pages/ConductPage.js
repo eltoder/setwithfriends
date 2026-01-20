@@ -3,8 +3,6 @@ import Link from "@material-ui/core/Link";
 import Paper from "@material-ui/core/Paper";
 import Typography from "@material-ui/core/Typography";
 
-import InternalLink from "../components/InternalLink";
-
 function ConductPage() {
   return (
     <Container>
@@ -93,13 +91,6 @@ function ConductPage() {
           and contact a moderator.
         </Typography>
       </Paper>
-      <Typography
-        variant="body1"
-        align="center"
-        style={{ marginTop: 12, paddingBottom: 12 }}
-      >
-        <InternalLink to="/">Return to home</InternalLink>
-      </Typography>
     </Container>
   );
 }
