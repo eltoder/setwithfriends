@@ -144,6 +144,7 @@ function RoomPage({ match, location }) {
                 title="Game Chat"
                 messageLimit={200}
                 gameId={gameId}
+                isPlaying={true}
                 showMessageTimes
               />
             </Paper>
