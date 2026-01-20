@@ -50,10 +50,10 @@ function BoardLayoutDialog(props) {
     setCardOrientation,
   } = useContext(SettingsContext);
 
-  const menuItems = (...items) =>
-    items.map((item) => (
-      <MenuItem key={item} value={item}>
-        {item}
+  const menuItems = (items) =>
+    Object.entries(items).map(([key, name]) => (
+      <MenuItem key={key} value={key}>
+        {name}
       </MenuItem>
     ));
 
@@ -71,7 +71,7 @@ function BoardLayoutDialog(props) {
               value={layoutOrientation}
               onChange={(e) => setLayoutOrientation(e.target.value)}
             >
-              {menuItems("portrait", "landscape")}
+              {menuItems({ portrait: "portrait", landscape: "landscape" })}
             </Select>
           </FormControl>
           <FormControl className={classes.formControl}>
@@ -80,7 +80,10 @@ function BoardLayoutDialog(props) {
               value={cardOrientation}
               onChange={(e) => setCardOrientation(e.target.value)}
             >
-              {menuItems("vertical", "horizontal")}
+              {
+                // Stored values are named backwards of what most people expect.
+                menuItems({ horizontal: "vertical", vertical: "horizontal" })
+              }
             </Select>
           </FormControl>
         </div>

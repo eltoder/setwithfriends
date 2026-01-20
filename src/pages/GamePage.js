@@ -36,7 +36,7 @@ import {
   removeCard,
 } from "../game";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import useKeydown, { getModifierState } from "../hooks/useKeydown";
+import useKeydown, { getKeyState } from "../hooks/useKeydown";
 import { formatANoun, sleep } from "../util";
 import LoadingPage from "./LoadingPage";
 import NotFoundPage from "./NotFoundPage";
@@ -167,16 +167,19 @@ function GamePage({ match }) {
   }, [finished.gameId, gameId]);
 
   useKeydown((event) => {
-    if (getModifierState(event) === "Control") {
-      if (event.key === "Enter") {
+    const { key, modifier } = getKeyState(event);
+    if (modifier === "Control") {
+      if (key === "enter") {
         event.preventDefault();
         handlePlayAgain();
-      } else if (event.key === "q") {
-        event.preventDefault();
-        setRedirect("/");
-      } else if (event.key === "p") {
+      }
+    } else if (modifier === "Control|Shift") {
+      if (key === "P") {
         event.preventDefault();
         togglePause();
+      } else if (key === "Q") {
+        event.preventDefault();
+        setRedirect("/");
       }
     }
   });
@@ -412,7 +415,7 @@ function GamePage({ match }) {
       <Grid container spacing={2}>
         <Box clone order={{ xs: 3, sm: 1 }}>
           <Grid item xs={12} sm={4} md={3} className={classes.sideColumn}>
-            {(focusMode !== "on" || gameEnded) && (
+            {(focusMode !== "on" || spectating || gameEnded) && (
               <Paper style={{ display: "flex", height: "100%", padding: 8 }}>
                 <Chat
                   title="Game Chat"
@@ -492,7 +495,7 @@ function GamePage({ match }) {
         </Box>
         <Box clone order={{ xs: 2, sm: 3 }}>
           <Grid item xs={12} md={3} className={classes.sideColumn}>
-            {(focusMode !== "on" || gameEnded) && (
+            {(focusMode !== "on" || spectating || gameEnded) && (
               <Box order={{ xs: 2, md: 1 }} style={{ maxHeight: "100%" }}>
                 <GameSidebar
                   game={game}
