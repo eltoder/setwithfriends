@@ -1,8 +1,8 @@
 import { makeStyles, useTheme } from "@material-ui/core/styles";
 import Security from "@material-ui/icons/Security";
 
+import { BASE_RATING } from "../game";
 import useFirebaseRef from "../hooks/useFirebaseRef";
-import useStats from "../hooks/useStats";
 import { getColor } from "../util";
 
 const useStyles = makeStyles((theme) => ({
@@ -23,7 +23,9 @@ function User({ id, style, component, render, showRating, ...other }) {
   const classes = useStyles();
 
   const [user, loading] = useFirebaseRef(`users/${id}`);
-  const [stats, loadingStats] = useStats(showRating ? id : null);
+  const [rating, loadingRating] = useFirebaseRef(
+    showRating ? `userStats/${id}/${showRating}/rating` : null
+  );
 
   if (loading) {
     return null;
@@ -41,7 +43,7 @@ function User({ id, style, component, render, showRating, ...other }) {
     >
       {showRating && (
         <span className={classes.rating}>
-          {loadingStats ? "⋯" : Math.round(stats[showRating].rating)}
+          {loadingRating ? "⋯" : Math.round(rating ?? BASE_RATING)}
         </span>
       )}
       {user.admin && (
