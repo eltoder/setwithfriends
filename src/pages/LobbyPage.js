@@ -30,12 +30,9 @@ import useStorage from "../hooks/useStorage";
 
 const useStyles = makeStyles((theme) => ({
   mainGrid: {
-    "--table-height": "400px", // responsive variable
-    [theme.breakpoints.up("sm")]: {
-      "--table-height": "480px",
-    },
+    "--table-height": "calc(max(50vh - 120px, 400px))",
     [theme.breakpoints.up("md")]: {
-      "--table-height": "calc(min(100vh - 200px, 720px))",
+      "--table-height": "calc(max(min(100vh - 200px, 800px), 300px))",
     },
   },
   gamesTable: {
@@ -204,7 +201,7 @@ function LobbyPage() {
     <Container>
       <Grid container spacing={2} className={classes.mainGrid}>
         <Box clone order={{ xs: 2, md: 1 }} className={classes.chatColumn}>
-          <Grid item xs={12} sm={12} md={6}>
+          <Grid item xs={12} md={6}>
             <Paper className={classes.chatColumnPaper}>
               <Chat title="Lobby Chat" messageLimit={100} showMessageTimes />
             </Paper>
@@ -229,7 +226,7 @@ function LobbyPage() {
           </Grid>
         </Box>
         <Box clone order={{ xs: 1, md: 2 }} className={classes.gamesColumn}>
-          <Grid item xs={12} sm={12} md={6}>
+          <Grid item xs={12} md={6}>
             <Tabs
               className={classes.lobbyTabs}
               indicatorColor="secondary"
