@@ -20,7 +20,6 @@ import firebase from "../firebase";
 import { computeState, modes } from "../game";
 import useFirebaseRefs from "../hooks/useFirebaseRefs";
 import useStats from "../hooks/useStats";
-import LoadingPage from "./LoadingPage";
 
 const datasetVariants = {
   all: {
