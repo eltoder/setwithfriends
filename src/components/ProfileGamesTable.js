@@ -64,7 +64,7 @@ function ProfileGamesTable({ userId, gamesData, handleClickGame }) {
   if (Object.keys(gamesData).length === 0) {
     return (
       <Typography style={{ color: grey[400] }}>
-        No recent games to display...
+        No recent games in this category.
       </Typography>
     );
   }

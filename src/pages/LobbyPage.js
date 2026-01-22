@@ -120,22 +120,21 @@ function LobbyPage() {
   const [gameMode] = useStorage("gameMode", "normal");
   const [practiceMode] = useStorage("practiceMode", "off");
 
-  const gamesQuery = useMemo(() => {
-    return firebase
-      .database()
-      .ref("publicGames")
-      .orderByValue()
-      .limitToLast(35);
-  }, []);
+  const gamesQuery = useMemo(
+    () => firebase.database().ref("publicGames").orderByValue().limitToLast(35),
+    []
+  );
   const games = useFirebaseQuery(gamesQuery);
 
-  const myGamesQuery = useMemo(() => {
-    return firebase
-      .database()
-      .ref(`/userGames/${user.id}`)
-      .orderByValue()
-      .limitToLast(35);
-  }, [user.id]);
+  const myGamesQuery = useMemo(
+    () =>
+      firebase
+        .database()
+        .ref(`/userGames/${user.id}`)
+        .orderByValue()
+        .limitToLast(35),
+    [user.id]
+  );
   const myGames = useFirebaseQuery(myGamesQuery);
 
   const [stats, loadingStats] = useFirebaseRef("stats");

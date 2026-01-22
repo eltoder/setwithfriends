@@ -124,14 +124,16 @@ function Chat({
   const databasePath = gameId ? `chats/${gameId}` : "lobbyChat";
   const messagesQuery = useMemo(
     () =>
-      firebase
-        .database()
-        .ref(databasePath)
-        .orderByChild("time")
-        .limitToLast(messageLimit),
-    [databasePath, messageLimit]
+      isHidden
+        ? null
+        : firebase
+            .database()
+            .ref(databasePath)
+            .orderByChild("time")
+            .limitToLast(messageLimit),
+    [isHidden, databasePath, messageLimit]
   );
-  const messages = useFirebaseQuery(isHidden ? null : messagesQuery);
+  const messages = useFirebaseQuery(messagesQuery);
   const mentionRE = useMemo(() => makeMentionRE(user.name), [user.name]);
 
   function handleSubmit(event) {

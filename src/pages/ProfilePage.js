@@ -81,7 +81,7 @@ function ProfilePage({ match }) {
       .database()
       .ref(`/userGames/${userId}`)
       .orderByValue()
-      .limitToLast(64);
+      .limitToLast(100);
     const update = (snapshot) => {
       query.off("value", update);
       setGames(snapshot.val() ?? {});
@@ -113,9 +113,6 @@ function ProfilePage({ match }) {
 
   if (redirect) {
     return <Redirect push to={redirect} />;
-  }
-  if (!gameIds) {
-    return <LoadingPage />;
   }
 
   let gamesData = null;
