@@ -53,9 +53,10 @@ function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
   const { pathname } = useLocation();
   const time = useMoment(500);
   const gameTime = endedAt || time;
+  const pauseEnd = pause?.end ?? gameTime;
   const pauseTime =
     (pause?.previous ?? 0) +
-    (pause?.start ? (pause.end ?? gameTime) - pause.start : 0);
+    (pause?.start < pauseEnd ? pauseEnd - pause.start : 0);
 
   return (
     <Paper className={classes.sidebar}>

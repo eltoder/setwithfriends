@@ -80,9 +80,10 @@ export const finishGame = functions.https.onCall(async (data, context) => {
     );
   }
   const pause = gameData.child("pause").val();
+  const pauseEnd = pause?.end ?? finalTime;
   const pauseTime =
     (pause?.previous ?? 0) +
-    (pause?.start ? (pause.end ?? finalTime) - pause.start : 0);
+    (pause?.start < pauseEnd ? pauseEnd - pause.start : 0);
 
   // The game has ended, so we attempt to do an atomic update.
   // Safety: Events can only be appended to the game, so the final time must remain the same.
