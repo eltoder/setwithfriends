@@ -1,0 +1,7 @@
+name = "setwithforks"
+compatibility_date = "2026-02-14"
+workers_dev = false
+
+[assets]
+directory = "build"
+not_found_handling = "single-page-application"

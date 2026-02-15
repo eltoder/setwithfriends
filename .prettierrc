@@ -6,5 +6,11 @@
   "proseWrap": "always",
   "importOrder": ["^@", "^[./]"],
   "importOrderSeparation": true,
-  "importOrderSortSpecifiers": true
+  "importOrderSortSpecifiers": true,
+  "overrides": [
+    {
+      "files": ["*.yml", "*.yaml"],
+      "options": { "proseWrap": "preserve" }
+    }
+  ]
 }
