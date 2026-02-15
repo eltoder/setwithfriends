@@ -65,5 +65,8 @@ jobs:
     uses: ./.github/workflows/deploy.yml
     with:
       env: staging
+      cloudflare: true
     secrets:
       firebase-token: ${{ secrets.FIREBASE_DEV_TOKEN }}
+      cloudflare-token: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      cloudflare-account-id: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}

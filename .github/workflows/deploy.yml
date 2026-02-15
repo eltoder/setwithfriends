@@ -6,9 +6,17 @@ on:
       env:
         required: true
         type: string
+      cloudflare:
+        required: false
+        type: boolean
+        default: false
     secrets:
       firebase-token:
         required: true
+      cloudflare-token:
+        required: false
+      cloudflare-account-id:
+        required: false
 
 jobs:
   deploy:
@@ -34,8 +42,20 @@ jobs:
       - run: npm run build:${{ inputs.env }}
 
       - name: Deploy to Firebase
-        uses: w9jds/firebase-action@v14.10.1
+        uses: w9jds/firebase-action@master
         with:
-          args: deploy -P ${{ inputs.env }} --only database,functions,hosting
+          args: >-
+            deploy
+            -P ${{ inputs.env }}
+            --only database,functions${{ !inputs.cloudflare && ',hosting' || '' }}
         env:
           FIREBASE_TOKEN: ${{ secrets.firebase-token }}
+
+      - name: Deploy to Cloudflare
+        if: inputs.cloudflare
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.cloudflare-token }}
+          accountId: ${{ secrets.cloudflare-account-id }}
+          wranglerVersion: "4.65.0"
+          command: deploy
