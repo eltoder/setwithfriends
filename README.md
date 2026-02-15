@@ -2,12 +2,12 @@
 
 ![Logo](https://i.imgur.com/YTldFYX.png)
 
-This is the source code for [Set with Forks](https://setwithfriends.com/), an
+This is the source code for [Set with Forks](https://setwithforks.com/), an
 online, multiplayer implementation of the real-time card game
 [Set](<https://en.wikipedia.org/wiki/Set_(card_game)>). Your goal is to find
 triplets of cards that follow a certain pattern as quickly as possible.
 
-- [Web version](https://setwithfriends.com/)
+- [Web version](https://setwithforks.com/)
 - [Official Discord](https://discord.gg/XbjJyc9)
 
 ## Technical Details
@@ -83,7 +83,7 @@ emulator suite using the `npm run build:dev` script.
 
 The other parts of the app (serverless functions, database rules) are deployed
 to production using GitHub Actions on the `main` branch. The
-[staging environment](https://setwithfriends-dev.web.app/) gets automatic deploy
+[staging environment](https://setwithforks-dev.web.app/) gets automatic deploy
 previews when CI on the `main` branch passes. It is useful for seeing the latest
 version of the app and making sure that nothing is broken before releasing to
 production.

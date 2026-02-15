@@ -21,7 +21,7 @@ const TermsOfService = () => (
     <Typography variant="h6">1. Terms</Typography>
     <Typography variant="body1" gutterBottom>
       By accessing the website at{" "}
-      <Link href="/">https://setwithfriends.com/</Link>, you are agreeing to be
+      <Link href="/">https://setwithforks.com/</Link>, you are agreeing to be
       bound by these terms of service, all applicable laws and regulations, and
       agree that you are responsible for compliance with any applicable local
       laws. If you do not agree with any of these terms, you are prohibited from
@@ -140,8 +140,8 @@ const PrivacyPolicy = () => (
     <Typography variant="body1" gutterBottom>
       Your privacy is important to us. It is Set with Forks policy to respect
       your privacy regarding any information we may collect from you across our
-      website, <Link href="/">https://setwithfriends.com/</Link>, and other
-      sites we own and operate.
+      website, <Link href="/">https://setwithforks.com/</Link>, and other sites
+      we own and operate.
     </Typography>
     <Typography variant="body1" gutterBottom>
       We only ask for personal information when we truly need it to provide a
