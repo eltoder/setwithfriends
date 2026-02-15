@@ -263,23 +263,38 @@ export const createGame = functions.https.onCall(async (data, context) => {
 
   if (access === "public") {
     const oneHourAgo = Date.now() - 3600000;
-    const recentGameIds = await admin
-      .database()
-      .ref(`userGames/${userId}`)
-      .orderByValue()
-      .startAt(oneHourAgo)
-      .once("value");
-
-    const recentGames = await Promise.all(
-      Object.keys(recentGameIds.val() || {}).map((recentGameId) =>
-        admin.database().ref(`games/${recentGameId}`).once("value")
-      )
-    );
+    const [userGamesSnap, publicGamesSnap] = await Promise.all([
+      admin
+        .database()
+        .ref(`userGames/${userId}`)
+        .orderByValue()
+        .startAt(oneHourAgo)
+        .once("value"),
+      admin
+        .database()
+        .ref("publicGames")
+        .orderByValue()
+        .startAt(oneHourAgo)
+        .once("value"),
+    ]);
+    const userGamesIds = userGamesSnap.val();
+    const publicGamesIds = publicGamesSnap.val();
+    const recentGames =
+      userGamesIds && publicGamesIds
+        ? await Promise.all(
+            Object.keys(userGamesIds)
+              .filter((recentGameId) =>
+                publicGamesIds.hasOwnProperty(recentGameId)
+              )
+              .map((recentGameId) =>
+                admin.database().ref(`games/${recentGameId}`).once("value")
+              )
+          )
+        : [];
 
     let unfinishedGames = 0;
     for (const snap of recentGames) {
       if (
-        snap.child("access").val() === "public" &&
         snap.child("status").val() !== "done" &&
         snap.child("host").val() === userId
       ) {
