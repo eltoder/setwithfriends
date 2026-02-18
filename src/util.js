@@ -1,4 +1,4 @@
-import moment from "moment";
+import { format as dateFormat } from "date-fns/format";
 import {
   RegExpMatcher,
   TextCensor,
@@ -198,9 +198,8 @@ export function generateName() {
 export function formatTime(t, hideSubsecond) {
   t = Math.max(t, 0);
   const hours = Math.floor(t / (3600 * 1000));
-  const rest = t % (3600 * 1000);
   const format = hideSubsecond ? "mm:ss" : "mm:ss.SS";
-  return (hours ? `${hours}:` : "") + moment.utc(rest).format(format);
+  return (hours ? `${hours}:` : "") + dateFormat(new Date(t), format);
 }
 
 export function formatCount(count, singular, plural = null) {
