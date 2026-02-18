@@ -2,12 +2,14 @@ import moment from "moment";
 import {
   RegExpMatcher,
   TextCensor,
+  collapseDuplicatesTransformer,
   createSimpleTransformer,
   englishDataset,
   englishRecommendedTransformers,
   fixedPhraseCensorStrategy,
   pattern,
-  remapCharactersTransformer,
+  resolveConfusablesTransformer,
+  toAsciiLowerCaseTransformer,
 } from "obscenity";
 
 import amber from "@material-ui/core/colors/amber";
@@ -78,10 +80,7 @@ const invisibleChars = new Set([
 const fixedDataset = englishDataset
   .removePhrasesIf((phrase) => phrase.metadata.originalWord === "prick")
   .addPhrase((phrase) =>
-    phrase
-      .setMetadata({ originalWord: "ass" })
-      .addWhitelistedTerm("45s")
-      .addWhitelistedTerm("assess")
+    phrase.setMetadata({ originalWord: "ass" }).addWhitelistedTerm("assess")
   )
   .addPhrase((phrase) =>
     phrase
@@ -108,14 +107,26 @@ const fixedDataset = englishDataset
   );
 // Work-around for:
 // https://github.com/jo3-l/obscenity/issues/100
+const blacklistMatcherTransformers = [
+  createSimpleTransformer((c) => (!invisibleChars.has(c) ? c : undefined)),
+  resolveConfusablesTransformer(),
+  toAsciiLowerCaseTransformer(),
+  collapseDuplicatesTransformer({
+    defaultThreshold: 1,
+    customThresholds: new Map([
+      ["b", 2], // a_bb_o
+      ["e", 2], // ab_ee_d
+      ["o", 2], // b_oo_nga
+      ["l", 2], // fe_ll_atio
+      ["s", 2], // a_ss_
+      ["g", 2], // ni_gg_er
+    ]),
+  }),
+];
 export const badWords = new RegExpMatcher({
   ...fixedDataset.build(),
   ...englishRecommendedTransformers,
-  blacklistMatcherTransformers: [
-    createSimpleTransformer((c) => (!invisibleChars.has(c) ? c : undefined)),
-    remapCharactersTransformer({ l: "/" }),
-    ...englishRecommendedTransformers.blacklistMatcherTransformers,
-  ],
+  blacklistMatcherTransformers,
 });
 const censor = new TextCensor().setStrategy(fixedPhraseCensorStrategy("🤬"));
 
