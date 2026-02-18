@@ -1,6 +1,6 @@
 # Set with Forks
 
-![Logo](https://i.imgur.com/YTldFYX.png)
+![Logo](https://i.imgur.com/65fxE0S.jpeg)
 
 This is the source code for [Set with Forks](https://setwithforks.com/), an
 online, multiplayer implementation of the real-time card game
