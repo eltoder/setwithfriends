@@ -48,15 +48,20 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
-  const classes = useStyles();
-  const { pathname } = useLocation();
-  const time = useMoment(500);
+function GameTime({ startedAt, endedAt, pause }) {
+  const time = useMoment(endedAt ? 0 : 500);
   const gameTime = endedAt || time;
   const pauseEnd = pause?.end ?? gameTime;
   const pauseTime =
     (pause?.previous ?? 0) +
     (pause?.start < pauseEnd ? pauseEnd - pause.start : 0);
+  // Hide the sub-second time resolution while game is active.
+  return <>{formatTime(gameTime - startedAt - pauseTime, !endedAt)}</>;
+}
+
+function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
+  const classes = useStyles();
+  const { pathname } = useLocation();
 
   return (
     <Paper className={classes.sidebar}>
@@ -82,9 +87,11 @@ function GameSidebar({ game, scores, leaderboard, pause, endedAt }) {
           />
         )}
         <Typography variant="h4" align="center">
-          {/* Hide the sub-second time resolution while game is active to
-          avoid stressing beginners. */}
-          {formatTime(gameTime - game.startedAt - pauseTime, !endedAt)}
+          <GameTime
+            startedAt={game.startedAt}
+            endedAt={endedAt}
+            pause={pause}
+          />
         </Typography>
       </div>
       <Divider style={{ margin: "8px 0" }} />
