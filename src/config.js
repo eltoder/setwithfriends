@@ -9,7 +9,6 @@ const config = {
       projectId: "setwithforks-dev",
       appId: "1:488130851214:web:e656dc30f31e99e160b4df",
     },
-    stripe: null, // Stripe not supported in development
   },
   staging: {
     firebase: {
@@ -22,7 +21,6 @@ const config = {
       appId: "1:488130851214:web:e656dc30f31e99e160b4df",
       measurementId: "G-LQR3228JDG",
     },
-    stripe: null, // No Stripe yet
   },
   production: {
     firebase: {
@@ -34,11 +32,6 @@ const config = {
       messagingSenderId: "970544876139",
       appId: "1:970544876139:web:06295fe4079007f76abf2e",
       measurementId: "G-QDX193SN7R",
-    },
-    stripe: {
-      publishableKey:
-        "pk_live_51I0VxyCWK9K42cLJX34X6lIqsuZSWQX6I8WuOgmvEGANYlNyCsZDl2MmWGXQhuM5QnVciouCiYZ9lWq5Ope68aSj00bllKdnRr",
-      priceId: "price_1I2QWcCWK9K42cLJFp2sUkSh",
     },
   },
 };
