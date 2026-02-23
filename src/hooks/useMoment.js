@@ -8,11 +8,11 @@ function useMoment(delay = 1000) {
   const [offset] = useFirebaseRef(".info/serverTimeOffset");
 
   useEffect(() => {
-    if (!delay) return;
-
     const id = setInterval(() => {
       setTime(moment(Date.now() + offset));
     }, delay);
+
+    // Clear any intervals that saw stale offsets
     return () => clearInterval(id);
   }, [offset, delay]);
 
