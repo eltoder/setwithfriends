@@ -1,4 +1,4 @@
-import formatDuration from "format-duration";
+import moment from "moment";
 import {
   RegExpMatcher,
   TextCensor,
@@ -196,11 +196,11 @@ export function generateName() {
 }
 
 export function formatTime(t, hideSubsecond) {
-  const res = formatDuration(Math.max(t, 0), {
-    leading: true,
-    ms: !hideSubsecond,
-  });
-  return hideSubsecond ? res : res.slice(0, -1);
+  t = Math.max(t, 0);
+  const hours = Math.floor(t / (3600 * 1000));
+  const rest = t % (3600 * 1000);
+  const format = hideSubsecond ? "mm:ss" : "mm:ss.SS";
+  return (hours ? `${hours}:` : "") + moment.utc(rest).format(format);
 }
 
 export function formatCount(count, singular, plural = null) {
