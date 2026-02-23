@@ -170,21 +170,27 @@ function checkSet4Set(a: string, b: string, c: string, d: string) {
   return [a, b, c, d];
 }
 
-function* findSetNormal(deck: string[], gameMode: GameMode, state: FindState) {
+function findSetNormal(deck: string[], gameMode: GameMode, state: FindState) {
   const deckSet = new Set(deck);
   const first =
     modes[gameMode].chain && state.lastSet!.length > 0 ? state.lastSet! : deck;
+  const foundSets = modes[gameMode].puzzle && state.foundSets!;
   for (let i = 0; i < first.length; i++) {
     for (let j = first === deck ? i + 1 : 0; j < deck.length; j++) {
       const c = conjugateCard(first[i], deck[j]);
       if (deckSet.has(c)) {
-        yield [first[i], deck[j], c];
+        const set = [first[i], deck[j], c];
+        if (!(foundSets && foundSets.has(set.sort().join("|")))) {
+          return set;
+        }
       }
     }
   }
+  return null;
 }
 
-function* findSetUltra(deck: string[], gameMode: GameMode, state: FindState) {
+function findSetUltra(deck: string[], gameMode: GameMode, state: FindState) {
+  const foundSets = modes[gameMode].puzzle && state.foundSets!;
   const cutoff = modes[gameMode].chain ? state.lastSet!.length : 0;
   const deckSet = new Set(deck);
   let first, second, prevSet;
@@ -207,14 +213,18 @@ function* findSetUltra(deck: string[], gameMode: GameMode, state: FindState) {
           c2 !== second[j] &&
           c2 !== deck[k]
         ) {
-          yield [first[i], second[j], deck[k], c2];
+          const set = [first[i], second[j], deck[k], c2];
+          if (!(foundSets && foundSets.has(set.sort().join("|")))) {
+            return set;
+          }
         }
       }
     }
   }
+  return null;
 }
 
-function* findSetGhost(deck: string[], gameMode: GameMode, state: FindState) {
+function findSetGhost(deck: string[], gameMode: GameMode, state: FindState) {
   for (let i = 0; i < deck.length; i++) {
     for (let j = i + 1; j < deck.length; j++) {
       for (let k = j + 1; k < deck.length; k++) {
@@ -229,41 +239,40 @@ function* findSetGhost(deck: string[], gameMode: GameMode, state: FindState) {
                 deck[m],
                 deck[n]
               );
-              if (cand) yield cand;
+              if (cand) return cand;
             }
           }
         }
       }
     }
   }
+  return null;
 }
 
-function* findSet4Set(deck: string[], gameMode: GameMode, state: FindState) {
+function findSet4Set(deck: string[], gameMode: GameMode, state: FindState) {
   const deckSet = new Set(deck);
   const first =
     modes[gameMode].chain && state.lastSet!.length > 0 ? state.lastSet! : deck;
+  const foundSets = modes[gameMode].puzzle && state.foundSets!;
   for (let i = 0; i < first.length; i++) {
     for (let j = i + 1; j < first.length; j++) {
       for (let k = first === deck ? j + 1 : 0; k < deck.length; k++) {
         const c = conjugateCard4Set(first[i], first[j], deck[k]);
         if (deckSet.has(c)) {
-          yield [first[i], first[j], deck[k], c];
+          const set = [first[i], first[j], deck[k], c];
+          if (!(foundSets && foundSets.has(set.sort().join("|")))) {
+            return set;
+          }
         }
       }
     }
   }
+  return null;
 }
 
 /** Find a set in an unordered collection of cards, if any, depending on mode. */
 export function findSet(deck: string[], gameMode: GameMode, state: FindState) {
-  const foundSets = modes[gameMode].puzzle && state.foundSets;
-  const sets = setTypes[modes[gameMode].setType].findFn(deck, gameMode, state);
-  for (const set of sets) {
-    if (!(foundSets && foundSets.has(set.sort().join("|")))) {
-      return set;
-    }
-  }
-  return null;
+  return setTypes[modes[gameMode].setType].findFn(deck, gameMode, state);
 }
 
 /** Get the array of cards from a GameEvent */
