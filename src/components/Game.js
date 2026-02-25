@@ -17,11 +17,18 @@ const useStyles = makeStyles({
   },
   movingCard: {
     position: "absolute",
-    pointerEvents: "none",
     zIndex: 1,
     "& > div": {
       backgroundColor: "transparent !important",
     },
+  },
+  leavingCard: {
+    position: "absolute",
+    zIndex: 1,
+    "& > div": {
+      backgroundColor: "transparent !important",
+    },
+    pointerEvents: "none",
   },
 });
 
@@ -244,10 +251,12 @@ function Game({
         (style, card) =>
           card && (
             <animated.div
-              className={to([style.left, style.top], () =>
+              className={to([style.left, style.top, style.opacity], () =>
                 style.left.idle && style.top.idle
                   ? classes.staticCard
-                  : classes.movingCard
+                  : style.opacity.goal === 1
+                    ? classes.movingCard
+                    : classes.leavingCard
               )}
               style={style}
             >
