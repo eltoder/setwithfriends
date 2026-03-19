@@ -14,7 +14,6 @@ import { makeStyles } from "@material-ui/core/styles";
 
 import failSfx1 from "../assets/failedSetSound1.mp3";
 import failSfx2 from "../assets/failedSetSound2.mp3";
-import failSfx3 from "../assets/failedSetSound3.mp3";
 import foundSfx from "../assets/successfulSetSound.mp3";
 import Chat from "../components/Chat";
 import Game from "../components/Game";
@@ -131,9 +130,8 @@ function GamePage({ match }) {
   const [playSuccess] = useSound(foundSfx);
   const [playFail1] = useSound(failSfx1);
   const [playFail2] = useSound(failSfx2);
-  const [playFail3] = useSound(failSfx3);
   const playFail = () =>
-    [playFail1, playFail2, playFail3][Math.floor(Math.random() * 3)]();
+    [playFail1, playFail2][Math.floor(Math.random() * 2)]();
 
   // Reset card selection on update to game events
   const numEvents = Object.keys(gameData?.events || {}).length;
