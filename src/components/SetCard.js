@@ -49,13 +49,15 @@ const useStyles = makeStyles((theme) => ({
 
 const SHAPES = ["squiggle", "oval", "diamond", "hourglass"];
 const MASKS = ["", "", "url(#mask-stripes)", "url(#mask-checkers)"];
+const MASKS_SMALL = ["", "", "url(#mask-stripes-small)", "url(#mask-checkers)"];
 
 function Symbol(props) {
   const classes = useStyles();
   const color = props.color;
   const shape = SHAPES[props.shape];
   const shade = props.shade;
-  const width = props.size === "sm" ? 7.1 : 33.6;
+  const width = props.size === "sm" ? 7.3 : 33.6;
+  const masks = props.size === "sm" ? MASKS_SMALL : MASKS;
   return (
     <svg
       className={clsx(classes.symbol, {
@@ -66,7 +68,7 @@ function Symbol(props) {
       viewBox="0 0 200 400"
     >
       {shade !== 1 && (
-        <use href={"#" + shape} fill={color} mask={MASKS[shade]} />
+        <use href={"#" + shape} fill={color} mask={masks[shade]} />
       )}
       <use href={"#" + shape} stroke={color} fill="none" strokeWidth={18} />
     </svg>
