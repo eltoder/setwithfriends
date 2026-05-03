@@ -41,6 +41,14 @@ function makeThemes(rawCustomCardColors) {
   };
 }
 
+function parseVolume(raw) {
+  // Old versions stored "on"/"off"; new versions store a 0-100 string.
+  if (raw === "on") return 100;
+  if (raw === "off") return 0;
+  const n = Number(raw);
+  return Number.isFinite(n) ? Math.max(0, Math.min(100, Math.round(n))) : 100;
+}
+
 function makeKeyboardLayout(keyboardLayoutName, customKeyboardLayout) {
   const emptyLayout = { verticalLayout: "", horizontalLayout: "" };
   if (keyboardLayoutName !== "Custom") {
@@ -88,7 +96,12 @@ function App() {
     "orientation",
     "vertical"
   );
-  const [volume, setVolume] = useStorage("volume", "on");
+  const [rawVolume, setRawVolume] = useStorage("volume", "100");
+  const volume = parseVolume(rawVolume);
+  const setVolume = (next) =>
+    setRawVolume((prev) =>
+      String(typeof next === "function" ? next(parseVolume(prev)) : next)
+    );
   const [notifications, setNotifications] = useStorage("notifications", "on");
   const [focusMode, setFocusMode] = useStorage("focusMode", "off");
 

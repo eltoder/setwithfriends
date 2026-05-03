@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 import AppBar from "@material-ui/core/AppBar";
 import Divider from "@material-ui/core/Divider";
@@ -6,12 +6,15 @@ import IconButton from "@material-ui/core/IconButton";
 import Link from "@material-ui/core/Link";
 import Menu from "@material-ui/core/Menu";
 import MenuItem from "@material-ui/core/MenuItem";
+import Slider from "@material-ui/core/Slider";
 import Toolbar from "@material-ui/core/Toolbar";
 import Tooltip from "@material-ui/core/Tooltip";
 import Typography from "@material-ui/core/Typography";
 import { makeStyles } from "@material-ui/core/styles";
 import EditIcon from "@material-ui/icons/Edit";
 import SettingsIcon from "@material-ui/icons/Settings";
+import VolumeOffIcon from "@material-ui/icons/VolumeOff";
+import VolumeUpIcon from "@material-ui/icons/VolumeUp";
 
 import { version } from "../config";
 import { SettingsContext, UserContext } from "../context";
@@ -43,6 +46,16 @@ const useStyles = makeStyles({
     "&:hover > $editIcon": {
       visibility: "visible",
     },
+  },
+  volumeRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 8,
+    padding: "6px 16px",
+    minWidth: 200,
+  },
+  volumeButton: {
+    padding: 4,
   },
 });
 
@@ -99,8 +112,15 @@ function Navbar() {
     }
   }
 
-  function handleChangeVolume() {
-    settings.setVolume((volume) => (volume === "on" ? "off" : "on"));
+  // Remembers the level to restore when unmuting via the keyboard shortcut
+  // or speaker icon, so toggling back doesn't always snap to 100%.
+  const lastVolume = useRef(settings.volume > 0 ? settings.volume : 100);
+  useEffect(() => {
+    if (settings.volume > 0) lastVolume.current = settings.volume;
+  }, [settings.volume]);
+
+  function handleToggleMute() {
+    settings.setVolume((v) => (v > 0 ? 0 : lastVolume.current));
   }
 
   function handleChangeTheme() {
@@ -124,7 +144,7 @@ function Navbar() {
     if (modifier === "Control|Shift") {
       if (key === "S") {
         event.preventDefault();
-        handleChangeVolume();
+        handleToggleMute();
       } else if (key === "F") {
         event.preventDefault();
         handleChangeFocusMode();
@@ -212,14 +232,25 @@ function Navbar() {
             </Typography>
           )}
           <Divider style={{ margin: "8px 0" }} />
-          <MenuItem
-            onClick={() => {
-              handleChangeVolume();
-              handleCloseMenu();
-            }}
-          >
-            {settings.volume === "on" ? "Mute" : "Unmute"} sound
-          </MenuItem>
+          <div className={classes.volumeRow}>
+            <Tooltip title={settings.volume > 0 ? "Mute" : "Unmute"}>
+              <IconButton
+                className={classes.volumeButton}
+                onClick={handleToggleMute}
+                aria-label={settings.volume > 0 ? "Mute sound" : "Unmute sound"}
+              >
+                {settings.volume > 0 ? <VolumeUpIcon /> : <VolumeOffIcon />}
+              </IconButton>
+            </Tooltip>
+            <Slider
+              value={settings.volume}
+              onChange={(_, v) => settings.setVolume(v)}
+              min={0}
+              max={100}
+              step={5}
+              aria-label="Sound volume"
+            />
+          </div>
           <MenuItem
             onClick={() => {
               handleChangeNotifications();
