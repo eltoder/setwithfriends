@@ -127,9 +127,10 @@ function GamePage({ match }) {
   const [hasNextGame] = useFirebaseRef(
     spectating && game?.status === "done" ? `games/${nextGameId}/status` : null
   );
-  const [playSuccess] = useSound(foundSfx);
-  const [playFail1] = useSound(failSfx1);
-  const [playFail2] = useSound(failSfx2);
+  const soundVolume = volume / 100;
+  const [playSuccess] = useSound(foundSfx, { volume: soundVolume });
+  const [playFail1] = useSound(failSfx1, { volume: soundVolume });
+  const [playFail2] = useSound(failSfx2, { volume: soundVolume });
   const playFail = () =>
     [playFail1, playFail2][Math.floor(Math.random() * 2)]();
 
@@ -298,7 +299,7 @@ function GamePage({ match }) {
           return state.cards;
         case "set":
           handleSet(state.cards);
-          if (volume === "on") playSuccess();
+          if (volume > 0) playSuccess();
           if (notifications === "on") {
             setSnack({
               open: true,
@@ -308,7 +309,7 @@ function GamePage({ match }) {
           }
           return [];
         case "error":
-          if (volume === "on") playFail();
+          if (volume > 0) playFail();
           if (notifications === "on") {
             setSnack({
               open: true,
