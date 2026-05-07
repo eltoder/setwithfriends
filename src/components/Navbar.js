@@ -51,11 +51,11 @@ const useStyles = makeStyles({
     display: "flex",
     alignItems: "center",
     gap: 8,
-    padding: "6px 16px",
+    padding: "0px 16px",
     minWidth: 200,
   },
   volumeButton: {
-    padding: 4,
+    padding: "0px 4px 0px 0px",
   },
 });
 
