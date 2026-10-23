@@ -117,7 +117,8 @@ function GamePage({ match }) {
 
   const [waiting, setWaiting] = useState(false);
   const [redirect, setRedirect] = useState(null);
-  const [selected, setSelected] = useState([]);
+  let [selected, setSelected] = useState([]);
+  // needed so that in memory 3 incorrect cards stay selected (and thus visible)
   const clearSelected = useRef(false);
   const [snack, setSnack] = useState({ open: false });
 
@@ -285,18 +286,20 @@ function GamePage({ match }) {
       });
       return;
     }
-    setSelected((selected) => {
-      if (clearSelected.current) {
-        selected = [];
-        clearSelected.current = false;
-      }
-      if (selected.includes(card)) {
-        return gameMode === "memory" ? selected : removeCard(selected, card);
-      }
+    if (clearSelected.current) {
+      selected = [];
+      clearSelected.current = false;
+    }
+    if (selected.includes(card)) {
+      setSelected(
+        gameMode === "memory" ? selected : removeCard(selected, card)
+      );
+    } else {
       const state = addCard(selected, card, gameMode, findState);
       switch (state.kind) {
         case "pending":
-          return state.cards;
+          setSelected(state.cards);
+          break;
         case "set":
           handleSet(state.cards);
           if (volume > 0) playSuccess();
@@ -307,7 +310,8 @@ function GamePage({ match }) {
               message: `Found ${formatANoun(state.setType)}`,
             });
           }
-          return [];
+          setSelected([]);
+          break;
         case "error":
           if (volume > 0) playFail();
           if (notifications === "on") {
@@ -319,12 +323,14 @@ function GamePage({ match }) {
           }
           if (gameMode === "memory") {
             clearSelected.current = true;
-            return state.cards;
+            setSelected(state.cards);
+          } else {
+            setSelected([]);
           }
-          return [];
+          break;
         // no default
       }
-    });
+    }
   }
 
   function handleClear() {
